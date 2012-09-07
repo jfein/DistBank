@@ -51,6 +51,13 @@ public class NetworkInterface implements Runnable {
 				System.out.println("Got conn from "
 						+ conn.getRemoteSocketAddress());
 
+				// Check we can get messages from the remote host
+				if (!channelsIn.contains(conn.getRemoteSocketAddress())) {
+					continue;
+				}
+
+				System.out.println("Got VALID conn");
+
 				// Get Request
 				InputStream connIn = conn.getInputStream();
 				ObjectInputStream in = new ObjectInputStream(connIn);
@@ -104,6 +111,11 @@ public class NetworkInterface implements Runnable {
 			out.flush();
 
 			System.out.println("Sent Request");
+
+			// Check we can get messages from remote host
+			if (!channelsIn.contains(a)) {
+				throw new Exception();
+			}
 
 			// Get response
 			InputStream connIn = conn.getInputStream();

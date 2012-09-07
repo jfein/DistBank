@@ -6,7 +6,6 @@ public class State {
 
 	public State() {
 		x = 0;
-		System.out.println("State initialized to 0");
 	}
 
 	public int getX() {
