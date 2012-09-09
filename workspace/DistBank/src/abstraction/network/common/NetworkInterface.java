@@ -13,24 +13,13 @@ import java.util.List;
 import java.util.Set;
 
 import abstraction.distsys.Runtime;
-import abstraction.network.server.Server;
 
-public class NetworkInterface implements Runnable {
-
-	private Set<SocketAddress> channelsOut;
-	private Set<SocketAddress> channelsIn;
+public class NetworkInterface extends Thread {
 
 	private InetSocketAddress myAddress;
 
 	public NetworkInterface(InetSocketAddress myAddress) {
 		this.myAddress = myAddress;
-
-		List<Set<SocketAddress>> channels = Topology.getMyChannels(myAddress);
-		channelsOut = channels.get(0);
-		channelsIn = channels.get(1);
-
-		// Start a thread to get requests
-		new Thread(this).start();
 	}
 
 	@Override
@@ -78,10 +67,11 @@ public class NetworkInterface implements Runnable {
 	}
 
 	// Opens socket, sends a request, waits for a response
-	public Message sendRequestGetResponse(SocketAddress a, Message req) {
+	public static Message sendRequestGetResponse(SocketAddress a, Message req) {
 		try {
 			// Check we can send messages to remote host & get a response
-			if (!channelsOut.contains(a) || !channelsIn.contains(a)) {
+			if (!Topology.channelsOut.contains(a)
+					|| !Topology.channelsIn.contains(a)) {
 				throw new Exception();
 			}
 

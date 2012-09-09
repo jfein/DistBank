@@ -1,6 +1,9 @@
 package abstraction.distsys;
 
+import java.net.InetSocketAddress;
+
 import abstraction.network.common.NetworkInterface;
+import abstraction.network.common.Topology;
 import abstraction.network.server.Server;
 
 public abstract class Runtime {
@@ -13,14 +16,17 @@ public abstract class Runtime {
 
 	private Server server;
 	private State state;
-	private NetworkInterface networkInterface;
 
-	public Runtime(Server server, State state, NetworkInterface networkInterface) {
+	public Runtime(InetSocketAddress address, Server server, State state) {
+		Topology.setMyChannels(address);
+
 		this.server = server;
 		this.state = state;
-		this.networkInterface = networkInterface;
 
 		Runtime.runtime = this;
+
+		// Start receiving requests
+		new NetworkInterface(address).start();
 	}
 
 	public Server getServer() {
@@ -29,10 +35,6 @@ public abstract class Runtime {
 
 	public State getState() {
 		return state;
-	}
-
-	public NetworkInterface getNetworkInterface() {
-		return networkInterface;
 	}
 
 }

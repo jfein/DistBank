@@ -11,12 +11,12 @@ import java.util.HashSet;
 
 public class Topology {
 
-	public static final String TOPOLOGY_FILE = "topology.txt";
+	public static final Set<SocketAddress> channelsOut = new HashSet<SocketAddress>();
+	public static Set<SocketAddress> channelsIn = new HashSet<SocketAddress>();
 
-	public static List<Set<SocketAddress>> getMyChannels(SocketAddress myAddress) {
-		Set<SocketAddress> channelsOut = new HashSet<SocketAddress>();
-		Set<SocketAddress> channelsIn = new HashSet<SocketAddress>();
+	private static final String TOPOLOGY_FILE = "topology.txt";
 
+	public static void setMyChannels(SocketAddress myAddress) {
 		try {
 			BufferedReader read = new BufferedReader(new FileReader(
 					TOPOLOGY_FILE));
@@ -41,15 +41,9 @@ public class Topology {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		List<Set<SocketAddress>> channels = new ArrayList<Set<SocketAddress>>();
-		channels.add(channelsOut);
-		channels.add(channelsIn);
-
-		return channels;
 	}
 
-	public static SocketAddress stringToSocketAddress(String s) {
+	private static SocketAddress stringToSocketAddress(String s) {
 		String parts[] = s.split(":");
 		return new InetSocketAddress(parts[0], Integer.parseInt(parts[1]));
 	}

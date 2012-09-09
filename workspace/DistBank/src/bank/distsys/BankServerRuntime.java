@@ -6,13 +6,12 @@ import bank.network.client.BankClient;
 import bank.network.server.BankServer;
 
 import abstraction.distsys.Runtime;
-import abstraction.network.common.NetworkInterface;
 
 public class BankServerRuntime extends Runtime {
 
 	public BankServerRuntime(String host, int port) {
-		super(new BankServer(), new BankState(), new NetworkInterface(
-				new InetSocketAddress(host, port)));
+		super(new InetSocketAddress(host, port), new BankServer(),
+				new BankState());
 	}
 
 	public static void main(String[] args) {
