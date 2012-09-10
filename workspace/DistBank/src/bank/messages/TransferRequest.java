@@ -2,16 +2,16 @@ package bank.messages;
 
 import core.network.common.Message;
 
-public class WithdrawRequest implements BankRequest {
+public class TransferRequest implements BankRequest {
 	private Integer srcAccountId;
-	
-	public WithdrawRequest (Integer accountId) {
-		this.srcAccountId = srcAccountId;
+
+	public TransferRequest(Integer accountId) {
+		this.srcAccountId = accountId;
 	}
 	@Override
 	public Integer getSrcAccountId() {
 		// TODO Auto-generated method stub
-		return srcAccountId;
+		return this.srcAccountId;
 	}
 
 	@Override
@@ -19,5 +19,5 @@ public class WithdrawRequest implements BankRequest {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 }
