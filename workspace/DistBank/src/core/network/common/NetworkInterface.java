@@ -19,8 +19,10 @@ public class NetworkInterface {
 		return (T) in.readObject();
 	}
 
-	public static <T extends Message> void sendMessage(Socket conn, T msg)
-			throws IOException {
+	public static <T extends Message> void sendMessage(Socket conn,
+			SocketAddress dest, T msg) throws Exception {
+		if (!Topology.canSendTo(dest))
+			throw new Exception("Can't send to " + dest);
 		OutputStream conOut = conn.getOutputStream();
 		ObjectOutputStream out = new ObjectOutputStream(conOut);
 		out.writeObject(msg);
@@ -29,14 +31,11 @@ public class NetworkInterface {
 
 	public static <T extends Message> Socket sendMessage(SocketAddress dest,
 			T msg) throws Exception {
-		if (!Topology.canSendTo(dest) || !Topology.canReceiveFrom(dest))
-			throw new Exception();
-
+		if (!Topology.canSendTo(dest))
+			throw new Exception("Can't send to " + dest);
 		Socket conn = new Socket();
 		conn.connect(dest);
-
-		sendMessage(conn, msg);
-
+		sendMessage(conn, dest, msg);
 		return conn;
 	}
 

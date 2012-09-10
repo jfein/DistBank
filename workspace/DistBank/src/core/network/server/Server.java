@@ -21,7 +21,7 @@ public class Server extends Thread {
 
 	@Override
 	public void run() {
-		while (true) {
+		while (!serverSocket.isClosed()) {
 			try {
 				Socket conn = serverSocket.accept();
 
@@ -29,7 +29,8 @@ public class Server extends Thread {
 
 				Message msgOut = serverHandler.handle(msgIn);
 
-				NetworkInterface.sendMessage(conn, msgOut);
+				NetworkInterface.sendMessage(conn, msgIn.getReturnAddress(),
+						msgOut);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

@@ -8,7 +8,8 @@ import core.network.common.NetworkInterface;
 
 public abstract class Client {
 
-	protected static <T> T exec(SocketAddress dest, Message msgOut) {
+	protected static <T extends Message> T exec(SocketAddress dest,
+			Message msgOut) {
 		try {
 			Socket conn = NetworkInterface.sendMessage(dest, msgOut);
 			return NetworkInterface.getMessage(conn);

@@ -18,12 +18,11 @@ public class BankServerRunner {
 
 		System.out.println("Starting on port " + port);
 
-		new ServerNodeRuntime(myAddress, new BankState(), new BankServerHandler());
+		new ServerNodeRuntime(myAddress, new BankState(1),
+				new BankServerHandler());
 
 		if (port == 4001) {
 			InetSocketAddress dest = new InetSocketAddress("localhost", 4000);
-			System.out.println("Doing stuff");
-			BankClient.change(dest, 15);
 			System.out.println("Other X: " + BankClient.query(dest));
 		}
 	}

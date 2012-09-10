@@ -2,17 +2,17 @@ package bank.messages;
 
 import core.network.common.Message;
 
-public class BankResponse implements Message {
+public class BankResponse extends Message {
 
 	private static final long serialVersionUID = -3689706541111933234L;
 
-	private int amt;
+	private double amt;
 
-	public BankResponse(Double double1) {
-		this.amt = double1;
+	public BankResponse(double amt) {
+		this.amt = amt;
 	}
 
-	public int getAmt() {
+	public double getAmt() {
 		return amt;
 	}
 
