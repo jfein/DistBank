@@ -3,6 +3,8 @@ package frontend.bank.objects;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import bank.Account;
+
 public class Branch {
 	
      private Integer branchId;

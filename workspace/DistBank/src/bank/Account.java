@@ -1,4 +1,4 @@
-package frontend.bank.objects;
+package bank;
 
 import java.io.Serializable;
 
