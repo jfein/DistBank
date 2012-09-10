@@ -2,7 +2,7 @@ package bank.messages;
 
 import core.network.common.Message;
 
-public class QueryRequest implements BankRequest {
+public class QueryRequest implements BankRequest, Message {
 	private Integer accountId;
 	private static final long serialVersionUID = 4050589149139383647L;
 

@@ -16,10 +16,4 @@ public class BankClient extends Client {
 		return resp.getAmt();
 	}
 
-	public static int change(SocketAddress a, int amt) {
-		ChangeRequest req = new ChangeRequest(amt);
-		BankResponse resp = BankClient.exec(a, req);
-		return resp.getAmt();
-	}
-
 }
