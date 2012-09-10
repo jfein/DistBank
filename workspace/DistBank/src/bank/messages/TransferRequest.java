@@ -4,9 +4,13 @@ import core.network.common.Message;
 
 public class TransferRequest implements BankRequest {
 	private Integer srcAccountId;
-
-	public TransferRequest(Integer accountId) {
+	private Integer destAccountId;
+	private Double amount;
+	
+	public TransferRequest(Integer accountId, Integer destAccount, Double amount) {
 		this.srcAccountId = accountId;
+		this.destAccountId = destAccount;
+		this.amount = amount;
 	}
 	@Override
 	public Integer getSrcAccountId() {
@@ -20,4 +24,11 @@ public class TransferRequest implements BankRequest {
 		return null;
 	}
 	
+	public Integer getDestAccountId() {
+		return this.destAccountId;
+	}
+	
+	public Double getAmount() {
+		return this.amount;
+	}
 }

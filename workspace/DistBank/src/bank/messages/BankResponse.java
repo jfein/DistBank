@@ -12,8 +12,8 @@ public class BankResponse extends Message {
 		this.amt = amt;
 	}
 
+
 	public double getAmt() {
 		return amt;
 	}
-
 }

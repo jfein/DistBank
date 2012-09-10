@@ -3,6 +3,7 @@ package core.network.common;
 import java.io.Serializable;
 import java.net.SocketAddress;
 
+
 import core.distsys.NodeRuntime;
 
 public abstract class Message implements Serializable {
@@ -18,4 +19,5 @@ public abstract class Message implements Serializable {
 	public SocketAddress getReturnAddress() {
 		return returnAddress;
 	}
+
 }
