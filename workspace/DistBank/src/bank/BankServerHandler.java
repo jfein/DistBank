@@ -10,7 +10,7 @@ public class BankServerHandler extends ServerHandler {
 
 	public BankResponse handle(QueryRequest req) {
 		BankState state = ServerNodeRuntime.getNodeRuntimeState();
-		return new BankResponse(state.query());
+		return new BankResponse(state.query(req.getSrcAccountId(), req.getSerialNumber()));
 	}
 
 	public BankResponse handle(ChangeRequest req) {

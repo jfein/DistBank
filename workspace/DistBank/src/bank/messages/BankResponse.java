@@ -8,8 +8,8 @@ public class BankResponse implements Message {
 
 	private int amt;
 
-	public BankResponse(int amt) {
-		this.amt = amt;
+	public BankResponse(Double double1) {
+		this.amt = double1;
 	}
 
 	public int getAmt() {
