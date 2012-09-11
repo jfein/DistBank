@@ -6,21 +6,11 @@ public class DepositRequest extends BankRequest {
 	private Integer srcAccountId;
 	private Double amount;
 	
-	public DepositRequest(Integer accountId, Double amount, Integer serial) {
+	public DepositRequest(Integer accountId, Double amount, String serial) {
 		super(accountId, serial);
 		this.amount = amount;
 	}
-	@Override
-	public Integer getSrcAccountId() {
-		return this.srcAccountId;
-	}
 
-	@Override
-	public Integer getSerialNumber() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	public Double getAmount() {
 		return this.amount;
 	}

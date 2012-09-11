@@ -6,7 +6,7 @@ public class TransferRequest extends BankRequest {
 	private Integer destAccountId;
 	private Double amount;
 	
-	public TransferRequest(Integer accountId, Integer destAccount, Double amount, Integer serial) {
+	public TransferRequest(Integer accountId, Integer destAccount, Double amount, String serial) {
 		super(accountId, serial);
 		this.destAccountId = destAccount;
 		this.amount = amount;

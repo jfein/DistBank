@@ -1,5 +1,6 @@
 package bank;
 
+import java.net.InetSocketAddress;
 import java.util.HashMap;
 
 import core.distsys.State;
@@ -18,9 +19,11 @@ public class BankState implements State {
    	 this.branchAccounts.put(account, new Account(account));
     }
 
-    public Double deposit(Integer accountId, Double amount, Integer serialNumber) {
+    public Double deposit(Integer accountId, double amount, String serialNumber) {
    	 //check if this accountId exists
-   	 if (branchAccounts.containsKey(accountId)) {
+    System.out.println("Deposit Account : " + accountId);
+   	 if (!branchAccounts.containsKey(accountId)) {
+   		 System.out.println("Account doesn't exist. \n");
    		addNewAccount(accountId);
    	 }
    	 //TODO: check the serial number
@@ -28,12 +31,16 @@ public class BankState implements State {
    	 Account accountToDo = branchAccounts.get(accountId);
    	 accountToDo.setAccountBalance(accountToDo.getAccountBalance() + amount);
    	 branchAccounts.put(accountId, accountToDo);
+   	 System.out.println("Serial ID of this transaction: " +serialNumber);
+   	 System.out.println("Account " + accountId + " balance: " + accountToDo.getAccountBalance());
    	 return accountToDo.getAccountBalance(); 
     }
     
-    public Double withdraw(Integer accountId, Double amount, Integer serialNumber) {
+    public Double withdraw(Integer accountId, double amount, String serialNumber) {
    	 //check if this accountId exists
-   	 if (branchAccounts.containsKey(accountId)) {
+     System.out.println("Account : " + accountId);
+   	 if (!branchAccounts.containsKey(accountId)) {
+        System.out.println("Account doesn't exist. \n");
    		addNewAccount(accountId);
    	 }
    	 //TODO: check the serial number
@@ -41,12 +48,14 @@ public class BankState implements State {
    	 Account accountToDo = branchAccounts.get(accountId);
    	 accountToDo.setAccountBalance(accountToDo.getAccountBalance() - amount);
    	 branchAccounts.put(accountId, accountToDo);
+	 System.out.println("Serial ID of this transaction: " +serialNumber);
+   	 System.out.println("Account " + accountId + " balance: " + accountToDo.getAccountBalance());
    	 return accountToDo.getAccountBalance(); 
     }
     
-    public Double query(Integer accountId, Integer serialNumber) {
+    public Double query(Integer accountId, String serialNumber) {
    	 //check if this accountId exists
-   	 if (branchAccounts.containsKey(accountId)) {
+   	 if (!branchAccounts.containsKey(accountId)) {
    		addNewAccount(accountId);
    	 }
    	 //TODO: check the serial number
@@ -55,21 +64,20 @@ public class BankState implements State {
    	 return accountToDo.getAccountBalance();
     }
     
-    public Double transfer(Integer srcAccountId, Integer destAccountId, Double amount, Integer serialNumber) {
+    public Double transfer(Integer srcAccountId, Integer destAccountId, double amount, String serialNumber) {
    	 //check if this accountId exists
-   	 if (branchAccounts.containsKey(srcAccountId)) {
+   	 if (!branchAccounts.containsKey(srcAccountId)) {
    		addNewAccount(srcAccountId);
    	 }
    	
    	 //TODO: check the serial number
    	 
    	 // Update the source account amount
-   	 Account accountToDo = branchAccounts.get(srcAccountId);
-   	 accountToDo.setAccountBalance(accountToDo.getAccountBalance() - amount);
-   	 branchAccounts.put(srcAccountId, accountToDo);
-   	 
+   	 double newBalance =  withdraw(srcAccountId, amount, serialNumber);
    	 //TODO: Send a deposit request to the destination
-   	 return accountToDo.getAccountBalance(); 
+   	 InetSocketAddress dest = new InetSocketAddress("localhost", 4002);
+   	 BankClient.deposit(dest, destAccountId, amount, serialNumber);
+   	 return newBalance;
     }
 
 }

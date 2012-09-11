@@ -26,6 +26,7 @@ public class BankServerHandler extends ServerHandler {
 	}
 	
 	public BankResponse handle(TransferRequest req) {
+		System.out.println(" Handling Transfer request: " + req.getSerialNumber());
 		BankState state = ServerNodeRuntime.getNodeRuntimeState();
 		return new BankResponse(state.transfer(req.getSrcAccountId(), req.getDestAccountId(), req.getAmount(), req.getSerialNumber()));
 	}

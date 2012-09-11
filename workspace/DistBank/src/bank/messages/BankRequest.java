@@ -6,9 +6,9 @@ public abstract class  BankRequest  extends Message{
 
 	private static final long serialVersionUID = 1L;
 	private Integer srcAccountId;
-	private Integer serialNumber;
+	private String serialNumber;
 	
-	public BankRequest(Integer accountId, Integer serial) {
+	public BankRequest(Integer accountId, String serial) {
 		this.srcAccountId = accountId;
 		this.serialNumber = serial;
 	}
@@ -17,7 +17,7 @@ public abstract class  BankRequest  extends Message{
 		return this.srcAccountId;
 	}
 	
-	public Integer getSerialNumber() {
+	public String getSerialNumber() {
 		return this.serialNumber;
 	}
 }
