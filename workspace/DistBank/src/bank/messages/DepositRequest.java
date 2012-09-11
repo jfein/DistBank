@@ -1,13 +1,13 @@
 package bank.messages;
 
-import core.network.common.Message;
+public class DepositRequest extends BankRequest {
 
-public class DepositRequest implements BankRequest {
+	private static final long serialVersionUID = 1L;
 	private Integer srcAccountId;
 	private Double amount;
 	
-	public DepositRequest(Integer accountId, Double amount) {
-		this.srcAccountId = accountId;
+	public DepositRequest(Integer accountId, Double amount, Integer serial) {
+		super(accountId, serial);
 		this.amount = amount;
 	}
 	@Override

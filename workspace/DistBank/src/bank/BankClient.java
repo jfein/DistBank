@@ -5,14 +5,35 @@ import java.net.SocketAddress;
 import core.network.client.Client;
 
 import bank.messages.BankResponse;
+import bank.messages.DepositRequest;
 import bank.messages.QueryRequest;
+import bank.messages.TransferRequest;
+import bank.messages.WithdrawRequest;
 
 public class BankClient extends Client {
 
-	public static double query(SocketAddress a) {
-		QueryRequest req = new QueryRequest();
-		BankResponse resp = BankClient.exec(a, req);
+	public static double query(SocketAddress branch, Integer accountId) {
+		//TODO do serial number
+		QueryRequest req = new QueryRequest(accountId, 0);
+		BankResponse resp = BankClient.exec(branch, req);
 		return resp.getAmt();
 	}
 
+	public static double deposit(SocketAddress branch, Integer accountId, double amount) {
+		DepositRequest req = new DepositRequest(accountId, amount, 0);
+		BankResponse resp = BankClient.exec(branch, req);
+		return resp.getAmt();
+	}
+	
+	public static double withdraw(SocketAddress branch, Integer accountId, double amount) {
+		WithdrawRequest req = new WithdrawRequest(accountId, amount, 0);
+		BankResponse resp = BankClient.exec(branch, req);
+		return resp.getAmt();
+	}
+	
+	public static double transfer(SocketAddress branch, Integer srcAccountId, Integer destAccountId, double amount) {
+		TransferRequest req = new TransferRequest(srcAccountId, destAccountId, amount, 0);
+		BankResponse resp = BankClient.exec(branch, req);
+		return resp.getAmt();
+	}
 }

@@ -1,25 +1,13 @@
 package bank.messages;
 
-import core.network.common.Message;
+public class WithdrawRequest extends BankRequest {
 
-public class WithdrawRequest implements BankRequest {
-	private Integer srcAccountId;
+	private static final long serialVersionUID = 1L;
 	private Double amount;
 	
-	public WithdrawRequest (Integer accountId, Double amount) {
-		this.srcAccountId = srcAccountId;
+	public WithdrawRequest (Integer accountId, Double amount, Integer serial) {
+		super(accountId, serial);
 		this.amount = amount;
-	}
-	@Override
-	public Integer getSrcAccountId() {
-		// TODO Auto-generated method stub
-		return srcAccountId;
-	}
-
-	@Override
-	public Integer getSerialNumber() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	
 	public Double getAmount() {
