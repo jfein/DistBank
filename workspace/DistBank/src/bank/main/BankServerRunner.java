@@ -3,6 +3,7 @@ package bank.main;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
+import bank.AccountId;
 import bank.BankClient;
 import bank.BankServerHandler;
 import bank.BankState;
@@ -26,15 +27,15 @@ public class BankServerRunner {
 		}
 
 		if (port == 4001) {
+			AccountId test = new AccountId(1,40);
+			AccountId destTest = new AccountId(2, 9);
 			InetSocketAddress dest = new InetSocketAddress("localhost", 4000);
-			System.out.println("Withdraw 54.89 from Acnt 111: "
-					+ BankClient.withdraw(dest, 111, 54.89, "111.0"));
-			System.out.println("Deposit 100 to Acnt 1111:"
-					+ BankClient.deposit(dest, 111, 100.00, "111.1"));
-			System.out.println("Query 1111: "
-					+ BankClient.query(dest, 111, "111.2"));
-			System.out.println("Transfer from 1111 to 9: "
-					+ BankClient.transfer(dest, 111, 9, 30, "111.3"));
+
+			System.out.println("Withdraw 54.89 from Acnt 111: " + BankClient.withdraw(dest, test, 54.89, 111));
+			System.out.println("Deposit 100 to Acnt 1111:" + BankClient.deposit(dest, test, 100.00, 112));
+			System.out.println("Query 1111: " + BankClient.query(dest, test, 113));
+			System.out.println("Transfer from 1111 to 9: " + BankClient.transfer(dest, test, destTest, 30, 114));
+			
 
 		}
 	}

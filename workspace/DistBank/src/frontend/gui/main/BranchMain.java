@@ -34,7 +34,9 @@ public class BranchMain extends JPanel {
     private JPanel mainContentPanel;
     private static BranchMain currentBranchMain;
 	private static final long serialVersionUID = 1L;
-
+	private JTextField serialNumberField;
+	private JTextField accountNumberField;
+   
 
 	/**
 	 * Create the frame.
@@ -52,7 +54,7 @@ public class BranchMain extends JPanel {
         
         // North Panel
 		JLabel northPanel = new JLabel(
-				"Welcome to WHYDOIHAVETODOTHIS (WDIHTDT) Bank", JLabel.CENTER);
+				"Welcome to J&V Bank", JLabel.CENTER);
 		northPanel.setPreferredSize(new Dimension(500, 100));
 		mainPanel.add(northPanel, BorderLayout.NORTH);
 	    
@@ -71,10 +73,14 @@ public class BranchMain extends JPanel {
 		//add button panel to main panel
 		mainPanel.add(mainButtonPanel, BorderLayout.CENTER);
 	    JLabel buttonChoiceLabel = new JLabel(" PLEASE CHOOSE YOUR ACTION ");
+	    mainButtonPanelLayout.putConstraint(SpringLayout.NORTH, buttonChoiceLabel, 90, SpringLayout.NORTH, mainButtonPanel);
+	    mainButtonPanelLayout.putConstraint(SpringLayout.EAST, buttonChoiceLabel, -96, SpringLayout.EAST, mainButtonPanel);
 	    buttonChoiceLabel.setPreferredSize(new Dimension(250,30));
 		
 	    //Transfer Button
 	    JButton transferButton = new JButton(" Transfer ");
+	    mainButtonPanelLayout.putConstraint(SpringLayout.NORTH, transferButton, 185, SpringLayout.NORTH, mainButtonPanel);
+	    mainButtonPanelLayout.putConstraint(SpringLayout.EAST, transferButton, -172, SpringLayout.EAST, mainButtonPanel);
 		transferButton.setPreferredSize(new Dimension(150,30));
 		transferButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -88,6 +94,8 @@ public class BranchMain extends JPanel {
 		
 		//Deposit Button
 		JButton depositButton = new JButton(" Deposit ");
+		mainButtonPanelLayout.putConstraint(SpringLayout.NORTH, depositButton, 125, SpringLayout.NORTH, mainButtonPanel);
+		mainButtonPanelLayout.putConstraint(SpringLayout.EAST, depositButton, -172, SpringLayout.EAST, mainButtonPanel);
 		depositButton.setPreferredSize(new Dimension(150,30));
 		depositButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -101,6 +109,11 @@ public class BranchMain extends JPanel {
 		
 		//Withdraw Button
 		JButton withdrawButton = new JButton(" Widthraw ");
+		mainButtonPanelLayout.putConstraint(SpringLayout.SOUTH, depositButton, 0, SpringLayout.NORTH, withdrawButton);
+		mainButtonPanelLayout.putConstraint(SpringLayout.NORTH, withdrawButton, 155, SpringLayout.NORTH, mainButtonPanel);
+		mainButtonPanelLayout.putConstraint(SpringLayout.SOUTH, buttonChoiceLabel, -4, SpringLayout.NORTH, withdrawButton);
+		mainButtonPanelLayout.putConstraint(SpringLayout.SOUTH, withdrawButton, 0, SpringLayout.NORTH, transferButton);
+		mainButtonPanelLayout.putConstraint(SpringLayout.EAST, withdrawButton, -172, SpringLayout.EAST, mainButtonPanel);
 		withdrawButton.setPreferredSize(new Dimension(150,30));
 		withdrawButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -114,6 +127,9 @@ public class BranchMain extends JPanel {
 		
 		//Check Balance Button
 		JButton checkBalanceButton = new JButton(" Check Balance");
+		mainButtonPanelLayout.putConstraint(SpringLayout.NORTH, checkBalanceButton, 215, SpringLayout.NORTH, mainButtonPanel);
+		mainButtonPanelLayout.putConstraint(SpringLayout.SOUTH, transferButton, 0, SpringLayout.NORTH, checkBalanceButton);
+		mainButtonPanelLayout.putConstraint(SpringLayout.EAST, checkBalanceButton, -172, SpringLayout.EAST, mainButtonPanel);
 		checkBalanceButton.setPreferredSize(new Dimension(150,30));
 		checkBalanceButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -124,37 +140,36 @@ public class BranchMain extends JPanel {
 				});
 			}
 		});
-		mainButtonPanelLayout.putConstraint(SpringLayout.SOUTH, buttonChoiceLabel, -215,
-				SpringLayout.SOUTH, mainButtonPanel);
-		mainButtonPanelLayout.putConstraint(SpringLayout.SOUTH, depositButton, -185,
-				SpringLayout.SOUTH, mainButtonPanel);
-		
-		mainButtonPanelLayout.putConstraint(SpringLayout.SOUTH, withdrawButton, -155,
-				SpringLayout.SOUTH, mainButtonPanel);
-		
-		mainButtonPanelLayout.putConstraint(SpringLayout.SOUTH, transferButton, -125,
-				SpringLayout.SOUTH, mainButtonPanel);
-		
-		mainButtonPanelLayout.putConstraint(SpringLayout.SOUTH, checkBalanceButton, -95,
-				SpringLayout.SOUTH, mainButtonPanel);
-		
-		//Put constraints on buttons so they are aligned the same distance from
-		//the right side of the panel
-		mainButtonPanelLayout.putConstraint(SpringLayout.EAST, checkBalanceButton, -175,
-				SpringLayout.EAST,mainButtonPanel);
-		mainButtonPanelLayout.putConstraint(SpringLayout.EAST, withdrawButton, -175,
-				SpringLayout.EAST,mainButtonPanel);
-		mainButtonPanelLayout.putConstraint(SpringLayout.EAST, depositButton, -175,
-				SpringLayout.EAST,mainButtonPanel);
-		mainButtonPanelLayout.putConstraint(SpringLayout.EAST, transferButton, -175,
-				SpringLayout.EAST,mainButtonPanel);
-		mainButtonPanelLayout.putConstraint(SpringLayout.EAST, buttonChoiceLabel, -100,
-				SpringLayout.EAST,mainButtonPanel);
 	    mainButtonPanel.add(withdrawButton);
 	    mainButtonPanel.add(buttonChoiceLabel);
 	    mainButtonPanel.add(transferButton);
 	    mainButtonPanel.add(depositButton);
 	    mainButtonPanel.add(checkBalanceButton);
+	    
+	    serialNumberField = new JTextField("0");
+	    mainButtonPanelLayout.putConstraint(SpringLayout.WEST, serialNumberField, 0, SpringLayout.WEST, withdrawButton);
+	    mainButtonPanelLayout.putConstraint(SpringLayout.SOUTH, serialNumberField, -202, SpringLayout.SOUTH, mainButtonPanel);
+	    mainButtonPanelLayout.putConstraint(SpringLayout.EAST, serialNumberField, -174, SpringLayout.EAST, mainButtonPanel);
+	    mainButtonPanel.add(serialNumberField);
+	    serialNumberField.setColumns(10);
+	    
+	    JLabel lblSerial = new JLabel("Serial Number:");
+	    mainButtonPanelLayout.putConstraint(SpringLayout.NORTH, lblSerial, 6, SpringLayout.NORTH, serialNumberField);
+	    mainButtonPanelLayout.putConstraint(SpringLayout.SOUTH, lblSerial, -208, SpringLayout.SOUTH, mainButtonPanel);
+	    mainButtonPanel.add(lblSerial);
+	    
+	    accountNumberField = new JTextField("00.000");
+	    mainButtonPanelLayout.putConstraint(SpringLayout.SOUTH, accountNumberField, -236, SpringLayout.SOUTH, mainButtonPanel);
+	    mainButtonPanelLayout.putConstraint(SpringLayout.WEST, accountNumberField, 0, SpringLayout.WEST, withdrawButton);
+	    mainButtonPanelLayout.putConstraint(SpringLayout.EAST, accountNumberField, 0, SpringLayout.EAST, withdrawButton);
+	    accountNumberField.setColumns(10);
+	    mainButtonPanel.add(accountNumberField);
+	    
+	    JLabel llblAccnt = new JLabel("Account Number:");
+	    mainButtonPanelLayout.putConstraint(SpringLayout.WEST, lblSerial, 0, SpringLayout.WEST, llblAccnt);
+	    mainButtonPanelLayout.putConstraint(SpringLayout.NORTH, llblAccnt, 6, SpringLayout.NORTH, accountNumberField);
+	    mainButtonPanelLayout.putConstraint(SpringLayout.EAST, llblAccnt, -8, SpringLayout.WEST, accountNumberField);
+	    mainButtonPanel.add(llblAccnt);
 	    
 	    withdrawButton.setVisible(true);
 	    checkBalanceButton.setVisible(true);
@@ -163,6 +178,7 @@ public class BranchMain extends JPanel {
 	    mainContentPanel.setPreferredSize(new Dimension(500,500));
 	    add(mainContentPanel, mainContentIndex);
 	}
+	
 	public void addBackButton(){
 		JButton depositButton = new JButton(" Back To Main ");
 		depositButton.setPreferredSize(new Dimension(150,30));
@@ -177,36 +193,38 @@ public class BranchMain extends JPanel {
 			});
 		mainContentPanel.add(depositButton,BorderLayout.SOUTH);
 	}
+	
     public void updateBranchMainLayout() {
     	addBackButton();
     	CardLayout cL = (CardLayout) (this.getLayout());
     	cL.show(this, mainContentIndex);
     	this.updateUI();
     }
+    
 	public void doDepositPanel(){
 		mainContentPanel.removeAll();
-        DepositPanel dp = new DepositPanel();
+        DepositPanel dp = new DepositPanel(accountNumberField.getText(), Integer.parseInt(serialNumberField.getText()));
         dp.setVisible(true);
         mainContentPanel.add(dp, BorderLayout.CENTER);
 		updateBranchMainLayout();
 	}
 	public void doWithdrawPanel(){
 		mainContentPanel.removeAll();
-        WithdrawPanel dp = new WithdrawPanel();
+        WithdrawPanel dp = new WithdrawPanel(accountNumberField.getText(), Integer.parseInt(serialNumberField.getText()));
         dp.setVisible(true);
         mainContentPanel.add(dp, BorderLayout.CENTER);
         updateBranchMainLayout();
 	}
 	public void doCheckBalancePanel(){
 		mainContentPanel.removeAll();
-        BalancePanel dp = new BalancePanel();
+        BalancePanel dp = new BalancePanel(accountNumberField.getText(), Integer.parseInt(serialNumberField.getText()));
         dp.setVisible(true);
         mainContentPanel.add(dp, BorderLayout.CENTER);
         updateBranchMainLayout();
 	}
 	public void doTransferPanel(){
 		mainContentPanel.removeAll();
-        TransferPanel dp = new TransferPanel();
+        TransferPanel dp = new TransferPanel(accountNumberField.getText(), Integer.parseInt(serialNumberField.getText()));
         dp.setVisible(true);
         mainContentPanel.add(dp, BorderLayout.CENTER);
         updateBranchMainLayout();

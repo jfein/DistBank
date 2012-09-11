@@ -1,18 +1,20 @@
 package bank.messages;
 
+import bank.AccountId;
+
 public class TransferRequest extends BankRequest {
 
 	private static final long serialVersionUID = 1L;
-	private Integer destAccountId;
+	private AccountId destAccountId;
 	private Double amount;
 	
-	public TransferRequest(Integer accountId, Integer destAccount, Double amount, String serial) {
+	public TransferRequest(AccountId accountId, AccountId destAccount, Double amount, Integer serial) {
 		super(accountId, serial);
 		this.destAccountId = destAccount;
 		this.amount = amount;
 	}
 	
-	public Integer getDestAccountId() {
+	public AccountId getDestAccountId() {
 		return this.destAccountId;
 	}
 	

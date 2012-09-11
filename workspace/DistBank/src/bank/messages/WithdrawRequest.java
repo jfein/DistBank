@@ -1,11 +1,13 @@
 package bank.messages;
 
+import bank.AccountId;
+
 public class WithdrawRequest extends BankRequest {
 
 	private static final long serialVersionUID = 1L;
 	private Double amount;
 	
-	public WithdrawRequest (Integer accountId, Double amount, String serial) {
+	public WithdrawRequest (AccountId accountId, Double amount, Integer serial) {
 		super(accountId, serial);
 		this.amount = amount;
 	}

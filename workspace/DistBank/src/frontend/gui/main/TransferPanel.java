@@ -3,6 +3,7 @@ package frontend.gui.main;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.InetSocketAddress;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -11,24 +12,25 @@ import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 
+import bank.AccountId;
+import bank.BankClient;
+
 public class TransferPanel extends JPanel {
 	private JTextField amountField;
 	private JTextField destAcntNumberField;
-	private JTextField srcAcntNumberField;
-	
-	public TransferPanel() {
+	private String srcAccountNumber;
+	private Integer userSerialNumber;
+	private JLabel balanceLabel;
+	public TransferPanel(String srcAccountNumber, Integer userSerialNumber) {
+		this.userSerialNumber = userSerialNumber;
+		this.srcAccountNumber = srcAccountNumber;
 		SpringLayout thisLayout = new SpringLayout();
 		setLayout(thisLayout);
 	    destAcntNumberField = new JTextField("Dest Account");
 
 		add(destAcntNumberField);
 		destAcntNumberField.setColumns(10);
-		
-		srcAcntNumberField = new JTextField("Src Account");
-		srcAcntNumberField.setColumns(10);
-		thisLayout.putConstraint(SpringLayout.SOUTH, srcAcntNumberField, -20, SpringLayout.NORTH, destAcntNumberField);
-		thisLayout.putConstraint(SpringLayout.EAST, srcAcntNumberField, 0, SpringLayout.EAST, destAcntNumberField);
-		add(srcAcntNumberField);
+
 		
 		amountField = new JTextField();
 		thisLayout.putConstraint(SpringLayout.SOUTH, destAcntNumberField, -17, SpringLayout.NORTH, amountField);
@@ -43,24 +45,40 @@ public class TransferPanel extends JPanel {
 		thisLayout.putConstraint(SpringLayout.SOUTH, lblAccountNumber, -23, SpringLayout.NORTH, amountField);
 		thisLayout.putConstraint(SpringLayout.EAST, lblAccountNumber, -160, SpringLayout.EAST, amountField);
 		add(lblAccountNumber);
-		
-		JLabel lblSrcAccountNumber = new JLabel("Source Account Number:");
-		thisLayout.putConstraint(SpringLayout.NORTH, lblSrcAccountNumber, 6, SpringLayout.NORTH, srcAcntNumberField);
-		thisLayout.putConstraint(SpringLayout.SOUTH, lblSrcAccountNumber, -70, SpringLayout.NORTH, amountField);
-		thisLayout.putConstraint(SpringLayout.EAST, lblSrcAccountNumber, -160, SpringLayout.EAST, amountField);
-		add(lblSrcAccountNumber);
-		
-		
-		
-		
+
 		JLabel lblAmount = new JLabel("Amount:");
 		thisLayout.putConstraint(SpringLayout.NORTH, lblAmount, 6, SpringLayout.NORTH, amountField);
 		thisLayout.putConstraint(SpringLayout.EAST, lblAmount, -27, SpringLayout.WEST, amountField);
 		add(lblAmount);
 		
-		JButton btnWithdraw = new JButton("Transfer");
-		thisLayout.putConstraint(SpringLayout.SOUTH, btnWithdraw, -200, SpringLayout.SOUTH, this);
-		thisLayout.putConstraint(SpringLayout.EAST, btnWithdraw, -146, SpringLayout.EAST, this);
-		add(btnWithdraw);
+		JButton btnTransfer = new JButton("Transfer");
+		thisLayout.putConstraint(SpringLayout.SOUTH, btnTransfer, -200, SpringLayout.SOUTH, this);
+		thisLayout.putConstraint(SpringLayout.EAST, btnTransfer, -146, SpringLayout.EAST, this);
+		add(btnTransfer);
+		
+		balanceLabel = new JLabel("");
+		thisLayout.putConstraint(SpringLayout.NORTH, balanceLabel, 6, SpringLayout.SOUTH, btnTransfer);
+		thisLayout.putConstraint(SpringLayout.EAST, balanceLabel, -10, SpringLayout.EAST, btnTransfer);
+		add(balanceLabel);
+		
+
+		btnTransfer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						doTransfer();
+					}
+				});
+			}
+		});
 	}
+	
+	public void doTransfer() {
+		InetSocketAddress dest = new InetSocketAddress("localhost", 4000);
+		AccountId srcAccountId = Utils.stringToAccountId(this.srcAccountNumber);
+		AccountId destAccountId = Utils.stringToAccountId(this.destAcntNumberField.getText());
+	    double balance = BankClient.transfer(dest, srcAccountId, destAccountId, Double.parseDouble(this.amountField.getText()), this.userSerialNumber);
+		this.balanceLabel.setText("Your Account [" + this.srcAccountNumber + "] Balance: " + String.valueOf(balance));
+	}
+	
 }

@@ -1,12 +1,15 @@
 package bank.messages;
 
+import bank.AccountId;
+
 public class DepositRequest extends BankRequest {
 
-	private static final long serialVersionUID = -4127927538689030026L;
-
+	private static final long serialVersionUID = 1L;
+	private AccountId srcAccountId;
 	private Double amount;
+	
+	public DepositRequest(AccountId accountId, Double amount, Integer serial) {
 
-	public DepositRequest(Integer accountId, Double amount, String serial) {
 		super(accountId, serial);
 		this.amount = amount;
 	}
