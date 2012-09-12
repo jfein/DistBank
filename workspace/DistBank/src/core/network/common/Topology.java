@@ -34,7 +34,6 @@ public class Topology {
 
 	public static void setTopology() {
 		NodeId myId = NodeRuntime.getNodeId();
-		System.out.println("Starting node ID " + myId);
 
 		try {
 			// Parse node_mapping.txt

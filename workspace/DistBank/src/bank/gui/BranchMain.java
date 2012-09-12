@@ -264,10 +264,9 @@ public class BranchMain extends JPanel {
 	
 	public static void createAndShowGUI() {
 		// Create and set up a window
-		JFrame frame = new JFrame("Shouter!");
+		JFrame frame = new JFrame("J&V Bank");
 		frame.setPreferredSize(new Dimension(500, 500));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		System.out.println("Creating GUI\n");
 		// add contents to this window
 		frame.getContentPane().add(new BranchMain());
 		// Display the window

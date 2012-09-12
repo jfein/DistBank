@@ -20,6 +20,9 @@ public class NodeRuntime {
 		NodeRuntime.state = state;
 
 		Topology.setTopology();
+
+		System.out.println("Node Runtime starting on node ID " + NodeRuntime.id
+				+ " on address " + Topology.getAddress(NodeRuntime.id));
 	}
 
 }

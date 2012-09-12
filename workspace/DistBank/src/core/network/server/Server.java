@@ -26,21 +26,11 @@ public class Server extends Thread {
 			try {
 				conn = serverSocket.accept();
 
-				System.out.println("\tNew Connection from "
-						+ conn.getRemoteSocketAddress());
-
 				Message msgIn = NetworkInterface.getMessage(conn);
-
-				System.out.println("\tGot Request");
 
 				Message msgOut = serverHandler.handle(msgIn);
 
-				System.out.println("\tRequest Handled");
-
 				NetworkInterface.sendMessage(conn, msgIn.getSenderId(), msgOut);
-
-				System.out.println("\tSent Response\n------------------------");
-
 			} catch (Exception e) {
 				e.printStackTrace();
 				try {

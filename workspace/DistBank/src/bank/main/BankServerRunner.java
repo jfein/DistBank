@@ -18,5 +18,7 @@ public class BankServerRunner {
 
 		BranchId id = new BranchId(Integer.parseInt(args[0]));
 		ServerNodeRuntime.init(id, new BankState(), new BankServerHandler());
+		
+		System.out.println("BankServer Branch " + id + " running.");
 	}
 }
