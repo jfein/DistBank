@@ -1,24 +1,19 @@
 package test;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 
+import core.distsys.NodeId;
 import core.network.server.ServerNodeRuntime;
 
 public class TestServerRunner {
 
 	public static void main(String[] args) throws IOException {
-		String host = "localhost";
-		int port = Integer.parseInt(args[0]);
-		InetSocketAddress myAddress = new InetSocketAddress(host, port);
+		NodeId id = new NodeId(args[0]);
 
-		System.out.println("Starting on port " + port);
+		ServerNodeRuntime.init(id, new TestState(), new TestServerHandler());
 
-		new ServerNodeRuntime(myAddress, new TestState(),
-				new TestServerHandler());
-
-		if (port == 4001) {
-			InetSocketAddress dest = new InetSocketAddress("localhost", 4000);
+		if (id.toString().equals("g0")) {
+			NodeId dest = new NodeId("b0");
 			System.out.println("A");
 			TestClient.setX(dest, 42);
 			System.out.println("B");

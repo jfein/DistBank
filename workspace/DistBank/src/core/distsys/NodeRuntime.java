@@ -2,26 +2,22 @@ package core.distsys;
 
 public class NodeRuntime {
 
-	private static NodeRuntime nodeRuntime = null;
+	private static NodeId id;
+	private static State state;
 
 	public static <T extends State> T getNodeRuntimeState() {
-		return (T) nodeRuntime.state;
+		return (T) state;
 	}
 
 	public static NodeId getNodeRuntimeId() {
-		return nodeRuntime.id;
+		return id;
 	}
 
-	private NodeId id;
-	private State state;
-
-	public NodeRuntime(NodeId id, State state) {
-		this.id = id;
-		this.state = state;
+	public static void init(NodeId id, State state) {
+		NodeRuntime.id = id;
+		NodeRuntime.state = state;
 
 		Topology.setTopology(id);
-
-		NodeRuntime.nodeRuntime = this;
 	}
 
 }

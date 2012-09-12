@@ -7,10 +7,10 @@ import core.distsys.State;
 
 public class BankState implements State {
 
-	private Integer branchId;
+	private BranchId branchId;
 	private HashMap<AccountId, Account> branchAccounts;
 
-	public BankState(Integer branchId) {
+	public BankState(BranchId branchId) {
 		this.branchId = branchId;
 		this.branchAccounts = new HashMap<AccountId, Account>();
 	}

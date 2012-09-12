@@ -7,8 +7,7 @@ import bank.gui.BranchMain;
 public class BankGuiRunner {
 
 	public static void main(String[] args) {
-		GuiId id = new GuiId(args[0]);
-		new NodeRuntime(id, null);
+		NodeRuntime.init(new GuiId(args[0]), null);
 		BranchMain.createAndShowGUI();
 	}
 
