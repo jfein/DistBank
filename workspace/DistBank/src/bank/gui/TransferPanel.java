@@ -1,4 +1,4 @@
-package frontend.gui.main;
+package bank.gui;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -74,10 +74,9 @@ public class TransferPanel extends JPanel {
 	}
 	
 	public void doTransfer() {
-		InetSocketAddress dest = new InetSocketAddress("localhost", 4000);
-		AccountId srcAccountId = Utils.stringToAccountId(this.srcAccountNumber);
-		AccountId destAccountId = Utils.stringToAccountId(this.destAcntNumberField.getText());
-	    double balance = BankClient.transfer(dest, srcAccountId, destAccountId, Double.parseDouble(this.amountField.getText()), this.userSerialNumber);
+		AccountId srcAccountId = new AccountId(this.srcAccountNumber);
+		AccountId destAccountId = new AccountId(this.destAcntNumberField.getText());
+	    double balance = BankClient.transfer(srcAccountId, destAccountId, Double.parseDouble(this.amountField.getText()), this.userSerialNumber);
 		this.balanceLabel.setText("Your Account [" + this.srcAccountNumber + "] Balance: " + String.valueOf(balance));
 	}
 	

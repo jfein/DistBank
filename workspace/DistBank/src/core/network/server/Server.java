@@ -37,12 +37,10 @@ public class Server extends Thread {
 
 				System.out.println("\tRequest Handled");
 
-				NetworkInterface.sendMessage(conn, msgIn.getReturnAddress(),
-						msgOut);
+				NetworkInterface.sendMessage(conn, msgIn.getSenderId(), msgOut);
 
-				System.out.println("\tSent Response\n----------------------------------");
-				
-				
+				System.out.println("\tSent Response\n------------------------");
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				try {

@@ -1,9 +1,6 @@
 package core.distsys;
 
-import java.net.InetSocketAddress;
-
-
-public abstract class NodeRuntime {
+public class NodeRuntime {
 
 	private static NodeRuntime nodeRuntime = null;
 
@@ -11,18 +8,18 @@ public abstract class NodeRuntime {
 		return (T) nodeRuntime.state;
 	}
 
-	public static InetSocketAddress getNodeRuntimeMyAddress() {
-		return nodeRuntime.myAddress;
+	public static NodeId getNodeRuntimeId() {
+		return nodeRuntime.id;
 	}
 
-	private InetSocketAddress myAddress;
+	private NodeId id;
 	private State state;
 
-	public NodeRuntime(InetSocketAddress myAddress, State state) {
-		this.myAddress = myAddress;
+	public NodeRuntime(NodeId id, State state) {
+		this.id = id;
 		this.state = state;
 
-		Topology.setTopology(myAddress);
+		Topology.setTopology(id);
 
 		NodeRuntime.nodeRuntime = this;
 	}

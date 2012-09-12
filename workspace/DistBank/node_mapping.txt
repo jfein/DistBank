@@ -1,0 +1,3 @@
+b0 localhost:4000
+b1 localhost:4001
+b2 localhost:4002

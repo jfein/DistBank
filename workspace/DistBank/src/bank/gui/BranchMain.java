@@ -1,4 +1,4 @@
-package frontend.gui.main;
+package bank.gui;
 
 /**
  * Create main log in page.
@@ -24,12 +24,14 @@ import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.JComboBox;
 
+import core.distsys.State;
 
 
-public class BranchMain extends JPanel {
+public class BranchMain extends JPanel implements State {
 	
 	private String mainContentIndex = "Main Content Panel";
 	private String branchMainIndex = "Main Bank Branch Panel";
+	
     private JPanel mainButtonPanel;
     private JPanel mainContentPanel;
     private static BranchMain currentBranchMain;
@@ -253,7 +255,5 @@ public class BranchMain extends JPanel {
 		frame.pack();
 		frame.setVisible(true);
 	}
-	public static void main(String[] args){
-		createAndShowGUI();
-	}
+
 }

@@ -2,36 +2,34 @@ package bank;
 
 public class AccountId {
 	private Integer accountNumber;
-	private Integer branchNumber;
-	
-	public AccountId(Integer accountNumber, Integer branchNumber) {
+	private BranchId branchId;
+
+	public AccountId(String accountId) {
+		String[] tokens = accountId.split("\\.");
+		this.accountNumber = Integer.parseInt(tokens[1]);
+		this.branchId = new BranchId(tokens[0]);
+	}
+
+	public AccountId(Integer accountNumber, String branchId) {
 		this.accountNumber = accountNumber;
-		this.branchNumber = branchNumber;
+		this.branchId = new BranchId(branchId);
 	}
-	
-	public void setAccountNumber(Integer accountNumber) {
-		this.accountNumber = accountNumber;
-	}
-	
-	public void setBranchNumber(Integer branchNumber) {
-		this.branchNumber = branchNumber;
-	}
-	
+
 	public Integer getAccountNumber() {
 		return this.accountNumber;
 	}
-	
-	public Integer getBranchNumber() {
-		return this.branchNumber;
+
+	public BranchId getBranchId() {
+		return this.branchId;
 	}
-	
-	public boolean equals(Object o){
+
+	@Override
+	public boolean equals(Object o) {
 		if (o instanceof AccountId) {
 			AccountId other = (AccountId) o;
-			if (other.accountNumber == this.accountNumber && other.branchNumber == this.branchNumber) {
+			if (other.accountNumber == this.accountNumber
+					&& other.branchId.equals(this.branchId))
 				return true;
-			}
-			return false;
 		}
 		return false;
 	}

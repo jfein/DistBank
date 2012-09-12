@@ -93,7 +93,7 @@ public class BankState implements State {
    	 double newBalance =  withdraw(srcAccountId, amount, serialNumber);
    	 //TODO: Send a deposit request to the destination
    	 InetSocketAddress dest = new InetSocketAddress("localhost", 4002);
-   	 BankClient.deposit(dest, destAccountId, amount, serialNumber);
+   	 BankClient.deposit(destAccountId, amount, serialNumber);
    	 
    	 //Add the serial number as used
    	 branchAccounts.get(srcAccountId).insertUsedSerialNumber(serialNumber);

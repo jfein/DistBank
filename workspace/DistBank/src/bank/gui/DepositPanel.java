@@ -1,4 +1,4 @@
-package frontend.gui.main;
+package bank.gui;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -61,9 +61,8 @@ public class DepositPanel extends JPanel{
 	}
 	
 	public void doDeposit() {
-		InetSocketAddress dest = new InetSocketAddress("localhost", 4000);
-		AccountId accountId = Utils.stringToAccountId(this.accountNumber);
-		double balance  = BankClient.deposit(dest, accountId, Double.parseDouble(this.amountField.getText()), this.userSerialNumber);
+		AccountId accountId = new AccountId(this.accountNumber);
+		double balance  = BankClient.deposit(accountId, Double.parseDouble(this.amountField.getText()), this.userSerialNumber);
 		this.balanceLabel.setText("Your Account [" + this.accountNumber + "] Balance: " + String.valueOf(balance));
 	}
 }

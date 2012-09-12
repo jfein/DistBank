@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 
 import core.distsys.Topology;
+import core.distsys.NodeId;
 
 public class NetworkInterface {
 
@@ -20,7 +21,7 @@ public class NetworkInterface {
 	}
 
 	public static <T extends Message> void sendMessage(Socket conn,
-			SocketAddress dest, T msg) throws Exception {
+			NodeId dest, T msg) throws Exception {
 		if (!Topology.canSendTo(dest))
 			throw new Exception("Can't send to " + dest);
 		OutputStream conOut = conn.getOutputStream();
@@ -29,12 +30,12 @@ public class NetworkInterface {
 		out.flush();
 	}
 
-	public static <T extends Message> Socket sendMessage(SocketAddress dest,
-			T msg) throws Exception {
+	public static <T extends Message> Socket sendMessage(NodeId dest, T msg)
+			throws Exception {
 		if (!Topology.canSendTo(dest))
 			throw new Exception("Can't send to " + dest);
 		Socket conn = new Socket();
-		conn.connect(dest);
+		conn.connect(Topology.getAddress(dest));
 		sendMessage(conn, dest, msg);
 		return conn;
 	}

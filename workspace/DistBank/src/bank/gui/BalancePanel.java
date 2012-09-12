@@ -1,4 +1,4 @@
-package frontend.gui.main;
+package bank.gui;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -62,9 +62,8 @@ public class BalancePanel extends JPanel{
 	
 	public void doCheckBalance(){
 		//TODO replace the inetsocket
-		InetSocketAddress dest = new InetSocketAddress("localhost", 4000);
-		AccountId accountId = Utils.stringToAccountId(this.accountNumber);
-		double balance  = BankClient.query(dest, accountId, this.userSerialNumber);
+		AccountId accountId = new AccountId(this.accountNumber);
+		double balance  = BankClient.query(accountId, this.userSerialNumber);
 		this.balanceField.setText(String.valueOf(balance));
 	}
 }

@@ -1,4 +1,4 @@
-package frontend.gui.main;
+package bank.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -59,9 +59,8 @@ public class WithdrawPanel extends JPanel {
 	}
 	
 	public void doWithdraw() {
-		InetSocketAddress dest = new InetSocketAddress("localhost", 4000);
-		AccountId accountId = Utils.stringToAccountId(this.accountNumber);
-		double balance  = BankClient.withdraw(dest, accountId, Double.parseDouble(this.amountField.getText()), this.userSerialNumber);
+		AccountId accountId = new AccountId(this.accountNumber);
+		double balance  = BankClient.withdraw(accountId, Double.parseDouble(this.amountField.getText()), this.userSerialNumber);
 		this.balanceLabel.setText("Your Account [" + this.accountNumber + "] Balance: " + String.valueOf(balance));
 	}
 }
