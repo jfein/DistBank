@@ -4,9 +4,10 @@ import core.node.NodeId;
 
 public class BranchId extends NodeId {
 
-	public BranchId(String id) {
-		super(id);
-	}
+	private static final long serialVersionUID = 7622797403116473347L;
 
+	public BranchId(Integer id) {
+		super(id.toString());
+	}
 
 }

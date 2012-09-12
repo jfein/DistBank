@@ -1,17 +1,14 @@
 package bank;
 
-import java.net.InetSocketAddress;
 import java.util.HashMap;
 
 import core.node.NodeState;
 
 public class BankState implements NodeState {
 
-	private BranchId branchId;
 	private HashMap<AccountId, Account> branchAccounts;
 
-	public BankState(BranchId branchId) {
-		this.branchId = branchId;
+	public BankState() {
 		this.branchAccounts = new HashMap<AccountId, Account>();
 	}
 	

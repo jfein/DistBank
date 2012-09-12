@@ -12,7 +12,6 @@ public class ServerNodeRuntime extends NodeRuntime {
 			throws IOException {
 		NodeRuntime.init(id, state);
 		new Server(Topology.getAddress(id), handler).start();
-		System.out.println("In node id: " + id);
 	}
 
 }

@@ -7,7 +7,12 @@ import bank.gui.BranchMain;
 public class BankGuiRunner {
 
 	public static void main(String[] args) {
-		NodeRuntime.init(new GuiId(args[0]), null);
+		if (args.length != 1) {
+			System.out.println("Parameter Error: Enter 1 arg for branch name.");
+			System.exit(-1);
+		}
+
+		NodeRuntime.init(new GuiId(Integer.parseInt(args[0])), null);
 		BranchMain.createAndShowGUI();
 	}
 

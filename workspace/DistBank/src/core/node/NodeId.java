@@ -32,6 +32,5 @@ public class NodeId implements Serializable {
 	public int hashCode() {
 		return this.toString().hashCode();
 	}
-	
-	
+
 }

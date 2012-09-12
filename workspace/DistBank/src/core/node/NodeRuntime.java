@@ -7,11 +7,11 @@ public class NodeRuntime {
 	private static NodeId id;
 	private static NodeState state;
 
-	public static <T extends NodeState> T getNodeRuntimeState() {
+	public static <T extends NodeState> T getNodeState() {
 		return (T) state;
 	}
 
-	public static NodeId getNodeRuntimeId() {
+	public static NodeId getNodeId() {
 		return id;
 	}
 
@@ -19,7 +19,7 @@ public class NodeRuntime {
 		NodeRuntime.id = id;
 		NodeRuntime.state = state;
 
-		Topology.setTopology(id);
+		Topology.setTopology();
 	}
 
 }

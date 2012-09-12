@@ -1,29 +1,26 @@
 package bank;
 
 import java.io.Serializable;
-import java.util.HashMap;
 
 public class AccountId implements Serializable {
-	private Integer accountNumber;
+
+	private static final long serialVersionUID = 4110648994886366615L;
+
 	private BranchId branchId;
+	private Integer accountNumber;
 
 	public AccountId(String accountId) {
 		String[] tokens = accountId.split("\\.");
+		this.branchId = new BranchId(Integer.parseInt(tokens[0]));
 		this.accountNumber = Integer.parseInt(tokens[1]);
-		this.branchId = new BranchId(tokens[0]);
-	}
-
-	public AccountId(Integer accountNumber, String branchId) {
-		this.accountNumber = accountNumber;
-		this.branchId = new BranchId(branchId);
-	}
-
-	public Integer getAccountNumber() {
-		return this.accountNumber;
 	}
 
 	public BranchId getBranchId() {
 		return this.branchId;
+	}
+
+	public Integer getAccountNumber() {
+		return this.accountNumber;
 	}
 
 	@Override
@@ -43,13 +40,4 @@ public class AccountId implements Serializable {
 		return this.branchId.getNodeId() + "." + this.accountNumber;
 	}
 
-	public static void main(String[] args) {
-		HashMap<AccountId, Integer> hashset = new HashMap<AccountId, Integer>();
-		AccountId x = new AccountId("b0.1");
-		hashset.put(x, 9);
-		AccountId y = new AccountId("b0.1");
-		System.out.println(hashset.containsKey(y));
-		System.out.println(hashset.get(y));
-		System.out.println("X and Y are equal: " + x.equals(y));
-	}
 }

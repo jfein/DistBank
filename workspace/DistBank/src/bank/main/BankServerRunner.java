@@ -11,7 +11,12 @@ import core.node.ServerNodeRuntime;
 public class BankServerRunner {
 
 	public static void main(String[] args) throws IOException {
-		BranchId id = new BranchId(args[0]);
-		ServerNodeRuntime.init(id, new BankState(id), new BankServerHandler());
+		if (args.length != 1) {
+			System.out.println("Parameter Error: Enter 1 arg for branch name.");
+			System.exit(-1);
+		}
+
+		BranchId id = new BranchId(Integer.parseInt(args[0]));
+		ServerNodeRuntime.init(id, new BankState(), new BankServerHandler());
 	}
 }

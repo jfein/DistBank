@@ -4,7 +4,7 @@ import core.network.common.Message;
 
 public abstract class ServerHandler {
 
-	public Message handle(Message m) {
+	public synchronized Message handle(Message m) {
 		try {
 			return (Message) this.getClass().getMethod("handle", m.getClass())
 					.invoke(this, m);

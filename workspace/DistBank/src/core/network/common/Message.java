@@ -12,7 +12,7 @@ public abstract class Message implements Serializable {
 	private NodeId senderId;
 
 	public Message() {
-		this.senderId = NodeRuntime.getNodeRuntimeId();
+		this.senderId = NodeRuntime.getNodeId();
 	}
 
 	public NodeId getSenderId() {

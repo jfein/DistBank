@@ -8,13 +8,18 @@ import core.node.NodeId;
 
 public abstract class Client {
 
-	protected static <T extends Message> T exec(NodeId dest, Message msgOut) {
+	protected static synchronized <T extends Message> T exec(NodeId dest,
+			Message msgOut) {
+		T msgIn = null;
+
 		try {
-			Socket conn = NetworkInterface.sendMessage(dest, msgOut);
-			return NetworkInterface.getMessage(conn);
+			Socket conn = NetworkInterface.sendMessageNewSocket(dest, msgOut);
+			msgIn = NetworkInterface.getMessage(conn);
+			conn.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
 		}
+
+		return msgIn;
 	}
 }

@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.HashSet;
 
 import core.node.NodeId;
+import core.node.NodeRuntime;
 
 public class Topology {
 
@@ -28,12 +29,15 @@ public class Topology {
 	}
 
 	public static InetSocketAddress getAddress(NodeId nodeId) {
-		System.out.println("Node id in getAddress: " + nodeId);
 		return nodeToAddress.get(nodeId);
 	}
 
-	public static void setTopology(NodeId myId) {
+	public static void setTopology() {
+		NodeId myId = NodeRuntime.getNodeId();
+		System.out.println("Starting node ID " + myId);
+
 		try {
+			// Parse node_mapping.txt
 			BufferedReader read1 = new BufferedReader(new FileReader(
 					NODE_MAPPING_FILE));
 
@@ -43,10 +47,10 @@ public class Topology {
 
 				NodeId id = new NodeId(parts[0]);
 				InetSocketAddress addr = stringToSocketAddress(parts[1]);
-				System.out.println("Adding node id: " + id.getNodeId() + " :: " + addr.getHostName() + ":" + addr.getPort());
 				nodeToAddress.put(id, addr);
 			}
 
+			// Parse topology_file.txt
 			BufferedReader read2 = new BufferedReader(new FileReader(
 					TOPOLOGY_FILE));
 

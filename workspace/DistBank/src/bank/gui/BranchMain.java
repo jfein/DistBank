@@ -28,7 +28,7 @@ import javax.swing.JComboBox;
 import core.node.NodeState;
 
 
-public class BranchMain extends JPanel implements NodeState {
+public class BranchMain extends JPanel {
 	
 	private String mainContentIndex = "Main Content Panel";
 	private String branchMainIndex = "Main Bank Branch Panel";
