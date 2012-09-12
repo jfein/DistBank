@@ -1,7 +1,7 @@
 package test;
 
-import core.distsys.NodeRuntime;
 import core.network.server.ServerHandler;
+import core.node.NodeRuntime;
 
 public class TestServerHandler extends ServerHandler {
 

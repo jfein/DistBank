@@ -1,7 +1,7 @@
 package test;
 
-import core.distsys.NodeId;
 import core.network.client.Client;
+import core.node.NodeId;
 
 public class TestClient extends Client {
 

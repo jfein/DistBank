@@ -24,10 +24,10 @@ import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.JComboBox;
 
-import core.distsys.State;
+import core.node.NodeState;
 
 
-public class BranchMain extends JPanel implements State {
+public class BranchMain extends JPanel implements NodeState {
 	
 	private String mainContentIndex = "Main Content Panel";
 	private String branchMainIndex = "Main Bank Branch Panel";

@@ -2,8 +2,8 @@ package test;
 
 import java.io.IOException;
 
-import core.distsys.NodeId;
-import core.network.server.ServerNodeRuntime;
+import core.node.NodeId;
+import core.node.ServerNodeRuntime;
 
 public class TestServerRunner {
 

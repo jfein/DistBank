@@ -1,8 +1,8 @@
 package test;
 
-import core.distsys.State;
+import core.node.NodeState;
 
-public class TestState implements State {
+public class TestState implements NodeState {
 
 	private int x;
 

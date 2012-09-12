@@ -1,7 +1,7 @@
 package bank.main;
 
 import bank.GuiId;
-import core.distsys.NodeRuntime;
+import core.node.NodeRuntime;
 import bank.gui.BranchMain;
 
 public class BankGuiRunner {

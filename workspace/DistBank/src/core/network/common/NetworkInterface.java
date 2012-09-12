@@ -6,10 +6,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.net.SocketAddress;
 
-import core.distsys.Topology;
-import core.distsys.NodeId;
+import core.node.NodeId;
 
 public class NetworkInterface {
 

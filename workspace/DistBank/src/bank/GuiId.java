@@ -1,6 +1,6 @@
 package bank;
 
-import core.distsys.NodeId;
+import core.node.NodeId;
 
 public class GuiId extends NodeId {
 

@@ -1,7 +1,7 @@
 package bank;
 
 import core.network.server.ServerHandler;
-import core.network.server.ServerNodeRuntime;
+import core.node.ServerNodeRuntime;
 import bank.messages.BankResponse;
 import bank.messages.DepositRequest;
 import bank.messages.QueryRequest;

@@ -3,9 +3,9 @@ package bank;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 
-import core.distsys.State;
+import core.node.NodeState;
 
-public class BankState implements State {
+public class BankState implements NodeState {
 
 	private BranchId branchId;
 	private HashMap<AccountId, Account> branchAccounts;

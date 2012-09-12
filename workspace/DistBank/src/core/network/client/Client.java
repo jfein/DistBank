@@ -2,9 +2,9 @@ package core.network.client;
 
 import java.net.Socket;
 
-import core.distsys.NodeId;
 import core.network.common.Message;
 import core.network.common.NetworkInterface;
+import core.node.NodeId;
 
 public abstract class Client {
 

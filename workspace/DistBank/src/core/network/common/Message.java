@@ -2,8 +2,8 @@ package core.network.common;
 
 import java.io.Serializable;
 
-import core.distsys.NodeRuntime;
-import core.distsys.NodeId;
+import core.node.NodeId;
+import core.node.NodeRuntime;
 
 public abstract class Message implements Serializable {
 

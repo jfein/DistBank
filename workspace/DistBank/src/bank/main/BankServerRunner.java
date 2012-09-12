@@ -6,7 +6,7 @@ import bank.BankServerHandler;
 import bank.BankState;
 import bank.BranchId;
 
-import core.network.server.ServerNodeRuntime;
+import core.node.ServerNodeRuntime;
 
 public class BankServerRunner {
 
