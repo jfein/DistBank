@@ -1,2 +1,0 @@
-g0 localhost:4000
-b0 localhost:4001
