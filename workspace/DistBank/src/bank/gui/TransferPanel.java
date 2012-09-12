@@ -6,7 +6,9 @@ import java.awt.event.ActionListener;
 import java.net.InetSocketAddress;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
@@ -26,7 +28,7 @@ public class TransferPanel extends JPanel {
 		this.srcAccountNumber = srcAccountNumber;
 		SpringLayout thisLayout = new SpringLayout();
 		setLayout(thisLayout);
-	    destAcntNumberField = new JTextField("Dest Account");
+	    destAcntNumberField = new JTextField();
 
 		add(destAcntNumberField);
 		destAcntNumberField.setColumns(10);
@@ -75,9 +77,20 @@ public class TransferPanel extends JPanel {
 	
 	public void doTransfer() {
 		AccountId srcAccountId = new AccountId(this.srcAccountNumber);
-		AccountId destAccountId = new AccountId(this.destAcntNumberField.getText());
-	    double balance = BankClient.transfer(srcAccountId, destAccountId, Double.parseDouble(this.amountField.getText()), this.userSerialNumber);
-		this.balanceLabel.setText("Your Account [" + this.srcAccountNumber + "] Balance: " + String.valueOf(balance));
+		if (this.destAcntNumberField.getText().equals("")){
+			JOptionPane.showMessageDialog(new JFrame(), "Please enter a destination account.", "Error",
+			        JOptionPane.ERROR_MESSAGE);
+		} else {
+			AccountId destAccountId = new AccountId(this.destAcntNumberField.getText());
+			System.out.println("Is empty: " + this.amountField.getText().equals(""));
+			if (this.amountField.getText().equals("")) {
+				  JOptionPane.showMessageDialog(new JFrame(), "Please enter an amount.", "Error",
+					        JOptionPane.ERROR_MESSAGE);
+			} else {
+				  double balance = BankClient.transfer(srcAccountId, destAccountId, Double.parseDouble(this.amountField.getText()), this.userSerialNumber);
+				  this.balanceLabel.setText("Your Account [" + this.srcAccountNumber + "] Balance: " + String.valueOf(balance));
+			}
+		}
 	}
 	
 }

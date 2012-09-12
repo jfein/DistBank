@@ -16,13 +16,14 @@ public class BankServerHandler extends ServerHandler {
 	}
 	
 	public BankResponse handle(WithdrawRequest req) {
+		System.out.println("Got withdraw request for : " + req.getSrcAccountId());
 		BankState state = ServerNodeRuntime.getNodeRuntimeState();
 		return new BankResponse(state.withdraw(req.getSrcAccountId(), req.getAmount(), req.getSerialNumber()));
 	}
 	
 	public BankResponse handle(DepositRequest req) {
 		BankState state = ServerNodeRuntime.getNodeRuntimeState();
-		System.out.println(" Got state. Call deposit.");
+		System.out.println(" Got state. Call deposit for " + req.getSrcAccountId());
 		return new BankResponse(state.deposit(req.getSrcAccountId(), req.getAmount(), req.getSerialNumber()));
 	}
 	

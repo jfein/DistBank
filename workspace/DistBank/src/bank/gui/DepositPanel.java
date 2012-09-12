@@ -6,7 +6,9 @@ import java.awt.event.ActionListener;
 import java.net.InetSocketAddress;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
@@ -25,6 +27,7 @@ public class DepositPanel extends JPanel{
 		
 		this.userSerialNumber = userSerialNumber;
 		this.accountNumber = accountNumber;
+		
 		SpringLayout thisLayout = new SpringLayout();
 		setLayout(thisLayout);
 		
@@ -48,7 +51,7 @@ public class DepositPanel extends JPanel{
 		thisLayout.putConstraint(SpringLayout.NORTH, balanceLabel, 29, SpringLayout.SOUTH, btnDeposit);
 		thisLayout.putConstraint(SpringLayout.EAST, balanceLabel, -179, SpringLayout.EAST, this);
 		add(balanceLabel);
-		
+	
 		btnDeposit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				SwingUtilities.invokeLater(new Runnable() {
@@ -62,7 +65,12 @@ public class DepositPanel extends JPanel{
 	
 	public void doDeposit() {
 		AccountId accountId = new AccountId(this.accountNumber);
+		if (this.amountField.getText().equals("")) {
+			  JOptionPane.showMessageDialog(new JFrame(), "Please enter an amount.", "Error",
+				        JOptionPane.ERROR_MESSAGE);
+		} else {
 		double balance  = BankClient.deposit(accountId, Double.parseDouble(this.amountField.getText()), this.userSerialNumber);
 		this.balanceLabel.setText("Your Account [" + this.accountNumber + "] Balance: " + String.valueOf(balance));
+		}
 	}
 }

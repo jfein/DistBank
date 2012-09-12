@@ -17,6 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.SpringLayout;
 import javax.swing.JTextField;
@@ -38,7 +39,7 @@ public class BranchMain extends JPanel implements NodeState {
 	private static final long serialVersionUID = 1L;
 	private JTextField serialNumberField;
 	private JTextField accountNumberField;
-   
+   private SpringLayout mainButtonPanelLayout;
 
 	/**
 	 * Create the frame.
@@ -68,7 +69,7 @@ public class BranchMain extends JPanel implements NodeState {
 	    
 		
 		//Center Panel
-		SpringLayout mainButtonPanelLayout = new SpringLayout();
+		mainButtonPanelLayout = new SpringLayout();
 	    mainButtonPanel = new JPanel();
 		//Set layout of button panel to Spring layout
 		mainButtonPanel.setLayout(mainButtonPanelLayout);
@@ -88,7 +89,9 @@ public class BranchMain extends JPanel implements NodeState {
 			public void actionPerformed(ActionEvent arg0) {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						doTransferPanel();
+						if (checkTextFields()) {
+							doTransferPanel();
+						}
 					}
 				});
 			}
@@ -103,7 +106,9 @@ public class BranchMain extends JPanel implements NodeState {
 			public void actionPerformed(ActionEvent arg0) {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						doDepositPanel();
+						if (checkTextFields()) {
+							doDepositPanel();
+						}
 					}
 				});
 			}
@@ -121,7 +126,9 @@ public class BranchMain extends JPanel implements NodeState {
 			public void actionPerformed(ActionEvent arg0) {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						doWithdrawPanel();
+						if (checkTextFields()) {
+							doWithdrawPanel();
+						}
 					}
 				});
 			}
@@ -137,7 +144,9 @@ public class BranchMain extends JPanel implements NodeState {
 			public void actionPerformed(ActionEvent arg0) {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						doCheckBalancePanel();
+						if (checkTextFields()) {
+							doCheckBalancePanel();
+						}
 					}
 				});
 			}
@@ -148,7 +157,7 @@ public class BranchMain extends JPanel implements NodeState {
 	    mainButtonPanel.add(depositButton);
 	    mainButtonPanel.add(checkBalanceButton);
 	    
-	    serialNumberField = new JTextField("0");
+	    serialNumberField = new JTextField();
 	    mainButtonPanelLayout.putConstraint(SpringLayout.WEST, serialNumberField, 0, SpringLayout.WEST, withdrawButton);
 	    mainButtonPanelLayout.putConstraint(SpringLayout.SOUTH, serialNumberField, -202, SpringLayout.SOUTH, mainButtonPanel);
 	    mainButtonPanelLayout.putConstraint(SpringLayout.EAST, serialNumberField, -174, SpringLayout.EAST, mainButtonPanel);
@@ -160,7 +169,7 @@ public class BranchMain extends JPanel implements NodeState {
 	    mainButtonPanelLayout.putConstraint(SpringLayout.SOUTH, lblSerial, -208, SpringLayout.SOUTH, mainButtonPanel);
 	    mainButtonPanel.add(lblSerial);
 	    
-	    accountNumberField = new JTextField("00.000");
+	    accountNumberField = new JTextField();
 	    mainButtonPanelLayout.putConstraint(SpringLayout.SOUTH, accountNumberField, -236, SpringLayout.SOUTH, mainButtonPanel);
 	    mainButtonPanelLayout.putConstraint(SpringLayout.WEST, accountNumberField, 0, SpringLayout.WEST, withdrawButton);
 	    mainButtonPanelLayout.putConstraint(SpringLayout.EAST, accountNumberField, 0, SpringLayout.EAST, withdrawButton);
@@ -203,19 +212,28 @@ public class BranchMain extends JPanel implements NodeState {
     	this.updateUI();
     }
     
+    public boolean checkTextFields() {
+    	if (this.accountNumberField.getText().equals("") || this.accountNumberField.getText().equals("")) {
+    		JOptionPane.showMessageDialog(new JFrame(), "Please fill out all the fields.", "Error",
+			        JOptionPane.ERROR_MESSAGE);
+    		return false;
+    	}
+    	return true;
+    }
+    
 	public void doDepositPanel(){
-		mainContentPanel.removeAll();
-        DepositPanel dp = new DepositPanel(accountNumberField.getText(), Integer.parseInt(serialNumberField.getText()));
-        dp.setVisible(true);
-        mainContentPanel.add(dp, BorderLayout.CENTER);
-		updateBranchMainLayout();
+			mainContentPanel.removeAll();
+	        DepositPanel dp = new DepositPanel(accountNumberField.getText(), Integer.parseInt(serialNumberField.getText()));
+	        dp.setVisible(true);
+	        mainContentPanel.add(dp, BorderLayout.CENTER);
+			updateBranchMainLayout();
 	}
 	public void doWithdrawPanel(){
-		mainContentPanel.removeAll();
-        WithdrawPanel dp = new WithdrawPanel(accountNumberField.getText(), Integer.parseInt(serialNumberField.getText()));
-        dp.setVisible(true);
-        mainContentPanel.add(dp, BorderLayout.CENTER);
-        updateBranchMainLayout();
+			mainContentPanel.removeAll();
+	        WithdrawPanel dp = new WithdrawPanel(accountNumberField.getText(), Integer.parseInt(serialNumberField.getText()));
+	        dp.setVisible(true);
+	        mainContentPanel.add(dp, BorderLayout.CENTER);
+	        updateBranchMainLayout();
 	}
 	public void doCheckBalancePanel(){
 		mainContentPanel.removeAll();
@@ -239,6 +257,8 @@ public class BranchMain extends JPanel implements NodeState {
     	// Show the branch home page
 		CardLayout cL = (CardLayout) (this.getLayout());
 		cL.show(this, branchMainIndex);
+		this.accountNumberField.setText("");
+		this.serialNumberField.setText("");
 		this.updateUI();
 	}
 	

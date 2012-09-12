@@ -30,27 +30,29 @@ public class BankState implements NodeState {
    	 if(branchAccounts.get(accountId).isUsedSerialNumber(serialNumber)) {
    		 return 0.0;
    	 }
-   	 System.out.println("after checking used serial");
-   	 //TODO: check the serial number
    	 // Set account amount
-   	 Account accountToDo = branchAccounts.get(accountId);
-   	 System.out.println("account to change: " + accountToDo.getAccountNumber());
+   	 
+   	 AccountId test = new AccountId("b0.1");
+   	 System.out.println("test: " + test.hashCode() + "\noriginal: " + accountId.hashCode());
+   	 Account accountToDo = branchAccounts.get(test);
+   	 System.out.println("Account to change: " + accountToDo.getAccountNumber());
    	 accountToDo.setAccountBalance(accountToDo.getAccountBalance() + amount);
    	 branchAccounts.put(accountId, accountToDo);
 	 //Add the serial number as used
    	 branchAccounts.get(accountId).insertUsedSerialNumber(serialNumber);
-   	 System.out.println("Serial ID of this transaction: " +serialNumber);
+   	 System.out.println("Serial ID of this transaction: " + serialNumber);
    	 System.out.println("Account " + accountId + " balance: " + accountToDo.getAccountBalance());
    	 return accountToDo.getAccountBalance(); 
     }
     
     public Double withdraw(AccountId accountId, double amount, Integer serialNumber) {
    	 //check if this accountId exists
-     System.out.println("Account : " + accountId);
+     System.out.println("Withdraw Account : " + accountId.getAccountNumber());
    	 if (!branchAccounts.containsKey(accountId)) {
-        System.out.println("Account doesn't exist. \n");
+        System.out.println("Account " + accountId.getAccountNumber()+ " doesn't exist. \n");
    		addNewAccount(accountId);
    	 }
+   	 System.out.println("On withdraw branch account size: " + this.branchAccounts.size());
 	 if(branchAccounts.get(accountId).isUsedSerialNumber(serialNumber)) {
    		 return 0.0;
    	 }

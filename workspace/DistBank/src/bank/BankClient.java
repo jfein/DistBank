@@ -27,6 +27,7 @@ public class BankClient extends Client {
 	}
 	
 	public static double withdraw(AccountId accountId, double amount, Integer serial) {
+		System.out.println("Withdraw request id: " + accountId);
 		WithdrawRequest req = new WithdrawRequest(accountId, amount, serial);
 		BankResponse resp = BankClient.exec(accountId.getBranchId(), req);
 		return resp.getAmt();

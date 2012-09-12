@@ -8,4 +8,5 @@ public class BranchId extends NodeId {
 		super(id);
 	}
 
+
 }

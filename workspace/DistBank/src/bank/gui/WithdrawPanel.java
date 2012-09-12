@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.InetSocketAddress;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
@@ -60,7 +62,12 @@ public class WithdrawPanel extends JPanel {
 	
 	public void doWithdraw() {
 		AccountId accountId = new AccountId(this.accountNumber);
-		double balance  = BankClient.withdraw(accountId, Double.parseDouble(this.amountField.getText()), this.userSerialNumber);
-		this.balanceLabel.setText("Your Account [" + this.accountNumber + "] Balance: " + String.valueOf(balance));
+		if (this.amountField.getText().equals("")) {
+			  JOptionPane.showMessageDialog(new JFrame(), "Please enter an amount.", "Error",
+				        JOptionPane.ERROR_MESSAGE);
+		} else {
+			double balance  = BankClient.withdraw(accountId, Double.parseDouble(this.amountField.getText()), this.userSerialNumber);
+			this.balanceLabel.setText("Your Account [" + this.accountNumber + "] Balance: " + String.valueOf(balance));
+		}
 	}
 }

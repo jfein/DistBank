@@ -1,8 +1,9 @@
 package bank;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
-public class AccountId implements Serializable{
+public class AccountId implements Serializable {
 	private Integer accountNumber;
 	private BranchId branchId;
 
@@ -27,17 +28,28 @@ public class AccountId implements Serializable{
 
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof AccountId) {
-			AccountId other = (AccountId) o;
-			if (other.accountNumber == this.accountNumber
-					&& other.branchId.equals(this.branchId))
-				return true;
-		}
+		if (o instanceof AccountId)
+			return this.hashCode() == ((AccountId) o).hashCode();
 		return false;
 	}
-	
+
 	@Override
 	public int hashCode() {
-		return (this.branchId.getNodeId() + "." + this.accountNumber).hashCode();
+		return this.toString().hashCode();
+	}
+
+	@Override
+	public String toString() {
+		return this.branchId.getNodeId() + "." + this.accountNumber;
+	}
+
+	public static void main(String[] args) {
+		HashMap<AccountId, Integer> hashset = new HashMap<AccountId, Integer>();
+		AccountId x = new AccountId("b0.1");
+		hashset.put(x, 9);
+		AccountId y = new AccountId("b0.1");
+		System.out.println(hashset.containsKey(y));
+		System.out.println(hashset.get(y));
+		System.out.println("X and Y are equal: " + x.equals(y));
 	}
 }
