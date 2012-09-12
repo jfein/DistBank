@@ -1,6 +1,8 @@
 package bank;
 
-public class AccountId {
+import java.io.Serializable;
+
+public class AccountId implements Serializable{
 	private Integer accountNumber;
 	private BranchId branchId;
 
@@ -32,5 +34,10 @@ public class AccountId {
 				return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return (this.branchId.getNodeId() + "." + this.accountNumber).hashCode();
 	}
 }

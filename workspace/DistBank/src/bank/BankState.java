@@ -21,17 +21,20 @@ public class BankState implements State {
 
     public Double deposit(AccountId accountId, double amount, Integer serialNumber) {
    	 //check if this accountId exists
-    System.out.println("Deposit Account : " + accountId);
+    System.out.println("Deposit Account : " + accountId.getAccountNumber());
    	 if (!branchAccounts.containsKey(accountId)) {
    		 System.out.println("Account doesn't exist. \n");
    		addNewAccount(accountId);
    	 }
+   	 System.out.println("Size of branch accounts: " + this.branchAccounts.size());
    	 if(branchAccounts.get(accountId).isUsedSerialNumber(serialNumber)) {
    		 return 0.0;
    	 }
+   	 System.out.println("after checking used serial");
    	 //TODO: check the serial number
    	 // Set account amount
    	 Account accountToDo = branchAccounts.get(accountId);
+   	 System.out.println("account to change: " + accountToDo.getAccountNumber());
    	 accountToDo.setAccountBalance(accountToDo.getAccountBalance() + amount);
    	 branchAccounts.put(accountId, accountToDo);
 	 //Add the serial number as used

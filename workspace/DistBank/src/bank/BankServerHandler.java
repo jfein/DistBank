@@ -22,6 +22,7 @@ public class BankServerHandler extends ServerHandler {
 	
 	public BankResponse handle(DepositRequest req) {
 		BankState state = ServerNodeRuntime.getNodeRuntimeState();
+		System.out.println(" Got state. Call deposit.");
 		return new BankResponse(state.deposit(req.getSrcAccountId(), req.getAmount(), req.getSerialNumber()));
 	}
 	

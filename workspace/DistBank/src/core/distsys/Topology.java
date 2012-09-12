@@ -26,6 +26,7 @@ public class Topology {
 	}
 
 	public static InetSocketAddress getAddress(NodeId nodeId) {
+		System.out.println("Node id in getAddress: " + nodeId);
 		return nodeToAddress.get(nodeId);
 	}
 
@@ -40,7 +41,7 @@ public class Topology {
 
 				NodeId id = new NodeId(parts[0]);
 				InetSocketAddress addr = stringToSocketAddress(parts[1]);
-
+				System.out.println("Adding node id: " + id.getNodeId() + " :: " + addr.getHostName() + ":" + addr.getPort());
 				nodeToAddress.put(id, addr);
 			}
 

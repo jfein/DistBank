@@ -13,6 +13,7 @@ public class ServerNodeRuntime extends NodeRuntime {
 	public ServerNodeRuntime(NodeId id, State state, ServerHandler handler)
 			throws IOException {
 		super(id, state);
+		System.out.println("In node id: " + id.getNodeId());
 		new Server(Topology.getAddress(id), handler).start();
 	}
 

@@ -1,6 +1,8 @@
 package core.distsys;
 
-public class NodeId {
+import java.io.Serializable;
+
+public class NodeId implements Serializable{
 
 	private String id;
 
@@ -22,5 +24,10 @@ public class NodeId {
 	@Override
 	public String toString() {
 		return id;
+	}
+	
+	@Override
+	public int hashCode() {
+		return id.hashCode();
 	}
 }
