@@ -87,7 +87,8 @@ public class TransferPanel extends JPanel {
 				  JOptionPane.showMessageDialog(new JFrame(), "Please enter an amount.", "Error",
 					        JOptionPane.ERROR_MESSAGE);
 			} else {
-				  double balance = BankClient.transfer(srcAccountId, destAccountId, Double.parseDouble(this.amountField.getText()), this.userSerialNumber);
+				  // TODO: check for null! and check if successfull
+				  double balance = BankClient.transfer(srcAccountId, destAccountId, Double.parseDouble(this.amountField.getText()), this.userSerialNumber).getAmt();
 				  this.balanceLabel.setText("Your Account [" + this.srcAccountNumber + "] Balance: " + String.valueOf(balance));
 			}
 		}

@@ -12,32 +12,34 @@ public class BankServerHandler extends ServerHandler {
 
 	public BankResponse handle(QueryRequest req) {
 		BankState state = ServerNodeRuntime.getNodeState();
-		return new BankResponse(state.query(req.getSrcAccountId(),
-				req.getSerialNumber()));
+		boolean success = state.query(req.getSrcAccountId(),
+				req.getSerialNumber());
+		double balance = state.getBalance(req.getSrcAccountId());
+		return new BankResponse(balance, success);
 	}
 
 	public BankResponse handle(WithdrawRequest req) {
-		System.out.println("Got withdraw request for : "
-				+ req.getSrcAccountId());
 		BankState state = ServerNodeRuntime.getNodeState();
-		return new BankResponse(state.withdraw(req.getSrcAccountId(),
-				req.getAmount(), req.getSerialNumber()));
+		boolean success = state.withdraw(req.getSrcAccountId(),
+				req.getAmount(), req.getSerialNumber());
+		double balance = state.getBalance(req.getSrcAccountId());
+		return new BankResponse(balance, success);
 	}
 
 	public BankResponse handle(DepositRequest req) {
 		BankState state = ServerNodeRuntime.getNodeState();
-		System.out.println("Got deposit request for : "
-				+ req.getSrcAccountId());
-		return new BankResponse(state.deposit(req.getSrcAccountId(),
-				req.getAmount(), req.getSerialNumber()));
+		boolean success = state.deposit(req.getSrcAccountId(), req.getAmount(),
+				req.getSerialNumber());
+		double balance = state.getBalance(req.getSrcAccountId());
+		return new BankResponse(balance, success);
 	}
 
 	public BankResponse handle(TransferRequest req) {
-		System.out.println(" Handling Transfer request: "
-				+ req.getSerialNumber());
 		BankState state = ServerNodeRuntime.getNodeState();
-		return new BankResponse(state.transfer(req.getSrcAccountId(),
-				req.getDestAccountId(), req.getAmount(), req.getSerialNumber()));
+		boolean success = state.transfer(req.getSrcAccountId(),
+				req.getDestAccountId(), req.getAmount(), req.getSerialNumber());
+		double balance = state.getBalance(req.getSrcAccountId());
+		return new BankResponse(balance, success);
 	}
 
 }

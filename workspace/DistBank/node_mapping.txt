@@ -1,4 +1,6 @@
 50 localhost:10000
-60 localhost:20000
-00 localhost:30000
-01 localhost:40000
+51 localhost:10001
+52 localhost:10002
+00 localhost:10003
+01 localhost:10004
+02 localhost:10005

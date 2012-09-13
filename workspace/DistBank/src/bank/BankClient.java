@@ -10,29 +10,27 @@ import bank.messages.WithdrawRequest;
 
 public class BankClient extends Client {
 
-	public static double query(AccountId accountId, Integer serial) {
+	public static BankResponse query(AccountId accountId, Integer serial) {
 		QueryRequest req = new QueryRequest(accountId, serial);
-		BankResponse resp = BankClient.exec(accountId.getBranchId(), req);
-		return (resp != null) ? resp.getAmt() : 0;
+		return BankClient.exec(accountId.getBranchId(), req);
 	}
 
-	public static double deposit(AccountId accountId, double amount, Integer serial) {
+	public static BankResponse deposit(AccountId accountId, double amount,
+			Integer serial) {
 		DepositRequest req = new DepositRequest(accountId, amount, serial);
-		System.out.println("Deposit request id: " + req.getSrcAccountId());
-		BankResponse resp = BankClient.exec(accountId.getBranchId(), req);
-		return (resp != null) ? resp.getAmt() : 0;
+		return BankClient.exec(accountId.getBranchId(), req);
 	}
 
-	public static double withdraw(AccountId accountId, double amount, Integer serial) {
-		System.out.println("Withdraw request id: " + accountId);
+	public static BankResponse withdraw(AccountId accountId, double amount,
+			Integer serial) {
 		WithdrawRequest req = new WithdrawRequest(accountId, amount, serial);
-		BankResponse resp = BankClient.exec(accountId.getBranchId(), req);
-		return (resp != null) ? resp.getAmt() : 0;
+		return BankClient.exec(accountId.getBranchId(), req);
 	}
 
-	public static double transfer(AccountId srcAccountId, AccountId destAccountId, double amount, Integer serial) {
-		TransferRequest req = new TransferRequest(srcAccountId, destAccountId, amount, serial);
-		BankResponse resp = BankClient.exec(srcAccountId.getBranchId(), req);
-		return (resp != null) ? resp.getAmt() : 0;
+	public static BankResponse transfer(AccountId srcAccountId,
+			AccountId destAccountId, double amount, Integer serial) {
+		TransferRequest req = new TransferRequest(srcAccountId, destAccountId,
+				amount, serial);
+		return BankClient.exec(srcAccountId.getBranchId(), req);
 	}
 }

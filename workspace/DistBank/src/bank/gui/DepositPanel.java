@@ -69,7 +69,7 @@ public class DepositPanel extends JPanel{
 			  JOptionPane.showMessageDialog(new JFrame(), "Please enter an amount.", "Error",
 				        JOptionPane.ERROR_MESSAGE);
 		} else {
-		double balance  = BankClient.deposit(accountId, Double.parseDouble(this.amountField.getText()), this.userSerialNumber);
+		double balance  = BankClient.deposit(accountId, Double.parseDouble(this.amountField.getText()), this.userSerialNumber).getAmt();
 		this.balanceLabel.setText("Your Account [" + this.accountNumber + "] Balance: " + String.valueOf(balance));
 		}
 	}

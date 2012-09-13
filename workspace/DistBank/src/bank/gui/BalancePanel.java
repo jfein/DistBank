@@ -63,7 +63,7 @@ public class BalancePanel extends JPanel{
 	public void doCheckBalance(){
 		//TODO replace the inetsocket
 		AccountId accountId = new AccountId(this.accountNumber);
-		double balance  = BankClient.query(accountId, this.userSerialNumber);
+		double balance  = BankClient.query(accountId, this.userSerialNumber).getAmt();
 		this.balanceField.setText(String.valueOf(balance));
 	}
 }
