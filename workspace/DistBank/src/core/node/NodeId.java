@@ -6,13 +6,13 @@ public class NodeId implements Serializable {
 
 	private static final long serialVersionUID = 1083289454276019163L;
 
-	private String id;
+	private Integer id;
 
-	public NodeId(String nodeId) {
+	public NodeId(Integer nodeId) {
 		this.id = nodeId;
 	}
 
-	public String getNodeId() {
+	public Integer getNodeId() {
 		return id;
 	}
 
@@ -25,12 +25,12 @@ public class NodeId implements Serializable {
 
 	@Override
 	public String toString() {
-		return id;
+		return id.toString();
 	}
 
 	@Override
 	public int hashCode() {
-		return this.toString().hashCode();
+		return this.id.hashCode();
 	}
 
 }

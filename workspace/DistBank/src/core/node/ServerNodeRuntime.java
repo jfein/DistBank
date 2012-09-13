@@ -9,9 +9,11 @@ import core.network.server.ServerHandler;
 public class ServerNodeRuntime extends NodeRuntime {
 
 	public static void init(NodeId id, NodeState state, ServerHandler handler)
-			throws IOException {
+			throws IOException, InterruptedException {
 		NodeRuntime.init(id, state);
-		new Server(Topology.getAddress(id), handler).start();
+		Server server = new Server(Topology.getAddress(id), handler);
+		server.start();
+		server.join();
 	}
 
 }

@@ -44,7 +44,7 @@ public class Topology {
 				String t = read1.readLine();
 				String parts[] = t.split(" ");
 
-				NodeId id = new NodeId(parts[0]);
+				NodeId id = new NodeId(Integer.parseInt(parts[0]));
 				InetSocketAddress addr = stringToSocketAddress(parts[1]);
 				nodeToAddress.put(id, addr);
 			}
@@ -57,8 +57,8 @@ public class Topology {
 				String t = read2.readLine();
 				String parts[] = t.split(" ");
 
-				NodeId src = new NodeId(parts[0]);
-				NodeId dest = new NodeId(parts[1]);
+				NodeId src = new NodeId(Integer.parseInt(parts[0]));
+				NodeId dest = new NodeId(Integer.parseInt(parts[1]));
 
 				if (src.equals(myId)) {
 					System.out.println("I can send messages to " + dest);
