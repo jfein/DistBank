@@ -39,6 +39,7 @@ public class BranchMain extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private JTextField serialNumberField;
 	private JTextField accountNumberField;
+	private JTextField amountNumberField;
    private SpringLayout mainButtonPanelLayout;
 
 	/**
@@ -213,7 +214,7 @@ public class BranchMain extends JPanel {
     }
     
     public boolean checkTextFields() {
-    	if (this.accountNumberField.getText().equals("") || this.accountNumberField.getText().equals("")) {
+    	if (this.accountNumberField.getText().equals("") || this.serialNumberField.getText().equals("")) {
     		JOptionPane.showMessageDialog(new JFrame(), "Please fill out all the fields.", "Error",
 			        JOptionPane.ERROR_MESSAGE);
     		return false;
