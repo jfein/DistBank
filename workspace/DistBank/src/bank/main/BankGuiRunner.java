@@ -14,7 +14,7 @@ public class BankGuiRunner {
 
 		GuiId id = new GuiId(Integer.parseInt(args[0]));
 		NodeRuntime.init(id, null);
-		BranchMain.createAndShowGUI();
+		BranchMain.createAndShowGUI(Integer.parseInt(args[0]));
 
 		System.out.println("BankGui ATM " + id + " running.");
 	}

@@ -8,24 +8,22 @@ package bank.gui;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.SystemColor;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.util.regex.Pattern;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
 import javax.swing.SpringLayout;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
-import javax.swing.JComboBox;
 
-import core.node.NodeState;
+import bank.AccountId;
+import bank.BankClient;
 
 
 public class BranchMain extends JPanel {
@@ -35,12 +33,24 @@ public class BranchMain extends JPanel {
 	
     private JPanel mainButtonPanel;
     private JPanel mainContentPanel;
-    private static BranchMain currentBranchMain;
+
 	private static final long serialVersionUID = 1L;
+	
+	//All the text fields
 	private JTextField serialNumberField;
-	private JTextField accountNumberField;
+	private JTextField srcAccountNumberField;
 	private JTextField amountNumberField;
-   private SpringLayout mainButtonPanelLayout;
+	private JTextField destAccountNumberField;
+	
+	//All the buttons
+	private JButton withdrawButton;
+	private JButton depositButton;
+	private JButton transferButton;
+	private JButton checkBalanceButton;
+	
+	private JLabel balanceLabel;
+	
+	private SpringLayout mainButtonPanelLayout;
 
 	/**
 	 * Create the frame.
@@ -49,7 +59,6 @@ public class BranchMain extends JPanel {
 		super(new CardLayout());
 		setBounds(0, 0, 500, 500);
 		setBorder(new EmptyBorder(5, 5, 5, 5));
-		currentBranchMain = this;
 		
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
@@ -63,51 +72,23 @@ public class BranchMain extends JPanel {
 		mainPanel.add(northPanel, BorderLayout.NORTH);
 	    
         // South Panel
-		JLabel southPanel = new JLabel(
-				"Vera Kutsenko, Jeremy Fein", JLabel.CENTER);
-		southPanel.setPreferredSize(new Dimension(500, 100));
-		mainPanel.add(southPanel, BorderLayout.SOUTH);
-	    
+		balanceLabel = new JLabel("Vera Kutsenko, Jeremy Fein", JLabel.CENTER);
+		balanceLabel.setPreferredSize(new Dimension(500, 100));
+		mainPanel.add(balanceLabel, BorderLayout.SOUTH); 
 		
 		//Center Panel
 		mainButtonPanelLayout = new SpringLayout();
 	    mainButtonPanel = new JPanel();
-		//Set layout of button panel to Spring layout
 		mainButtonPanel.setLayout(mainButtonPanelLayout);
-		//add button panel to main panel
 		mainPanel.add(mainButtonPanel, BorderLayout.CENTER);
-	    JLabel buttonChoiceLabel = new JLabel(" PLEASE CHOOSE YOUR ACTION ");
-	    mainButtonPanelLayout.putConstraint(SpringLayout.NORTH, buttonChoiceLabel, 90, SpringLayout.NORTH, mainButtonPanel);
-	    mainButtonPanelLayout.putConstraint(SpringLayout.EAST, buttonChoiceLabel, -96, SpringLayout.EAST, mainButtonPanel);
-	    buttonChoiceLabel.setPreferredSize(new Dimension(250,30));
-		
-	    //Transfer Button
-	    JButton transferButton = new JButton(" Transfer ");
-	    mainButtonPanelLayout.putConstraint(SpringLayout.NORTH, transferButton, 185, SpringLayout.NORTH, mainButtonPanel);
-	    mainButtonPanelLayout.putConstraint(SpringLayout.EAST, transferButton, -172, SpringLayout.EAST, mainButtonPanel);
-		transferButton.setPreferredSize(new Dimension(150,30));
-		transferButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						if (checkTextFields()) {
-							doTransferPanel();
-						}
-					}
-				});
-			}
-		});
-		
+	 
 		//Deposit Button
-		JButton depositButton = new JButton(" Deposit ");
-		mainButtonPanelLayout.putConstraint(SpringLayout.NORTH, depositButton, 125, SpringLayout.NORTH, mainButtonPanel);
-		mainButtonPanelLayout.putConstraint(SpringLayout.EAST, depositButton, -172, SpringLayout.EAST, mainButtonPanel);
-		depositButton.setPreferredSize(new Dimension(150,30));
+		depositButton = createMenuButton("Deposit", 125);
 		depositButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						if (checkTextFields()) {
+						if (isValidSourceAccountNumber() && isValidSerialNumber() && isValidAmount()) {
 							doDepositPanel();
 						}
 					}
@@ -116,18 +97,12 @@ public class BranchMain extends JPanel {
 		});
 		
 		//Withdraw Button
-		JButton withdrawButton = new JButton(" Widthraw ");
-		mainButtonPanelLayout.putConstraint(SpringLayout.SOUTH, depositButton, 0, SpringLayout.NORTH, withdrawButton);
-		mainButtonPanelLayout.putConstraint(SpringLayout.NORTH, withdrawButton, 155, SpringLayout.NORTH, mainButtonPanel);
-		mainButtonPanelLayout.putConstraint(SpringLayout.SOUTH, buttonChoiceLabel, -4, SpringLayout.NORTH, withdrawButton);
-		mainButtonPanelLayout.putConstraint(SpringLayout.SOUTH, withdrawButton, 0, SpringLayout.NORTH, transferButton);
-		mainButtonPanelLayout.putConstraint(SpringLayout.EAST, withdrawButton, -172, SpringLayout.EAST, mainButtonPanel);
-		withdrawButton.setPreferredSize(new Dimension(150,30));
+		withdrawButton = createMenuButton("Withdraw", 150);
 		withdrawButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						if (checkTextFields()) {
+						if (isValidSourceAccountNumber() && isValidSerialNumber() && isValidAmount()) {
 							doWithdrawPanel();
 						}
 					}
@@ -135,137 +110,224 @@ public class BranchMain extends JPanel {
 			}
 		});
 		
+		//Transfer Button
+	    transferButton = createMenuButton("Transfer", 175);
+		transferButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						if (isValidSourceAccountNumber() && isValidDestinationAccountNumber() 
+								&& isValidSerialNumber() && isValidAmount()) {
+							doTransferPanel();
+						}
+					}
+				});
+			}
+		});
+		
 		//Check Balance Button
-		JButton checkBalanceButton = new JButton(" Check Balance");
-		mainButtonPanelLayout.putConstraint(SpringLayout.NORTH, checkBalanceButton, 215, SpringLayout.NORTH, mainButtonPanel);
-		mainButtonPanelLayout.putConstraint(SpringLayout.SOUTH, transferButton, 0, SpringLayout.NORTH, checkBalanceButton);
-		mainButtonPanelLayout.putConstraint(SpringLayout.EAST, checkBalanceButton, -172, SpringLayout.EAST, mainButtonPanel);
-		checkBalanceButton.setPreferredSize(new Dimension(150,30));
+		checkBalanceButton = createMenuButton("Check Balance", 200);
 		checkBalanceButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						if (checkTextFields()) {
+						if (isValidSourceAccountNumber() && isValidSerialNumber() && isValidAmount()) {
 							doCheckBalancePanel();
 						}
 					}
 				});
 			}
 		});
+	    
+	    //Create Serial Number Field
+	    this.serialNumberField = createTextFieldInMainPanel(withdrawButton, 0);
+	    setLabelNextToField(new JLabel("Serial Number*:"), this.serialNumberField);
+	    
+	    //Create Source Account Number Field
+	    this.srcAccountNumberField = createTextFieldInMainPanel(withdrawButton, 25);
+	    setLabelNextToField(new JLabel("Source Account Number*:"), this.srcAccountNumberField);
+	    
+	    //Create Destination Account Number Field
+	    this.destAccountNumberField = createTextFieldInMainPanel(withdrawButton, 50);
+	    setLabelNextToField(new JLabel("Dest. Account Number:"), this.destAccountNumberField);
+	    
+	    //Create an amount field
+	    this.amountNumberField = createTextFieldInMainPanel(withdrawButton, 75);
+	    setLabelNextToField(new JLabel("Amount:"), this.amountNumberField);
+	 
+	    JLabel buttonChoiceLabel = new JLabel(" PLEASE CHOOSE YOUR ACTION ");
+	    mainButtonPanelLayout.putConstraint(SpringLayout.NORTH, buttonChoiceLabel, 0, SpringLayout.SOUTH, amountNumberField);
+	    mainButtonPanelLayout.putConstraint(SpringLayout.EAST, buttonChoiceLabel, -96, SpringLayout.EAST, mainButtonPanel);
+	    buttonChoiceLabel.setPreferredSize(new Dimension(250,30));
+
 	    mainButtonPanel.add(withdrawButton);
 	    mainButtonPanel.add(buttonChoiceLabel);
 	    mainButtonPanel.add(transferButton);
 	    mainButtonPanel.add(depositButton);
 	    mainButtonPanel.add(checkBalanceButton);
 	    
-	    serialNumberField = new JTextField();
-	    mainButtonPanelLayout.putConstraint(SpringLayout.WEST, serialNumberField, 0, SpringLayout.WEST, withdrawButton);
-	    mainButtonPanelLayout.putConstraint(SpringLayout.SOUTH, serialNumberField, -202, SpringLayout.SOUTH, mainButtonPanel);
-	    mainButtonPanelLayout.putConstraint(SpringLayout.EAST, serialNumberField, -174, SpringLayout.EAST, mainButtonPanel);
-	    mainButtonPanel.add(serialNumberField);
-	    serialNumberField.setColumns(10);
-	    
-	    JLabel lblSerial = new JLabel("Serial Number:");
-	    mainButtonPanelLayout.putConstraint(SpringLayout.NORTH, lblSerial, 6, SpringLayout.NORTH, serialNumberField);
-	    mainButtonPanelLayout.putConstraint(SpringLayout.SOUTH, lblSerial, -208, SpringLayout.SOUTH, mainButtonPanel);
-	    mainButtonPanel.add(lblSerial);
-	    
-	    accountNumberField = new JTextField();
-	    mainButtonPanelLayout.putConstraint(SpringLayout.SOUTH, accountNumberField, -236, SpringLayout.SOUTH, mainButtonPanel);
-	    mainButtonPanelLayout.putConstraint(SpringLayout.WEST, accountNumberField, 0, SpringLayout.WEST, withdrawButton);
-	    mainButtonPanelLayout.putConstraint(SpringLayout.EAST, accountNumberField, 0, SpringLayout.EAST, withdrawButton);
-	    accountNumberField.setColumns(10);
-	    mainButtonPanel.add(accountNumberField);
-	    
-	    JLabel llblAccnt = new JLabel("Account Number:");
-	    mainButtonPanelLayout.putConstraint(SpringLayout.WEST, lblSerial, 0, SpringLayout.WEST, llblAccnt);
-	    mainButtonPanelLayout.putConstraint(SpringLayout.NORTH, llblAccnt, 6, SpringLayout.NORTH, accountNumberField);
-	    mainButtonPanelLayout.putConstraint(SpringLayout.EAST, llblAccnt, -8, SpringLayout.WEST, accountNumberField);
-	    mainButtonPanel.add(llblAccnt);
-	    
 	    withdrawButton.setVisible(true);
 	    checkBalanceButton.setVisible(true);
+	    
+	    
        //Create a main content panel that will hold other panels
 	    mainContentPanel = new JPanel(new BorderLayout());
 	    mainContentPanel.setPreferredSize(new Dimension(500,500));
 	    add(mainContentPanel, mainContentIndex);
 	}
 	
-	public void addBackButton(){
-		JButton depositButton = new JButton(" Back To Main ");
-		depositButton.setPreferredSize(new Dimension(150,30));
-		depositButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						doBackButton();
-						}
-					});
-				}
-			});
-		mainContentPanel.add(depositButton,BorderLayout.SOUTH);
+	private void setLabelNextToField(JLabel label, JTextField textField) {
+		 mainButtonPanelLayout.putConstraint(SpringLayout.NORTH, label, 5, SpringLayout.NORTH, textField);
+		 mainButtonPanelLayout.putConstraint(SpringLayout.SOUTH, label, -5, SpringLayout.SOUTH, textField);
+		 mainButtonPanelLayout.putConstraint(SpringLayout.EAST, label, -5, SpringLayout.WEST, textField);
+		 mainButtonPanel.add(label);
 	}
 	
-    public void updateBranchMainLayout() {
-    	addBackButton();
-    	CardLayout cL = (CardLayout) (this.getLayout());
-    	cL.show(this, mainContentIndex);
-    	this.updateUI();
+	private JTextField createTextFieldInMainPanel(JButton button, Integer northOffset){
+		 JTextField textField = new JTextField();
+		 mainButtonPanelLayout.putConstraint(SpringLayout.NORTH, textField, northOffset, SpringLayout.NORTH, mainButtonPanel);
+		 mainButtonPanelLayout.putConstraint(SpringLayout.WEST, textField, 0, SpringLayout.WEST, button);
+		 mainButtonPanelLayout.putConstraint(SpringLayout.EAST, textField, 0, SpringLayout.EAST, button);
+		 textField.setColumns(10);
+		 mainButtonPanel.add(textField);
+		 return textField;
+	}
+	
+	public JButton createMenuButton (String name, Integer northOffset) {
+		JButton button = new JButton(name);
+	    mainButtonPanelLayout.putConstraint(SpringLayout.NORTH, button, northOffset, SpringLayout.NORTH, mainButtonPanel);
+	    mainButtonPanelLayout.putConstraint(SpringLayout.EAST, button, -170, SpringLayout.EAST, mainButtonPanel);
+		button.setPreferredSize(new Dimension(150,30));
+		return button;
+	}
+    public void popUpErrorMessage(String message) {
+    	JOptionPane.showMessageDialog(new JFrame(), message, "Error",
+		        JOptionPane.ERROR_MESSAGE);
     }
     
-    public boolean checkTextFields() {
-    	if (this.accountNumberField.getText().equals("") || this.serialNumberField.getText().equals("")) {
-    		JOptionPane.showMessageDialog(new JFrame(), "Please fill out all the fields.", "Error",
-			        JOptionPane.ERROR_MESSAGE);
+    public boolean isStringNumeric(String s) {
+    	Pattern doublePattern = Pattern.compile("-?\\d+(\\.\\d*)?");
+    	if(!doublePattern.matcher(s).matches()) {
+    		popUpErrorMessage("Please enter a numeric value.");
     		return false;
     	}
     	return true;
     }
     
+    public boolean isValidSerialNumber() {
+    	if (this.serialNumberField.getText().equals("")){
+    		popUpErrorMessage("Please fill out serial number.");
+    		return false;
+    	} 
+    	return isStringNumeric(this.serialNumberField.getText());
+    }
+    
+    public boolean isValidAccountNumber(String accountNumber) {
+    	if(accountNumber.equals("")) {
+    		popUpErrorMessage("Please fill out the required fields.");
+    	}else if(isStringNumeric(accountNumber)) {
+	    	String[] tokens = accountNumber.split("\\.");
+	    	if (tokens[0].length() == 2 && tokens[1].length() == 5) {
+	    			return true;
+	    		} 
+	    		popUpErrorMessage("Please ensure that account format is: bb.aaaa in numeric format. Ex:00.11111");
+	    	}
+	   return false;
+    }
+    public boolean isValidDestinationAccountNumber() {
+    	return isValidAccountNumber(this.destAccountNumberField.getText());
+    }
+    public boolean isValidSourceAccountNumber() {
+    	return isValidAccountNumber(this.srcAccountNumberField.getText());
+    }
+    
+    public boolean isValidAmount() {
+    	if (this.amountNumberField.getText().equals("")) {
+			 popUpErrorMessage("Please enter an amount.");
+			  return false;
+		} else if(!isStringNumeric(this.amountNumberField.getText())) {
+			return false;
+		} else {
+			if(Double.parseDouble(this.amountNumberField.getText()) < 0.0) {
+				popUpErrorMessage("Please enter a positive value for the amount.");
+				return false;
+			}
+		} 
+    	return true;
+    }
+    private void disableAllButtons () {
+    	this.withdrawButton.setEnabled(false);
+		this.transferButton.setEnabled(false);
+		this.depositButton.setEnabled(false);
+		this.checkBalanceButton.setEnabled(false);
+    }
+    
+    private void clearAllTextFields() {
+    	this.amountNumberField.setText("");
+    	this.srcAccountNumberField.setText("");
+    	this.destAccountNumberField.setText("");
+    	this.serialNumberField.setText("");
+    }
+    
+    private void enableAllButtons () {
+    	this.withdrawButton.setEnabled(true);
+		this.transferButton.setEnabled(true);
+		this.depositButton.setEnabled(true);
+		this.checkBalanceButton.setEnabled(true);
+    }
+    
 	public void doDepositPanel(){
-			mainContentPanel.removeAll();
-	        DepositPanel dp = new DepositPanel(accountNumberField.getText(), Integer.parseInt(serialNumberField.getText()));
-	        dp.setVisible(true);
-	        mainContentPanel.add(dp, BorderLayout.CENTER);
-			updateBranchMainLayout();
+			disableAllButtons();
+			AccountId accountId = new AccountId(this.srcAccountNumberField.getText());
+		
+				double balance  = BankClient.deposit(accountId, Double.parseDouble(this.amountNumberField.getText()), Integer.parseInt(this.serialNumberField.getText())).getAmt();
+				this.balanceLabel.setText("Your Account [" + this.srcAccountNumberField.getText() + "] Balance: " + String.valueOf(balance));
+			clearAllTextFields();
+			enableAllButtons();
 	}
+	
 	public void doWithdrawPanel(){
-			mainContentPanel.removeAll();
-	        WithdrawPanel dp = new WithdrawPanel(accountNumberField.getText(), Integer.parseInt(serialNumberField.getText()));
-	        dp.setVisible(true);
-	        mainContentPanel.add(dp, BorderLayout.CENTER);
-	        updateBranchMainLayout();
+		    disableAllButtons();
+		    AccountId accountId = new AccountId(this.srcAccountNumberField.getText());
+		
+				double balance  = BankClient.withdraw(accountId, Double.parseDouble(this.amountNumberField.getText()), Integer.parseInt(this.serialNumberField.getText())).getAmt();
+				this.balanceLabel.setText("Your Account [" + this.srcAccountNumberField.getText() + "] Balance: " + String.valueOf(balance));
+			
+			clearAllTextFields();
+	        enableAllButtons();
 	}
+	
 	public void doCheckBalancePanel(){
-		mainContentPanel.removeAll();
-        BalancePanel dp = new BalancePanel(accountNumberField.getText(), Integer.parseInt(serialNumberField.getText()));
-        dp.setVisible(true);
-        mainContentPanel.add(dp, BorderLayout.CENTER);
-        updateBranchMainLayout();
+		disableAllButtons();
+		AccountId accountId = new AccountId(this.srcAccountNumberField.getText());
+		double balance  = BankClient.query(accountId, Integer.parseInt(this.serialNumberField.getText())).getAmt();
+		this.balanceLabel.setText("Your Account [" + this.srcAccountNumberField.getText() + "] Balance: " + String.valueOf(balance));
+		clearAllTextFields();
+		enableAllButtons();
+		
 	}
+	
 	public void doTransferPanel(){
-		mainContentPanel.removeAll();
-        TransferPanel dp = new TransferPanel(accountNumberField.getText(), Integer.parseInt(serialNumberField.getText()));
-        dp.setVisible(true);
-        mainContentPanel.add(dp, BorderLayout.CENTER);
-        updateBranchMainLayout();
+		disableAllButtons();
+		
+			AccountId srcAccountId = new AccountId(this.srcAccountNumberField.getText());
+				AccountId destAccountId = new AccountId(this.destAccountNumberField.getText());
+				System.out.println("Is empty: " + this.amountNumberField.getText().equals(""));
+				if (this.amountNumberField.getText().equals("")) {
+					  JOptionPane.showMessageDialog(new JFrame(), "Please enter an amount.", "Error",
+						        JOptionPane.ERROR_MESSAGE);
+				} else {
+					  // TODO: check for null! and check if successfull
+					  double balance = BankClient.transfer(srcAccountId, destAccountId, Double.parseDouble(this.amountNumberField.getText()), Integer.parseInt(this.serialNumberField.getText())).getAmt();
+					  this.balanceLabel.setText("Your Account [" + this.srcAccountNumberField.getText() + "] Balance: " + String.valueOf(balance));
+				}
+		clearAllTextFields();
+		enableAllButtons();
 	}
-	
-	public void doBackButton(){
-		// Remove the content
-		mainContentPanel.removeAll();
 
-    	// Show the branch home page
-		CardLayout cL = (CardLayout) (this.getLayout());
-		cL.show(this, branchMainIndex);
-		this.accountNumberField.setText("");
-		this.serialNumberField.setText("");
-		this.updateUI();
-	}
-	
-	public static void createAndShowGUI() {
+	public static void createAndShowGUI(Integer branchID) {
 		// Create and set up a window
-		JFrame frame = new JFrame("J&V Bank");
+		JFrame frame = new JFrame("J&V Bank ATM " + branchID);
 		frame.setPreferredSize(new Dimension(500, 500));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// add contents to this window
@@ -276,4 +338,11 @@ public class BranchMain extends JPanel {
 		frame.setVisible(true);
 	}
 
+	public static void main(String[] args) {
+		//createAndShowGUI(1);
+		String x = "11.122,,";
+		Pattern doublePattern = Pattern.compile("-?\\d+(\\.\\d*)?");
+		System.out.println("String " + x + " is numeric: " + doublePattern.matcher(x).matches());
+		
+	}
 }
