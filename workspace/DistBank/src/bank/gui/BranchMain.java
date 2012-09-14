@@ -24,6 +24,7 @@ import javax.swing.SwingUtilities;
 
 import bank.AccountId;
 import bank.BankClient;
+import bank.messages.BankResponse;
 
 
 public class BranchMain extends JPanel {
@@ -131,7 +132,7 @@ public class BranchMain extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						if (isValidSourceAccountNumber() && isValidSerialNumber() && isValidAmount()) {
+						if (isValidSourceAccountNumber() && isValidSerialNumber()) {
 							doCheckBalancePanel();
 						}
 					}
@@ -300,13 +301,25 @@ public class BranchMain extends JPanel {
 	public void doCheckBalancePanel(){
 		disableAllButtons();
 		AccountId accountId = new AccountId(this.srcAccountNumberField.getText());
-		double balance  = BankClient.query(accountId, Integer.parseInt(this.serialNumberField.getText())).getAmt();
-		this.balanceLabel.setText("Your Account [" + this.srcAccountNumberField.getText() + "] Balance: " + String.valueOf(balance));
+		BankResponse response = BankClient.query(accountId, Integer.parseInt(this.serialNumberField.getText()));
+		if(checkResponse(response)){
+			this.balanceLabel.setText("Your Account [" + this.srcAccountNumberField.getText() + "] Balance: " + String.valueOf(response.getAmt()));
+		}
 		clearAllTextFields();
 		enableAllButtons();
 		
 	}
-	
+	public boolean checkResponse(BankResponse response) {
+		if(response == null) { 
+			popUpErrorMessage("Network Failure.");
+			return false;
+		} else if (!response.wasSuccessfull()) {
+			popUpErrorMessage("Your request was unsuccessfull. Please try again. Check your serial number.");
+			return false;
+		} else {
+			return true;
+		}
+	}
 	public void doTransferPanel(){
 		disableAllButtons();
 		
@@ -318,8 +331,10 @@ public class BranchMain extends JPanel {
 						        JOptionPane.ERROR_MESSAGE);
 				} else {
 					  // TODO: check for null! and check if successfull
-					  double balance = BankClient.transfer(srcAccountId, destAccountId, Double.parseDouble(this.amountNumberField.getText()), Integer.parseInt(this.serialNumberField.getText())).getAmt();
-					  this.balanceLabel.setText("Your Account [" + this.srcAccountNumberField.getText() + "] Balance: " + String.valueOf(balance));
+					 BankResponse response =  BankClient.transfer(srcAccountId, destAccountId, Double.parseDouble(this.amountNumberField.getText()), Integer.parseInt(this.serialNumberField.getText()));
+					 if (checkResponse(response)) {
+						 this.balanceLabel.setText("Your Account [" + this.srcAccountNumberField.getText() + "] Balance: " + String.valueOf(response.getAmt()));
+					 }
 				}
 		clearAllTextFields();
 		enableAllButtons();
