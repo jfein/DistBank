@@ -280,9 +280,10 @@ public class BranchMain extends JPanel {
 	public void doDepositPanel(){
 			disableAllButtons();
 			AccountId accountId = new AccountId(this.srcAccountNumberField.getText());
-		
-				double balance  = BankClient.deposit(accountId, Double.parseDouble(this.amountNumberField.getText()), Integer.parseInt(this.serialNumberField.getText())).getAmt();
-				this.balanceLabel.setText("Your Account [" + this.srcAccountNumberField.getText() + "] Balance: " + String.valueOf(balance));
+			BankResponse response =  BankClient.deposit(accountId, Double.parseDouble(this.amountNumberField.getText()), Integer.parseInt(this.serialNumberField.getText()));
+			if(checkResponse(response)){
+				this.balanceLabel.setText("Your Account [" + this.srcAccountNumberField.getText() + "] Balance: " + String.valueOf(response.getAmt()));
+			}
 			clearAllTextFields();
 			enableAllButtons();
 	}
@@ -290,10 +291,10 @@ public class BranchMain extends JPanel {
 	public void doWithdrawPanel(){
 		    disableAllButtons();
 		    AccountId accountId = new AccountId(this.srcAccountNumberField.getText());
-		
-				double balance  = BankClient.withdraw(accountId, Double.parseDouble(this.amountNumberField.getText()), Integer.parseInt(this.serialNumberField.getText())).getAmt();
-				this.balanceLabel.setText("Your Account [" + this.srcAccountNumberField.getText() + "] Balance: " + String.valueOf(balance));
-			
+		    BankResponse response =  BankClient.withdraw(accountId, Double.parseDouble(this.amountNumberField.getText()), Integer.parseInt(this.serialNumberField.getText()));
+			if(checkResponse(response)) {
+				this.balanceLabel.setText("Your Account [" + this.srcAccountNumberField.getText() + "] Balance: " + String.valueOf(response.getAmt()));
+			}
 			clearAllTextFields();
 	        enableAllButtons();
 	}
