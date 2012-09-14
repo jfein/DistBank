@@ -311,7 +311,7 @@ public class BranchMain extends JPanel {
 		
 	}
 	public boolean checkResponse(BankResponse response) {
-		if(response == null) { 
+		if (response == null) { 
 			popUpErrorMessage("Network Failure.");
 			return false;
 		} else if (!response.wasSuccessfull()) {
