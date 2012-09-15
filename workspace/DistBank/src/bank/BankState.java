@@ -78,7 +78,7 @@ public class BankState implements NodeState {
 		// Call deposit on other branch
 		BankResponse resp = BankClient.deposit(destAccountId, amount,
 				serialNumber);
-        System.out.println("Response: " + resp);
+        
 		// Withdraw and return true if resp is null or succesful
         if (resp == null ) {
         	withdraw(srcAccountId, amount, serialNumber);

@@ -316,6 +316,7 @@ public class BranchMain extends JPanel {
 			return false;
 		} else if (!response.wasSuccessfull()) {
 			popUpErrorMessage("Your request was unsuccessfull. Please try again. Check your serial number.");
+			this.balanceLabel.setText("Your Account [" + this.srcAccountNumberField.getText() + "] Balance: " + String.valueOf(response.getAmt()));
 			return false;
 		} else {
 			return true;
@@ -323,20 +324,17 @@ public class BranchMain extends JPanel {
 	}
 	public void doTransferPanel(){
 		disableAllButtons();
-		
-			AccountId srcAccountId = new AccountId(this.srcAccountNumberField.getText());
-				AccountId destAccountId = new AccountId(this.destAccountNumberField.getText());
-				System.out.println("Is empty: " + this.amountNumberField.getText().equals(""));
-				if (this.amountNumberField.getText().equals("")) {
-					  JOptionPane.showMessageDialog(new JFrame(), "Please enter an amount.", "Error",
-						        JOptionPane.ERROR_MESSAGE);
-				} else {
-					  // TODO: check for null! and check if successfull
-					 BankResponse response =  BankClient.transfer(srcAccountId, destAccountId, Double.parseDouble(this.amountNumberField.getText()), Integer.parseInt(this.serialNumberField.getText()));
-					 if (checkResponse(response)) {
-						 this.balanceLabel.setText("Your Account [" + this.srcAccountNumberField.getText() + "] Balance: " + String.valueOf(response.getAmt()));
-					 }
-				}
+		AccountId srcAccountId = new AccountId(this.srcAccountNumberField.getText());
+		AccountId destAccountId = new AccountId(this.destAccountNumberField.getText());
+		if (this.amountNumberField.getText().equals("")) {
+			JOptionPane.showMessageDialog(new JFrame(), "Please enter an amount.", "Error",
+				JOptionPane.ERROR_MESSAGE);
+		} else {
+			BankResponse response =  BankClient.transfer(srcAccountId, destAccountId, Double.parseDouble(this.amountNumberField.getText()), Integer.parseInt(this.serialNumberField.getText()));
+			if (checkResponse(response)) {
+				this.balanceLabel.setText("Your Account [" + this.srcAccountNumberField.getText() + "] Balance: " + String.valueOf(response.getAmt()));
+			}
+		}
 		clearAllTextFields();
 		enableAllButtons();
 	}
@@ -354,11 +352,4 @@ public class BranchMain extends JPanel {
 		frame.setVisible(true);
 	}
 
-	public static void main(String[] args) {
-		//createAndShowGUI(1);
-		String x = "11.122,,";
-		Pattern doublePattern = Pattern.compile("-?\\d+(\\.\\d*)?");
-		System.out.println("String " + x + " is numeric: " + doublePattern.matcher(x).matches());
-		
-	}
 }
