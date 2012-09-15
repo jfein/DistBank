@@ -1,0 +1,40 @@
+Files
+---------
+package bank
+	Account.java
+		This file represents an account object. Each object stores the following account information: an accountId, an account balance, and a list of used serial numbers for the transactions originating from this account.
+	AccountId.java
+		This file represents an account id object. Since each account id is represented by 2 integer branch id, and a 5 integer account number, the AccountId object stores a branch id, and an account number.
+	BankClient.java
+		This layer interacts with the BankServerHandler by making different types of requests depending on what the user presses on the GUI. So if the user wants to withdraw, BankClient's withdraw method created a WithdrawRequest and send the request to BankServerHandler which will handle the request appropriately. Similar actions occur for the other requests possible: deposit, transfer, and query (check balance). 
+	BankServerHandler.java
+		This layer handles all the requests from BankClient. This file contains overloaded  handle methods that differ in the arguments they take which are the request objects generated in BankClient.java(WithdrawRequest, DepositRequest, QueryRequest, TransferRequest). Each handle method handles the distinct Request objects appropriately. For example, the handle for a WithdrawRequest, calls the BankState's withdraw method and waits for the BankState's function to return success or failure, then the handle method returns a BankResponse object with the balance of this account and whether it was successful.
+	BankState.java
+		BankState holds all the main methods for changing the state of an account which changes the state of the bank, hence the name BankState. It contains methods like deposit, withdraw, query, transfer. Each method will get the account or create a new account with the balance of 0.0 if it does not exist. It will then proceed by checking if the serial number that came with this request has been used in previous requests with this account. If it has not, then we will do the appropriate change ( withdraw, deposit, transfer,check the balance ), and add the serial number to the list of used serial numbers, then return.
+	BranchId.java
+		This file represents the BranchId object. This object extends NodeId and stores an Integer id for a branch.
+	GuiId.java
+		This file represents the GUI Id object. This object extends NodeId and stores an Integer id for the gui.
+
+package bank.gui
+	BranchMain.java
+		This is the main file that sets up the GUI layout and GUI interactions between the user. This sets up the appropriate textfields that are needed from the user including the serial number, the source account number, the destination account number, and the amount.  Then the GUI sets up the buttons the user can click to withdraw, deposit, transfer, and query the balance of their account. There are corresponding action methods to the buttons which will contact their counterparts in the BankClient.java file described above.
+
+package bank.main
+	BankGuiRunner.java
+		Launches a GUI with a corresponding GUI id ( account number ) that is given on input.
+	BankServerRunner.java
+		A branch Id is given on input which will be used to find the corresponding hostname:port in a mapping file, and launch a server on this hostname:port combination.
+package bank.messages
+	BankRequest.java
+		Generic abstract class representing a request object. It stores the source account id from where the request generated and the serial number associated with this request.
+	BankResponse.java
+		This represents the response that the bank client will send back to the GUI. It stores the balance of the account that had originally requested a transaction and whether the transaction was successful.
+	DepositRequest.java
+		This represents the request that will be generated when the user presses the "deposit" button on GUI panel. It stores the amount to deposit along with the account id and serial number. This request objects helps the BankServerHandler distinguish which "handle" method to call.
+	QueryRequest.java
+		This represents the request that will be generated when he user presses "Check Balance" button on the GUI panel. This object does not store any additional information other then what BankRequest stores.This request objects helps the BankServerHandler distinguish which "handle" method to call.
+	TransferRequest.java
+		This represents the request that will be generated when the user presses "Transfer" button on the GUI Panel. This object stores the amount and destination account number which is needed additional to the source account number and serial number in order to complete the transaction. This request objects helps the BankServerHandler distinguish which "handle" method to call.
+	WithdrawRequest.java
+		This represents the request that will be generated when the user presses "Withdraw" button on the GUI Panel. This object stores the amount alongside the account number and serial number. This request objects helps the BankServerHandler distinguish which "handle" method to call.
