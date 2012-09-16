@@ -158,7 +158,7 @@ public class BranchMain extends JPanel {
 	    this.amountNumberField = createTextFieldInMainPanel(withdrawButton, 75);
 	    setLabelNextToField(new JLabel("Amount:"), this.amountNumberField);
 	 
-	    JLabel buttonChoiceLabel = new JLabel(" PLEASE CHOOSE YOUR ACTION ");
+	    JLabel buttonChoiceLabel = new JLabel("* indicated a REQUIRED field.");
 	    mainButtonPanelLayout.putConstraint(SpringLayout.NORTH, buttonChoiceLabel, 0, SpringLayout.SOUTH, amountNumberField);
 	    mainButtonPanelLayout.putConstraint(SpringLayout.EAST, buttonChoiceLabel, -96, SpringLayout.EAST, mainButtonPanel);
 	    buttonChoiceLabel.setPreferredSize(new Dimension(250,30));
@@ -353,5 +353,6 @@ public class BranchMain extends JPanel {
 		frame.pack();
 		frame.setVisible(true);
 	}
+	
 
 }
