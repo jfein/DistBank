@@ -76,25 +76,25 @@ public class BranchState implements NodeState {
 		if (srcAccnt.isUsedSerialNumber(serialNumber))
 			return false;
 
-		BranchResponse resp = null;
 		// Call deposit on local branch
 		if (destAccountId.getBranchId().equals(srcAccountId.getBranchId())) {
 			boolean success = this.deposit(destAccountId, amount, serialNumber);
-			resp = new BranchResponse(amount, success);
+			if (success)
+				return withdraw(srcAccountId, amount, serialNumber);
 		}
 		// Call deposit on other branch
 		else {
-			resp = BranchClient.deposit(destAccountId, amount, serialNumber);
+			BranchResponse resp = BranchClient.deposit(destAccountId, amount,
+					serialNumber);
+			// Deposit returned null (meaning a network error) but we cannot get
+			// messages from dest branch so its OK
+			if (resp == null
+					&& !Topology.canReceiveFrom(destAccountId.getBranchId()))
+				return withdraw(srcAccountId, amount, serialNumber);
+			// Response was succesful
+			if (resp != null && resp.wasSuccessfull())
+				return withdraw(srcAccountId, amount, serialNumber);
 		}
-
-		// Deposit returned null (meaning a network error) but we cannot get
-		// messages from dest branch so its OK
-		if (resp == null
-				&& !Topology.canReceiveFrom(destAccountId.getBranchId()))
-			return withdraw(srcAccountId, amount, serialNumber);
-		// Response was succesful
-		if (resp != null && resp.wasSuccessfull())
-			return withdraw(srcAccountId, amount, serialNumber);
 
 		return false;
 	}
