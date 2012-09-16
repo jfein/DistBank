@@ -14,11 +14,11 @@ import core.node.NodeRuntime;
 public class Topology {
 
 	private static final String TOPOLOGY_FILE = "topology_file.txt";
-	private static final String NODE_MAPPING_FILE = "node_mapping.txt";
+	private static final String NODE_MAPPING_FILE = "server_node_mapping.txt";
 
 	private static final Set<NodeId> channelsOut = new HashSet<NodeId>();
 	private static final Set<NodeId> channelsIn = new HashSet<NodeId>();
-	private static final Map<NodeId, InetSocketAddress> nodeToAddress = new HashMap<NodeId, InetSocketAddress>();
+	private static final Map<NodeId, InetSocketAddress> nodeToServerAddress = new HashMap<NodeId, InetSocketAddress>();
 
 	public static boolean canSendTo(NodeId other) {
 		return channelsOut.contains(other);
@@ -28,8 +28,8 @@ public class Topology {
 		return channelsIn.contains(other);
 	}
 
-	public static InetSocketAddress getAddress(NodeId nodeId) {
-		return nodeToAddress.get(nodeId);
+	public static InetSocketAddress getServerAddress(NodeId nodeId) {
+		return nodeToServerAddress.get(nodeId);
 	}
 
 	public static void setTopology() {
@@ -46,7 +46,7 @@ public class Topology {
 
 				NodeId id = new NodeId(Integer.parseInt(parts[0]));
 				InetSocketAddress addr = stringToSocketAddress(parts[1]);
-				nodeToAddress.put(id, addr);
+				nodeToServerAddress.put(id, addr);
 			}
 
 			// Parse topology_file.txt

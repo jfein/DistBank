@@ -32,7 +32,7 @@ public class NetworkInterface {
 		if (!Topology.canSendTo(dest))
 			throw new Exception("Error: This node cannot send to " + dest);
 		Socket conn = new Socket();
-		conn.connect(Topology.getAddress(dest));
+		conn.connect(Topology.getServerAddress(dest));
 		sendMessage(conn, dest, msg);
 		return conn;
 	}

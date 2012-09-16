@@ -11,7 +11,9 @@ public class ServerNodeRuntime extends NodeRuntime {
 	public static void init(NodeId id, NodeState state, ServerHandler handler)
 			throws IOException, InterruptedException {
 		NodeRuntime.init(id, state);
-		new Server(Topology.getAddress(id), handler).start();
+		new Server(Topology.getServerAddress(id), handler).start();
+		System.out.println("Server node runtime starting server to listen "
+				+ "on address " + Topology.getServerAddress(id));
 	}
 
 }

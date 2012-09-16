@@ -1,4 +1,8 @@
-Files
+README
+
+-------------------------------------------------------------------------------
+
+SOURCE CODE FILE DESCRIPTION:
 
 package bank
 	Account.java
@@ -67,4 +71,14 @@ package core.node
 		General ID to identify a node on the network. A node corresponds to a single JVM. The ID is in the form of an integer.
 	NodeState.java
 		Interface for a NodeState. Thus, any mutable object can be a NodeState.
+
+-------------------------------------------------------------------------------
+		
+OTHER FILE DESCRIPTION:
+	server_node_mapping.txt
+		This file lists all of the server nodes in the system and maps it to a host:port address on the network. This address is the host and port the server node is listening on; thus, other ndoes can use this mapping to figure out where to send messages to reach a server node when only the server node ID is known. Each line of the file is of the form "NodeID\thost:port".
+		
+-------------------------------------------------------------------------------
+
+INSTALLATION TUTORIAL:
 

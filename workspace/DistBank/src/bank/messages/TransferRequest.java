@@ -2,7 +2,7 @@ package bank.messages;
 
 import bank.AccountId;
 
-public class TransferRequest extends BankRequest {
+public class TransferRequest extends BranchRequest {
 
 	private static final long serialVersionUID = 1L;
 	private AccountId destAccountId;

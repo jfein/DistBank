@@ -2,7 +2,7 @@ package bank.messages;
 
 import bank.AccountId;
 
-public class DepositRequest extends BankRequest {
+public class DepositRequest extends BranchRequest {
 
 	private static final long serialVersionUID = 2192276582514840321L;
 

@@ -4,7 +4,7 @@ import bank.GuiId;
 import core.node.NodeRuntime;
 import bank.gui.BranchMain;
 
-public class BankGuiRunner {
+public class BranchGuiRunner {
 
 	public static void main(String[] args) {
 		if (args.length != 1) {

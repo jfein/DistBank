@@ -22,9 +22,11 @@ import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
+import core.node.NodeRuntime;
+
 import bank.AccountId;
-import bank.BankClient;
-import bank.messages.BankResponse;
+import bank.BranchClient;
+import bank.messages.BranchResponse;
 
 
 public class BranchMain extends JPanel {
@@ -68,7 +70,7 @@ public class BranchMain extends JPanel {
         
         // North Panel
 		JLabel northPanel = new JLabel(
-				"Welcome to J&V Bank", JLabel.CENTER);
+				"Welcome to J&V Bank ATM #" + NodeRuntime.getNodeId(), JLabel.CENTER);
 		northPanel.setPreferredSize(new Dimension(500, 100));
 		mainPanel.add(northPanel, BorderLayout.NORTH);
 	    
@@ -280,7 +282,7 @@ public class BranchMain extends JPanel {
 	public void doDepositPanel(){
 			disableAllButtons();
 			AccountId accountId = new AccountId(this.srcAccountNumberField.getText());
-			BankResponse response =  BankClient.deposit(accountId, Double.parseDouble(this.amountNumberField.getText()), Integer.parseInt(this.serialNumberField.getText()));
+			BranchResponse response =  BranchClient.deposit(accountId, Double.parseDouble(this.amountNumberField.getText()), Integer.parseInt(this.serialNumberField.getText()));
 			if(checkResponse(response)){
 				this.balanceLabel.setText("Your Account [" + this.srcAccountNumberField.getText() + "] Balance: " + String.valueOf(response.getAmt()));
 			}
@@ -291,7 +293,7 @@ public class BranchMain extends JPanel {
 	public void doWithdrawPanel(){
 		    disableAllButtons();
 		    AccountId accountId = new AccountId(this.srcAccountNumberField.getText());
-		    BankResponse response =  BankClient.withdraw(accountId, Double.parseDouble(this.amountNumberField.getText()), Integer.parseInt(this.serialNumberField.getText()));
+		    BranchResponse response =  BranchClient.withdraw(accountId, Double.parseDouble(this.amountNumberField.getText()), Integer.parseInt(this.serialNumberField.getText()));
 			if(checkResponse(response)) {
 				this.balanceLabel.setText("Your Account [" + this.srcAccountNumberField.getText() + "] Balance: " + String.valueOf(response.getAmt()));
 			}
@@ -302,7 +304,7 @@ public class BranchMain extends JPanel {
 	public void doCheckBalancePanel(){
 		disableAllButtons();
 		AccountId accountId = new AccountId(this.srcAccountNumberField.getText());
-		BankResponse response = BankClient.query(accountId, Integer.parseInt(this.serialNumberField.getText()));
+		BranchResponse response = BranchClient.query(accountId, Integer.parseInt(this.serialNumberField.getText()));
 		if(checkResponse(response)){
 			this.balanceLabel.setText("Your Account [" + this.srcAccountNumberField.getText() + "] Balance: " + String.valueOf(response.getAmt()));
 		}
@@ -310,7 +312,7 @@ public class BranchMain extends JPanel {
 		enableAllButtons();
 		
 	}
-	public boolean checkResponse(BankResponse response) {
+	public boolean checkResponse(BranchResponse response) {
 		if (response == null) { 
 			popUpErrorMessage("Network Failure.");
 			return false;
@@ -330,7 +332,7 @@ public class BranchMain extends JPanel {
 			JOptionPane.showMessageDialog(new JFrame(), "Please enter an amount.", "Error",
 				JOptionPane.ERROR_MESSAGE);
 		} else {
-			BankResponse response =  BankClient.transfer(srcAccountId, destAccountId, Double.parseDouble(this.amountNumberField.getText()), Integer.parseInt(this.serialNumberField.getText()));
+			BranchResponse response =  BranchClient.transfer(srcAccountId, destAccountId, Double.parseDouble(this.amountNumberField.getText()), Integer.parseInt(this.serialNumberField.getText()));
 			if (checkResponse(response)) {
 				this.balanceLabel.setText("Your Account [" + this.srcAccountNumberField.getText() + "] Balance: " + String.valueOf(response.getAmt()));
 			}

@@ -21,8 +21,7 @@ public class NodeRuntime {
 
 		Topology.setTopology();
 
-		System.out.println("Node Runtime starting on node ID " + NodeRuntime.id
-				+ " on address " + Topology.getAddress(NodeRuntime.id));
+		System.out.println("Node Runtime starting node ID " + NodeRuntime.id);
 	}
 
 }
