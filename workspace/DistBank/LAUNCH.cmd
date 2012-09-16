@@ -1,4 +1,4 @@
-set PATH=C:\Program Files\glassfish3\jdk\bin;%PATH%
+set PATH=C:\Program Files\Java\jdk1.7.0_18\bin;%PATH%
 javac .\src\bank\main\BranchServerRunner.java -sourcepath .\src -d .\bin
 javac .\src\bank\main\BranchGuiRunner.java -sourcepath .\src -d .\bin
 
