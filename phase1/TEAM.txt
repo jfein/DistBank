@@ -1,5 +1,0 @@
-Jeremy Fein (jdf226):
-Helped design the overall system to meet all requirements. Specifically worked on the network interface and topology configuration. Made generic framework for creating a client and server on top of this model. This includes the code in the core package of the project. Created a very simply test application on top of framework to set and get a variable on a server from the client. Spent about 30 hours on the project.
-
-Vera Kutsenko (vsk23):
-Helped design the overall system to meet all requirements. Specifically worked on the bank application specifics. Built the bank application on top of the core framework. The bank application consists of a bank state on the server, which nandles serial numbers and accounts. Also made a server handler to handle requests to modify the bank state, and a bank client API to make client requests to the bank server. Created the entire GUI and serial number scheme to properly display results. Spent about 30 hours on the project.
