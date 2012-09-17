@@ -1,0 +1,3 @@
+00 localhost:10000
+01 localhost:10001
+02 localhost:10002
