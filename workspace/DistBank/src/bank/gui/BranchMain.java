@@ -20,6 +20,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.PanelUI;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SpringLayout;
 import javax.swing.JTextField;
@@ -35,20 +36,18 @@ import bank.messages.BranchResponse;
 
 public class BranchMain extends JPanel {
 	
-	private Integer GUI_WIDTH = 500;
-	private  Integer GUI_HEIGHT = 500;
-	
+
 	private Integer MENU_BUTTON_START_N = 125;
-	private Integer TEXT_FIELD_START_N;
+
 	
 	private final Integer MENU_BUTTON_OFFSET = 25;
 	private final Integer TEXT_FIELD_OFFSET = 25;
 	
-	private String mainContentIndex = "Main Content Panel";
 	private String branchMainIndex = "Main Bank Branch Panel";
 	
+	private final String greetingTextLabel = "<html><FONT COLOR = RED SIZE = 18> J&V Bank </FONT></html>";
+	
     private JPanel mainButtonPanel;
-    private JPanel mainContentPanel;
 
 	private static final long serialVersionUID = 1L;
 	
@@ -75,31 +74,34 @@ public class BranchMain extends JPanel {
 	public BranchMain() {
 		
 	    this.setPreferredSize(new Dimension(700,500));
-		JPanel mainPanel = new JPanel();
+		
+	    JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
+		
 		JPanel snapshotPanel = new JPanel();
 		snapshotPanel.setBackground(Color.pink);
 		snapshotPanel.setLayout(new BorderLayout());
 		snapshotPanel.setMaximumSize(new Dimension(200,500));
+		
 		JSplitPane mainPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                 snapshotPanel, mainPanel);
         add(mainPane, branchMainIndex);
 		mainPane.setMaximumSize(new Dimension(500,500));
         mainPane.setDividerLocation(170 + mainPane.getInsets().left);
+        
         // North Panel
 		JLabel northPanel = new JLabel(
 				"Welcome to J&V Bank ATM #" + NodeRuntime.getNodeId(), JLabel.CENTER);
-		northPanel.setPreferredSize(new Dimension(this.GUI_WIDTH, 100));
+		northPanel.setPreferredSize(new Dimension(500, 100));
 		mainPanel.add(northPanel, BorderLayout.NORTH);
 		
-		
-		String snapShotText = "<html><FONT COLOR = RED SIZE = 18> J&V Bank </FONT></html>";
-		JLabel welcomeMessage = new JLabel (snapShotText, JLabel.CENTER);
+		//Snapshot Panel
+		JLabel welcomeMessage = new JLabel (greetingTextLabel, JLabel.CENTER);
 		snapshotPanel.add(welcomeMessage, BorderLayout.CENTER);
 	    
         // South Panel
 		balanceLabel = new JLabel("Vera Kutsenko, Jeremy Fein", JLabel.CENTER);
-		balanceLabel.setPreferredSize(new Dimension(this.GUI_WIDTH, 100));
+		balanceLabel.setPreferredSize(new Dimension(500, 100));
 		mainPanel.add(balanceLabel, BorderLayout.SOUTH); 
 		
 		//Center Panel
@@ -212,9 +214,6 @@ public class BranchMain extends JPanel {
 	    mainButtonPanel.add(this.takeSnapshotButton);
 	    withdrawButton.setVisible(true);
 	    checkBalanceButton.setVisible(true);
-	    
-	    
-      
 	}
 	
 	private void setLabelNextToField(JLabel label, JTextField textField) {
@@ -320,14 +319,47 @@ public class BranchMain extends JPanel {
 		this.checkBalanceButton.setEnabled(true);
     }
     
-    public void doTakeSnapshot() {
+    public JPanel getSnapShotPanel() {
+       	JSplitPane splitPane = (JSplitPane) this.getComponent(0);
+    	return (JPanel) splitPane.getLeftComponent();
+    }
+    public void resetScrollPanel() {
+    	JPanel scrollPanel = getSnapShotPanel();
+    	scrollPanel.removeAll();
+    	JLabel welcomeMessage = new JLabel (greetingTextLabel, JLabel.CENTER);
+		scrollPanel.add(welcomeMessage, BorderLayout.CENTER);
+		scrollPanel.revalidate();
+    }
     
-    	JSplitPane splitPane = (JSplitPane) this.getComponent(0);
-    	JPanel leftPanel = (JPanel) splitPane.getLeftComponent();
-    	JLabel label = new JLabel("Snapshot Requested..processing");
+    public void doTakeSnapshot() {
+    //TODO CHANGE THIS
+    	JPanel leftPanel = getSnapShotPanel();
     	leftPanel.removeAll();
-    	leftPanel.add(label,BorderLayout.CENTER);
-        leftPanel.revalidate();
+    	
+    	JScrollPane scrollPanel = new JScrollPane();
+    	scrollPanel.setPreferredSize(new Dimension(200,400));
+    	
+    	JButton clear = new JButton("Clear");
+    	clear.setPreferredSize(new Dimension(200,30));
+    	
+    	
+    	clear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+							resetScrollPanel();
+					}
+					
+				});
+			}
+		});
+    	
+    	
+    	leftPanel.add(clear, BorderLayout.SOUTH);
+    	leftPanel.add(scrollPanel,BorderLayout.CENTER);
+        clearAllTextFields();
+    	leftPanel.revalidate();
+        
       	//AccountId accountId = new AccountId(this.srcAccountNumberField.getText());
     	//BranchResponse response = BranchClient.takeSnapshot(accountId,Integer.parseInt(this.serialNumberField.getText()));
     	//clearAllTextFields();
