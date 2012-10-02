@@ -72,30 +72,29 @@ public class BranchMain extends JPanel {
 	 * Create the frame.
 	 */
 	public BranchMain() {
-		this.setLayout(new CardLayout());
+		
 	    this.setPreferredSize(new Dimension(700,500));
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
 		JPanel snapshotPanel = new JPanel();
 		snapshotPanel.setBackground(Color.pink);
 		snapshotPanel.setLayout(new BorderLayout());
-		snapshotPanel.setPreferredSize(new Dimension(300,500));
-		mainPanel.setPreferredSize(new Dimension(400,500));
+		snapshotPanel.setMaximumSize(new Dimension(200,500));
 		JSplitPane mainPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                 snapshotPanel, mainPanel);
         add(mainPane, branchMainIndex);
-		
-        mainPane.setDividerLocation(200 + mainPane.getInsets().left);
+		mainPane.setMaximumSize(new Dimension(500,500));
+        mainPane.setDividerLocation(170 + mainPane.getInsets().left);
         // North Panel
 		JLabel northPanel = new JLabel(
 				"Welcome to J&V Bank ATM #" + NodeRuntime.getNodeId(), JLabel.CENTER);
 		northPanel.setPreferredSize(new Dimension(this.GUI_WIDTH, 100));
 		mainPanel.add(northPanel, BorderLayout.NORTH);
 		
+		
 		String snapShotText = "<html><FONT COLOR = RED SIZE = 18> J&V Bank </FONT></html>";
-		JLabel mainSnapShotPanel = new JLabel (snapShotText, JLabel.CENTER);
-		mainSnapShotPanel.setPreferredSize(new Dimension(200,500));
-		snapshotPanel.add(mainSnapShotPanel, BorderLayout.NORTH);
+		JLabel welcomeMessage = new JLabel (snapShotText, JLabel.CENTER);
+		snapshotPanel.add(welcomeMessage, BorderLayout.CENTER);
 	    
         // South Panel
 		balanceLabel = new JLabel("Vera Kutsenko, Jeremy Fein", JLabel.CENTER);
@@ -105,6 +104,7 @@ public class BranchMain extends JPanel {
 		//Center Panel
 		mainButtonPanelLayout = new SpringLayout();
 	    mainButtonPanel = new JPanel();
+	    mainButtonPanel.setPreferredSize(new Dimension(500,280));
 		mainButtonPanel.setLayout(mainButtonPanelLayout);
 		mainPanel.add(mainButtonPanel, BorderLayout.CENTER);
 	 
@@ -181,21 +181,6 @@ public class BranchMain extends JPanel {
 			}
 		});
 		
-		// Test  Button
-				takeSnapshotButton = createMenuButton("Test", 100);
-				takeSnapshotButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent arg0) {
-						SwingUtilities.invokeLater(new Runnable() {
-							public void run() {
-					
-									doTest();
-			
-							}
-
-							
-						});
-					}
-				});
 	    
 	    //Create Serial Number Field
 	    this.serialNumberField = createTextFieldInMainPanel(withdrawButton, 0);
@@ -317,17 +302,6 @@ public class BranchMain extends JPanel {
 		this.checkBalanceButton.setEnabled(false);
     }
     
-    public void doTest() {
-    	System.out.println("doTest");
-    	PanelUI panelUi = this.getUI();
-    	
-        System.out.println("Panel UI Prefered Size: " + panelUi.toString());
-        this.setSize(new Dimension(500,700));
-    	//this.setPreferredSize(new Dimension(500,700));
-    	this.revalidate();
-    	//this.updateUI();
-    }
-    
     private void clearAllTextFields() {
     	this.amountNumberField.setText("");
     	this.srcAccountNumberField.setText("");
@@ -344,9 +318,10 @@ public class BranchMain extends JPanel {
     
     public void doTakeSnapshot() {
     
-      	AccountId accountId = new AccountId(this.srcAccountNumberField.getText());
-    	BranchResponse response = BranchClient.takeSnapshot(accountId,Integer.parseInt(this.serialNumberField.getText()));
-    	clearAllTextFields();
+    	JPanel snapShotPanel = this.
+      	//AccountId accountId = new AccountId(this.srcAccountNumberField.getText());
+    	//BranchResponse response = BranchClient.takeSnapshot(accountId,Integer.parseInt(this.serialNumberField.getText()));
+    	//clearAllTextFields();
 
     }
     
