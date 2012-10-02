@@ -50,6 +50,7 @@ public class BranchMain extends JPanel {
 	private JButton depositButton;
 	private JButton transferButton;
 	private JButton checkBalanceButton;
+	private JButton takeSnapshotButton;
 	
 	private JLabel balanceLabel;
 	
@@ -141,6 +142,22 @@ public class BranchMain extends JPanel {
 				});
 			}
 		});
+		
+		//Check Balance Button
+		takeSnapshotButton = createMenuButton("Take Snapshot", 225);
+		takeSnapshotButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						if (isValidSourceAccountNumber() && isValidSerialNumber()) {
+							doTakeSnapshot();
+						}
+					}
+
+					
+				});
+			}
+		});
 	    
 	    //Create Serial Number Field
 	    this.serialNumberField = createTextFieldInMainPanel(withdrawButton, 0);
@@ -163,12 +180,12 @@ public class BranchMain extends JPanel {
 	    mainButtonPanelLayout.putConstraint(SpringLayout.EAST, buttonChoiceLabel, -96, SpringLayout.EAST, mainButtonPanel);
 	    buttonChoiceLabel.setPreferredSize(new Dimension(250,30));
 
-	    mainButtonPanel.add(withdrawButton);
+	    mainButtonPanel.add(this.withdrawButton);
 	    mainButtonPanel.add(buttonChoiceLabel);
-	    mainButtonPanel.add(transferButton);
-	    mainButtonPanel.add(depositButton);
-	    mainButtonPanel.add(checkBalanceButton);
-	    
+	    mainButtonPanel.add(this.transferButton);
+	    mainButtonPanel.add(this.depositButton);
+	    mainButtonPanel.add(this.checkBalanceButton);
+	    mainButtonPanel.add(this.takeSnapshotButton);
 	    withdrawButton.setVisible(true);
 	    checkBalanceButton.setVisible(true);
 	    
@@ -279,6 +296,14 @@ public class BranchMain extends JPanel {
 		this.checkBalanceButton.setEnabled(true);
     }
     
+    public void doTakeSnapshot() {
+    
+      	AccountId accountId = new AccountId(this.srcAccountNumberField.getText());
+    	BranchResponse response = BranchClient.takeSnapshot(accountId,Integer.parseInt(this.serialNumberField.getText()));
+    	clearAllTextFields();
+
+    }
+    
 	public void doDepositPanel(){
 			disableAllButtons();
 			AccountId accountId = new AccountId(this.srcAccountNumberField.getText());
@@ -289,6 +314,7 @@ public class BranchMain extends JPanel {
 			clearAllTextFields();
 			enableAllButtons();
 	}
+	
 	
 	public void doWithdrawPanel(){
 		    disableAllButtons();

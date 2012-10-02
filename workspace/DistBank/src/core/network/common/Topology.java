@@ -31,6 +31,10 @@ public class Topology {
 	public static InetSocketAddress getServerAddress(NodeId nodeId) {
 		return nodeToServerAddress.get(nodeId);
 	}
+	
+	public static Set<NodeId> getChannelsOut() {
+		return channelsOut;
+	}
 
 	public static void setTopology() {
 		NodeId myId = NodeRuntime.getNodeId();
