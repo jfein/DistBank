@@ -8,6 +8,7 @@ package bank.gui;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -266,12 +267,15 @@ public class BranchMain extends JPanel {
     	if(accountNumber.equals("")) {
     		popUpErrorMessage("Please fill out the required fields.");
     	}else if(isStringNumeric(accountNumber)) {
+    		if(accountNumber.length() == 8) {
 	    	String[] tokens = accountNumber.split("\\.");
 	    	if (tokens[0].length() == 2 && tokens[1].length() == 5) {
 	    			return true;
 	    		} 
-	    		popUpErrorMessage("Please ensure that account format is: bb.aaaa in numeric format. Ex:00.11111");
-	    	}
+	    		
+	    	} 
+    		popUpErrorMessage("Please ensure that account format is: bb.aaaa in numeric format. Ex:00.11111");
+    	}
 	   return false;
     }
     public boolean isValidDestinationAccountNumber() {
@@ -318,7 +322,12 @@ public class BranchMain extends JPanel {
     
     public void doTakeSnapshot() {
     
-    	JPanel snapShotPanel = this.
+    	JSplitPane splitPane = (JSplitPane) this.getComponent(0);
+    	JPanel leftPanel = (JPanel) splitPane.getLeftComponent();
+    	JLabel label = new JLabel("Snapshot Requested..processing");
+    	leftPanel.removeAll();
+    	leftPanel.add(label,BorderLayout.CENTER);
+        leftPanel.revalidate();
       	//AccountId accountId = new AccountId(this.srcAccountNumberField.getText());
     	//BranchResponse response = BranchClient.takeSnapshot(accountId,Integer.parseInt(this.serialNumberField.getText()));
     	//clearAllTextFields();
