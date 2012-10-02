@@ -7,6 +7,7 @@ package bank.gui;
  */
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -15,8 +16,10 @@ import java.util.regex.Pattern;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.PanelUI;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.JSplitPane;
 import javax.swing.SpringLayout;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
@@ -30,6 +33,15 @@ import bank.messages.BranchResponse;
 
 
 public class BranchMain extends JPanel {
+	
+	private Integer GUI_WIDTH = 500;
+	private  Integer GUI_HEIGHT = 500;
+	
+	private Integer MENU_BUTTON_START_N = 125;
+	private Integer TEXT_FIELD_START_N;
+	
+	private final Integer MENU_BUTTON_OFFSET = 25;
+	private final Integer TEXT_FIELD_OFFSET = 25;
 	
 	private String mainContentIndex = "Main Content Panel";
 	private String branchMainIndex = "Main Bank Branch Panel";
@@ -60,24 +72,34 @@ public class BranchMain extends JPanel {
 	 * Create the frame.
 	 */
 	public BranchMain() {
-		super(new CardLayout());
-		setBounds(0, 0, 500, 500);
-		setBorder(new EmptyBorder(5, 5, 5, 5));
-		
+		this.setLayout(new CardLayout());
+	    this.setPreferredSize(new Dimension(700,500));
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
-        add(mainPanel, branchMainIndex);
+		JPanel snapshotPanel = new JPanel();
+		snapshotPanel.setBackground(Color.pink);
+		snapshotPanel.setLayout(new BorderLayout());
+		snapshotPanel.setPreferredSize(new Dimension(300,500));
+		mainPanel.setPreferredSize(new Dimension(400,500));
+		JSplitPane mainPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+                snapshotPanel, mainPanel);
+        add(mainPane, branchMainIndex);
 		
-        
+        mainPane.setDividerLocation(200 + mainPane.getInsets().left);
         // North Panel
 		JLabel northPanel = new JLabel(
 				"Welcome to J&V Bank ATM #" + NodeRuntime.getNodeId(), JLabel.CENTER);
-		northPanel.setPreferredSize(new Dimension(500, 100));
+		northPanel.setPreferredSize(new Dimension(this.GUI_WIDTH, 100));
 		mainPanel.add(northPanel, BorderLayout.NORTH);
+		
+		String snapShotText = "<html><FONT COLOR = RED SIZE = 18> J&V Bank </FONT></html>";
+		JLabel mainSnapShotPanel = new JLabel (snapShotText, JLabel.CENTER);
+		mainSnapShotPanel.setPreferredSize(new Dimension(200,500));
+		snapshotPanel.add(mainSnapShotPanel, BorderLayout.NORTH);
 	    
         // South Panel
 		balanceLabel = new JLabel("Vera Kutsenko, Jeremy Fein", JLabel.CENTER);
-		balanceLabel.setPreferredSize(new Dimension(500, 100));
+		balanceLabel.setPreferredSize(new Dimension(this.GUI_WIDTH, 100));
 		mainPanel.add(balanceLabel, BorderLayout.SOUTH); 
 		
 		//Center Panel
@@ -87,7 +109,7 @@ public class BranchMain extends JPanel {
 		mainPanel.add(mainButtonPanel, BorderLayout.CENTER);
 	 
 		//Deposit Button
-		depositButton = createMenuButton("Deposit", 125);
+		depositButton = createMenuButton("Deposit", 0);
 		depositButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				SwingUtilities.invokeLater(new Runnable() {
@@ -101,7 +123,7 @@ public class BranchMain extends JPanel {
 		});
 		
 		//Withdraw Button
-		withdrawButton = createMenuButton("Withdraw", 150);
+		withdrawButton = createMenuButton("Withdraw", this.MENU_BUTTON_OFFSET);
 		withdrawButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				SwingUtilities.invokeLater(new Runnable() {
@@ -115,7 +137,7 @@ public class BranchMain extends JPanel {
 		});
 		
 		//Transfer Button
-	    transferButton = createMenuButton("Transfer", 175);
+	    transferButton = createMenuButton("Transfer", 2 * this.MENU_BUTTON_OFFSET);
 		transferButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				SwingUtilities.invokeLater(new Runnable() {
@@ -130,7 +152,7 @@ public class BranchMain extends JPanel {
 		});
 		
 		//Check Balance Button
-		checkBalanceButton = createMenuButton("Check Balance", 200);
+		checkBalanceButton = createMenuButton("Check Balance", 3 * this.MENU_BUTTON_OFFSET);
 		checkBalanceButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				SwingUtilities.invokeLater(new Runnable() {
@@ -143,8 +165,8 @@ public class BranchMain extends JPanel {
 			}
 		});
 		
-		//Check Balance Button
-		takeSnapshotButton = createMenuButton("Take Snapshot", 225);
+		// Take Snapshot Button
+		takeSnapshotButton = createMenuButton("Take Snapshot",100);
 		takeSnapshotButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				SwingUtilities.invokeLater(new Runnable() {
@@ -158,21 +180,37 @@ public class BranchMain extends JPanel {
 				});
 			}
 		});
+		
+		// Test  Button
+				takeSnapshotButton = createMenuButton("Test", 100);
+				takeSnapshotButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+					
+									doTest();
+			
+							}
+
+							
+						});
+					}
+				});
 	    
 	    //Create Serial Number Field
 	    this.serialNumberField = createTextFieldInMainPanel(withdrawButton, 0);
 	    setLabelNextToField(new JLabel("Serial Number*:"), this.serialNumberField);
 	    
 	    //Create Source Account Number Field
-	    this.srcAccountNumberField = createTextFieldInMainPanel(withdrawButton, 25);
+	    this.srcAccountNumberField = createTextFieldInMainPanel(withdrawButton, this.TEXT_FIELD_OFFSET);
 	    setLabelNextToField(new JLabel("Source Account Number*:"), this.srcAccountNumberField);
 	    
 	    //Create Destination Account Number Field
-	    this.destAccountNumberField = createTextFieldInMainPanel(withdrawButton, 50);
+	    this.destAccountNumberField = createTextFieldInMainPanel(withdrawButton, this.TEXT_FIELD_OFFSET * 2);
 	    setLabelNextToField(new JLabel("Dest. Account Number:"), this.destAccountNumberField);
 	    
 	    //Create an amount field
-	    this.amountNumberField = createTextFieldInMainPanel(withdrawButton, 75);
+	    this.amountNumberField = createTextFieldInMainPanel(withdrawButton, this.TEXT_FIELD_OFFSET * 3);
 	    setLabelNextToField(new JLabel("Amount:"), this.amountNumberField);
 	 
 	    JLabel buttonChoiceLabel = new JLabel("* indicated a REQUIRED field.");
@@ -190,10 +228,7 @@ public class BranchMain extends JPanel {
 	    checkBalanceButton.setVisible(true);
 	    
 	    
-       //Create a main content panel that will hold other panels
-	    mainContentPanel = new JPanel(new BorderLayout());
-	    mainContentPanel.setPreferredSize(new Dimension(500,500));
-	    add(mainContentPanel, mainContentIndex);
+      
 	}
 	
 	private void setLabelNextToField(JLabel label, JTextField textField) {
@@ -215,7 +250,7 @@ public class BranchMain extends JPanel {
 	
 	public JButton createMenuButton (String name, Integer northOffset) {
 		JButton button = new JButton(name);
-	    mainButtonPanelLayout.putConstraint(SpringLayout.NORTH, button, northOffset, SpringLayout.NORTH, mainButtonPanel);
+	    mainButtonPanelLayout.putConstraint(SpringLayout.NORTH, button, this.MENU_BUTTON_START_N + northOffset, SpringLayout.NORTH, mainButtonPanel);
 	    mainButtonPanelLayout.putConstraint(SpringLayout.EAST, button, -170, SpringLayout.EAST, mainButtonPanel);
 		button.setPreferredSize(new Dimension(150,30));
 		return button;
@@ -280,6 +315,17 @@ public class BranchMain extends JPanel {
 		this.transferButton.setEnabled(false);
 		this.depositButton.setEnabled(false);
 		this.checkBalanceButton.setEnabled(false);
+    }
+    
+    public void doTest() {
+    	System.out.println("doTest");
+    	PanelUI panelUi = this.getUI();
+    	
+        System.out.println("Panel UI Prefered Size: " + panelUi.toString());
+        this.setSize(new Dimension(500,700));
+    	//this.setPreferredSize(new Dimension(500,700));
+    	this.revalidate();
+    	//this.updateUI();
     }
     
     private void clearAllTextFields() {
@@ -370,11 +416,8 @@ public class BranchMain extends JPanel {
 	public static void createAndShowGUI(Integer branchID) {
 		// Create and set up a window
 		JFrame frame = new JFrame("J&V Bank ATM " + branchID);
-		frame.setPreferredSize(new Dimension(500, 500));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		// add contents to this window
 		frame.getContentPane().add(new BranchMain());
-		// Display the window
 		frame.setResizable(false);
 		frame.pack();
 		frame.setVisible(true);
