@@ -12,6 +12,9 @@ public class MessageListener implements Runnable {
 		this.src = src;
 	}
 
+	/**
+	 * Blocks listening for a Message on the inbound connection from src.
+	 */
 	@Override
 	public void run() {
 		while (true) {

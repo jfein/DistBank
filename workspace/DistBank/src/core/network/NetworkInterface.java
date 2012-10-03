@@ -47,6 +47,15 @@ public class NetworkInterface implements Runnable {
 		return topology.getNodeToServerAddress().get(nodeId);
 	}
 
+	/**
+	 * Gets a message from the designated src. Blocks on retrieving the message.
+	 * Synchronizes on the connection in, so only one thread can block and read
+	 * a message at once.
+	 * 
+	 * @param src
+	 * @return
+	 * @throws Exception
+	 */
 	public <T extends Message> T getMessage(NodeId src) throws Exception {
 		if (!canReceiveFrom(src))
 			throw new Exception("Error: This node cannot receive from " + src);
@@ -63,6 +72,14 @@ public class NetworkInterface implements Runnable {
 		}
 	}
 
+	/**
+	 * Send a message to the destination. Synchronizes on th e connection out,
+	 * so only one message can be sent on a channel at a time.
+	 * 
+	 * @param dest
+	 * @param msg
+	 * @throws Exception
+	 */
 	public <T extends Message> void sendMessage(NodeId dest, T msg)
 			throws Exception {
 		if (!canSendTo(dest))
@@ -88,6 +105,11 @@ public class NetworkInterface implements Runnable {
 		}
 	}
 
+	/**
+	 * Main server thread. Listens for new connections. When retrieving a valid
+	 * connection in, creates a new MessageListener thread to block on the
+	 * incoming connection listening for messages.
+	 */
 	@Override
 	public void run() {
 		InetSocketAddress myAddress = getNodeAddress(NodeRuntime.getId());

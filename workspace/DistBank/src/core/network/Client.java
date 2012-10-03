@@ -13,6 +13,15 @@ public abstract class Client {
 	public static BlockingQueue<Response> responseQueue = new ArrayBlockingQueue<Response>(
 			1);
 
+	/**
+	 * Sends a request and returns a response. Synchronized statically, so only
+	 * one request can be in flight and we can only be waiting on one response
+	 * ever. Waits for the response to appear in the static responseQueue
+	 * 
+	 * @param dest
+	 * @param req
+	 * @return
+	 */
 	protected static synchronized <T extends Response> T exec(NodeId dest,
 			Request req) {
 		T resp = null;
