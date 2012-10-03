@@ -86,7 +86,7 @@ public class BranchMain extends JPanel {
 
 		// North Panel
 		JLabel northPanel = new JLabel("Welcome to J&V Bank ATM #"
-				+ NodeRuntime.getNodeId(), JLabel.CENTER);
+				+ NodeRuntime.getId(), JLabel.CENTER);
 		northPanel.setPreferredSize(new Dimension(500, 100));
 		mainPanel.add(northPanel, BorderLayout.NORTH);
 
@@ -345,7 +345,8 @@ public class BranchMain extends JPanel {
 	}
 
 	public JPanel getClearSnapShotPanel() {
-		JPanel snapShotPanel =  (JPanel) ((JSplitPane) this.getComponent(0)).getLeftComponent();
+		JPanel snapShotPanel = (JPanel) ((JSplitPane) this.getComponent(0))
+				.getLeftComponent();
 		snapShotPanel.removeAll();
 		return snapShotPanel;
 	}

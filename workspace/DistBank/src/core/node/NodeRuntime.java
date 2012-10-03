@@ -1,7 +1,7 @@
 package core.node;
 
 import core.network.NetworkInterface;
-import core.network.RequestHandler;
+import core.network.MessageHandler;
 
 public class NodeRuntime implements Runnable {
 
@@ -11,13 +11,13 @@ public class NodeRuntime implements Runnable {
 	private static NodeId id;
 	private static NodeState state;
 	private static NetworkInterface networkInterface;
-	private static RequestHandler requestHandler;
+	private static MessageHandler messageHandler;
 
-	public static <T extends NodeState> T getNodeState() {
+	public static <T extends NodeState> T getState() {
 		return (T) state;
 	}
 
-	public static NodeId getNodeId() {
+	public static NodeId getId() {
 		return id;
 	}
 
@@ -25,14 +25,17 @@ public class NodeRuntime implements Runnable {
 		return networkInterface;
 	}
 
-	public static <T extends RequestHandler> T getRequestHandler() {
-		return (T) requestHandler;
+	public static <T extends MessageHandler> T getMessageHandler() {
+		return (T) messageHandler;
 	}
 
-	public NodeRuntime(NodeId id, NodeState state, RequestHandler handler) {
+	public NodeRuntime(NodeId id, NodeState state, MessageHandler handler) {
+		if (handler == null)
+			NodeRuntime.messageHandler = new MessageHandler();
+		else
+			NodeRuntime.messageHandler = handler;
 		NodeRuntime.id = id;
 		NodeRuntime.state = state;
-		NodeRuntime.requestHandler = handler;
 		NodeRuntime.networkInterface = new NetworkInterface(NODE_MAPPING_FILE,
 				TOPOLOGY_FILE);
 	}
@@ -42,8 +45,8 @@ public class NodeRuntime implements Runnable {
 				+ " and  to listen on address "
 				+ NodeRuntime.networkInterface.getNodeAddress(id));
 
-		// Start server to take in new connections
-		NodeRuntime.getNetworkInterface().run();
+		// Run network to take in new connections
+		NodeRuntime.networkInterface.run();
 	}
 
 }

@@ -1,18 +1,18 @@
 package testapp;
 
-import core.network.RequestHandler;
+import core.network.MessageHandler;
 import core.node.NodeRuntime;
 
-public class TestServerHandler extends RequestHandler {
+public class TestServerHandler extends MessageHandler {
 
 	public Response handle(SetRequest req) {
-		TestState state = NodeRuntime.getNodeState();
+		TestState state = NodeRuntime.getState();
 		state.setX(req.getX());
 		return new Response(state.getX());
 	}
 
 	public Response handle(GetRequest req) {
-		TestState state = NodeRuntime.getNodeState();
+		TestState state = NodeRuntime.getState();
 		return new Response(state.getX());
 	}
 

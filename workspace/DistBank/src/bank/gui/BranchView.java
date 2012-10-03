@@ -48,7 +48,7 @@ public class BranchView extends JFrame {
 	private JButton takeSnapshotButton;
 
 	private JLabel balanceLabel;
-	
+
 	private JPanel snapshotPanel;
 	private JPanel mainPanel;
 	private JSplitPane splitFramePane;
@@ -72,13 +72,14 @@ public class BranchView extends JFrame {
 
 		splitFramePane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				snapshotPanel, mainPanel);
-		splitFramePane.setMaximumSize(new Dimension(GuiSpecs.GUI_BRANCH_PANEL_WIDTH,
-				GuiSpecs.GUI_FRAME_HEIGHT));
-		splitFramePane.setDividerLocation(170 + splitFramePane.getInsets().left);
+		splitFramePane.setMaximumSize(new Dimension(
+				GuiSpecs.GUI_BRANCH_PANEL_WIDTH, GuiSpecs.GUI_FRAME_HEIGHT));
+		splitFramePane
+				.setDividerLocation(170 + splitFramePane.getInsets().left);
 
 		// North Panel
 		JLabel northPanel = new JLabel("Welcome to J&V Bank ATM #"
-				+ NodeRuntime.getNodeId(), JLabel.CENTER);
+				+ NodeRuntime.getId(), JLabel.CENTER);
 		northPanel.setPreferredSize(new Dimension(500, 100));
 		mainPanel.add(northPanel, BorderLayout.NORTH);
 
@@ -99,19 +100,23 @@ public class BranchView extends JFrame {
 				GuiSpecs.GUI_BRANCH_PANEL_WIDTH, 280));
 		mainButtonPanel.setLayout(mainButtonPanelLayout);
 		mainPanel.add(mainButtonPanel, BorderLayout.CENTER);
-		
+
 		depositButton = createMenuButton("Deposit", 0);
-		withdrawButton = createMenuButton("Withdraw", GuiSpecs.MENU_BUTTON_OFFSET);
-		transferButton = createMenuButton("Transfer", 2 * GuiSpecs.MENU_BUTTON_OFFSET);
-		checkBalanceButton = createMenuButton("Check Balance", 3 * GuiSpecs.MENU_BUTTON_OFFSET);
-		takeSnapshotButton = createMenuButton("Take Snapshot", 4 * GuiSpecs.MENU_BUTTON_OFFSET);
-		
+		withdrawButton = createMenuButton("Withdraw",
+				GuiSpecs.MENU_BUTTON_OFFSET);
+		transferButton = createMenuButton("Transfer",
+				2 * GuiSpecs.MENU_BUTTON_OFFSET);
+		checkBalanceButton = createMenuButton("Check Balance",
+				3 * GuiSpecs.MENU_BUTTON_OFFSET);
+		takeSnapshotButton = createMenuButton("Take Snapshot",
+				4 * GuiSpecs.MENU_BUTTON_OFFSET);
+
 		mainButtonPanel.add(this.transferButton);
 		mainButtonPanel.add(this.depositButton);
 		mainButtonPanel.add(this.checkBalanceButton);
 		mainButtonPanel.add(this.takeSnapshotButton);
 		mainButtonPanel.add(this.withdrawButton);
-		
+
 		// Create Serial Number Field
 		this.serialNumberField = createTextFieldInMainPanel(withdrawButton, 0);
 		setLabelNextToField(new JLabel("Serial Number*:"),
@@ -141,67 +146,67 @@ public class BranchView extends JFrame {
 				buttonChoiceLabel, -96, SpringLayout.EAST, mainButtonPanel);
 		buttonChoiceLabel.setPreferredSize(new Dimension(250, 30));
 
-
 		mainButtonPanel.add(buttonChoiceLabel);
 		withdrawButton.setVisible(true);
 		checkBalanceButton.setVisible(true);
 		this.setContentPane(splitFramePane);
 		this.pack();
 	}
-	
-	public void addTransferListener(ActionListener tal){
+
+	public void addTransferListener(ActionListener tal) {
 		this.transferButton.addActionListener(tal);
 	}
-	
+
 	public void addDepositListener(ActionListener dal) {
 		this.depositButton.addActionListener(dal);
 	}
-	
+
 	public void addWithdrawListener(ActionListener wal) {
 		this.withdrawButton.addActionListener(wal);
 	}
-	
+
 	public void addQueryListener(ActionListener qal) {
 		this.checkBalanceButton.addActionListener(qal);
 	}
-	
-	public void addTakeSnapShotListener(ActionListener sal){
+
+	public void addTakeSnapShotListener(ActionListener sal) {
 		this.takeSnapshotButton.addActionListener(sal);
 	}
-	
+
 	public String getUISrcAccount() {
 		return this.srcAccountNumberField.getText();
 	}
-	
+
 	public String getUIAmount() {
 		return this.amountNumberField.getText();
 	}
-	
+
 	public String getUISerial() {
 		return this.serialNumberField.getText();
 	}
-	
+
 	public String getUIDestAccount() {
 		return this.destAccountNumberField.getText();
 	}
-	
+
 	public void setBalanceLabel(String label) {
 		this.balanceLabel.setText(label);
 	}
+
 	public void enableAllButtons(boolean enable) {
 		this.withdrawButton.setEnabled(enable);
 		this.transferButton.setEnabled(enable);
 		this.depositButton.setEnabled(enable);
 		this.checkBalanceButton.setEnabled(enable);
 	}
-	
+
 	public void clearAllTextFields() {
 		this.amountNumberField.setText("");
 		this.srcAccountNumberField.setText("");
 		this.destAccountNumberField.setText("");
 		this.serialNumberField.setText("");
 	}
-	
+
 	private void setLabelNextToField(JLabel label, JTextField textField) {
 		this.mainButtonPanelLayout.putConstraint(SpringLayout.NORTH, label, 5,
 				SpringLayout.NORTH, textField);
@@ -217,10 +222,10 @@ public class BranchView extends JFrame {
 		JTextField textField = new JTextField();
 		this.mainButtonPanelLayout.putConstraint(SpringLayout.NORTH, textField,
 				northOffset, SpringLayout.NORTH, mainButtonPanel);
-		this.mainButtonPanelLayout.putConstraint(SpringLayout.WEST, textField, 0,
-				SpringLayout.WEST, button);
-		this.mainButtonPanelLayout.putConstraint(SpringLayout.EAST, textField, 0,
-				SpringLayout.EAST, button);
+		this.mainButtonPanelLayout.putConstraint(SpringLayout.WEST, textField,
+				0, SpringLayout.WEST, button);
+		this.mainButtonPanelLayout.putConstraint(SpringLayout.EAST, textField,
+				0, SpringLayout.EAST, button);
 		textField.setColumns(10);
 		this.mainButtonPanel.add(textField);
 		return textField;
@@ -231,8 +236,8 @@ public class BranchView extends JFrame {
 		this.mainButtonPanelLayout.putConstraint(SpringLayout.NORTH, button,
 				GuiSpecs.MENU_BUTTON_START_N + northOffset, SpringLayout.NORTH,
 				mainButtonPanel);
-		this.mainButtonPanelLayout.putConstraint(SpringLayout.EAST, button, -170,
-				SpringLayout.EAST, mainButtonPanel);
+		this.mainButtonPanelLayout.putConstraint(SpringLayout.EAST, button,
+				-170, SpringLayout.EAST, mainButtonPanel);
 		button.setPreferredSize(new Dimension(150, 30));
 		return button;
 	}
@@ -241,7 +246,6 @@ public class BranchView extends JFrame {
 		JOptionPane.showMessageDialog(new JFrame(), message, "Error",
 				JOptionPane.ERROR_MESSAGE);
 	}
-
 
 	public JPanel getClearSnapShotPanel() {
 		this.snapshotPanel.removeAll();
@@ -254,6 +258,5 @@ public class BranchView extends JFrame {
 		snapshotPanel.add(welcomeMessage, BorderLayout.CENTER);
 		snapshotPanel.revalidate();
 	}
-
 
 }

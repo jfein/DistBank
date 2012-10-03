@@ -19,7 +19,7 @@ public class Topology {
 	private final Map<NodeId, InetSocketAddress> nodeToServerAddress = new HashMap<NodeId, InetSocketAddress>();
 
 	public Topology(String nodeMappingFile, String topologyFile) {
-		NodeId myId = NodeRuntime.getNodeId();
+		NodeId myId = NodeRuntime.getId();
 
 		try {
 			// Parse node_mapping.txt

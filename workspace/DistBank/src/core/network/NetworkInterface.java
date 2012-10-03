@@ -90,7 +90,7 @@ public class NetworkInterface implements Runnable {
 
 	@Override
 	public void run() {
-		InetSocketAddress myAddress = getNodeAddress(NodeRuntime.getNodeId());
+		InetSocketAddress myAddress = getNodeAddress(NodeRuntime.getId());
 
 		// Create server socket
 		ServerSocket serverSocket;
@@ -124,10 +124,19 @@ public class NetworkInterface implements Runnable {
 
 				System.out.println("Got new connection from Node " + src);
 
-				// Start a ConnectionListener thread to listen on the channelIn
+				// Add the new connIn, close any existing
 				synchronized (connsIn) {
+					if (connsIn.containsKey(src)) {
+						Socket oldConnIn = connsIn.get(src);
+						synchronized (oldConnIn) {
+							oldConnIn.close();
+						}
+					}
 					connsIn.put(src, connIn);
 				}
+
+				// Start a MessageListener to block on incoming messages on this
+				// new connIn
 				threadPool.execute(new MessageListener(src));
 
 			} catch (Exception e) {
