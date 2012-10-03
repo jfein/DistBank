@@ -177,7 +177,7 @@ public class BranchController {
 							+ String.valueOf(response.getAmt()));
 				}
 				branchView.clearAllTextFields();
-				branchView.enableAllButtons(false);
+				branchView.enableAllButtons(true);
 			}
 		}
 	}
