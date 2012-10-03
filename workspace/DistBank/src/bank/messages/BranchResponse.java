@@ -1,8 +1,8 @@
 package bank.messages;
 
-import core.network.common.Message;
+import core.network.messages.Response;
 
-public class BranchResponse extends Message {
+public class BranchResponse extends Response {
 
 	private static final long serialVersionUID = -3689706541111933234L;
 

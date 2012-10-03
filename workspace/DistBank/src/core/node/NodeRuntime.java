@@ -1,11 +1,17 @@
 package core.node;
 
-import core.network.common.Topology;
+import core.network.NetworkInterface;
+import core.network.RequestHandler;
 
-public class NodeRuntime {
+public class NodeRuntime implements Runnable {
+
+	public static final String NODE_MAPPING_FILE = "server_node_mapping.txt";
+	public static final String TOPOLOGY_FILE = "topology_file.txt";
 
 	private static NodeId id;
 	private static NodeState state;
+	private static NetworkInterface networkInterface;
+	private static RequestHandler requestHandler;
 
 	public static <T extends NodeState> T getNodeState() {
 		return (T) state;
@@ -15,13 +21,29 @@ public class NodeRuntime {
 		return id;
 	}
 
-	public static void init(NodeId id, NodeState state) {
+	public static NetworkInterface getNetworkInterface() {
+		return networkInterface;
+	}
+
+	public static <T extends RequestHandler> T getRequestHandler() {
+		return (T) requestHandler;
+	}
+
+	public NodeRuntime(NodeId id, NodeState state, RequestHandler handler) {
 		NodeRuntime.id = id;
 		NodeRuntime.state = state;
+		NodeRuntime.requestHandler = handler;
+		NodeRuntime.networkInterface = new NetworkInterface(NODE_MAPPING_FILE,
+				TOPOLOGY_FILE);
+	}
 
-		Topology.setTopology();
+	public void run() {
+		System.out.println("NodeRuntime starting node ID " + NodeRuntime.id
+				+ " and  to listen on address "
+				+ NodeRuntime.networkInterface.getNodeAddress(id));
 
-		System.out.println("Node Runtime starting node ID " + NodeRuntime.id);
+		// Start server to take in new connections
+		NodeRuntime.getNetworkInterface().run();
 	}
 
 }

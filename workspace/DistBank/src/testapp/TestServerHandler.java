@@ -1,9 +1,9 @@
-package test;
+package testapp;
 
-import core.network.server.ServerHandler;
+import core.network.RequestHandler;
 import core.node.NodeRuntime;
 
-public class TestServerHandler extends ServerHandler {
+public class TestServerHandler extends RequestHandler {
 
 	public Response handle(SetRequest req) {
 		TestState state = NodeRuntime.getNodeState();

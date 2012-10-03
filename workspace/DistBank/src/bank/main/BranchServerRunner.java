@@ -2,11 +2,11 @@ package bank.main;
 
 import java.io.IOException;
 
-import bank.BranchServerHandler;
+import bank.BranchRequestHandler;
 import bank.BranchState;
 import bank.BranchId;
 
-import core.node.ServerNodeRuntime;
+import core.node.NodeRuntime;
 
 public class BranchServerRunner {
 
@@ -18,8 +18,9 @@ public class BranchServerRunner {
 		}
 
 		BranchId id = new BranchId(Integer.parseInt(args[0]));
-		ServerNodeRuntime.init(id, new BranchState(), new BranchServerHandler());
-
+		
 		System.out.println("BankServer Branch " + id + " running.");
+		
+		(new NodeRuntime(id, new BranchState(), new BranchRequestHandler())).run();
 	}
 }

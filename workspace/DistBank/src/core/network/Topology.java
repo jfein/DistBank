@@ -1,4 +1,4 @@
-package core.network.common;
+package core.network;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -13,36 +13,18 @@ import core.node.NodeRuntime;
 
 public class Topology {
 
-	private static final String TOPOLOGY_FILE = "topology_file.txt";
-	private static final String NODE_MAPPING_FILE = "server_node_mapping.txt";
+	private final Set<NodeId> channelsOut = new HashSet<NodeId>();
+	private final Set<NodeId> channelsIn = new HashSet<NodeId>();
 
-	private static final Set<NodeId> channelsOut = new HashSet<NodeId>();
-	private static final Set<NodeId> channelsIn = new HashSet<NodeId>();
-	private static final Map<NodeId, InetSocketAddress> nodeToServerAddress = new HashMap<NodeId, InetSocketAddress>();
+	private final Map<NodeId, InetSocketAddress> nodeToServerAddress = new HashMap<NodeId, InetSocketAddress>();
 
-	public static boolean canSendTo(NodeId other) {
-		return channelsOut.contains(other);
-	}
-
-	public static boolean canReceiveFrom(NodeId other) {
-		return channelsIn.contains(other);
-	}
-
-	public static InetSocketAddress getServerAddress(NodeId nodeId) {
-		return nodeToServerAddress.get(nodeId);
-	}
-	
-	public static Set<NodeId> getChannelsOut() {
-		return channelsOut;
-	}
-
-	public static void setTopology() {
+	public Topology(String nodeMappingFile, String topologyFile) {
 		NodeId myId = NodeRuntime.getNodeId();
 
 		try {
 			// Parse node_mapping.txt
 			BufferedReader read1 = new BufferedReader(new FileReader(
-					NODE_MAPPING_FILE));
+					nodeMappingFile));
 
 			while (read1.ready()) {
 				String t = read1.readLine();
@@ -55,7 +37,7 @@ public class Topology {
 
 			// Parse topology_file.txt
 			BufferedReader read2 = new BufferedReader(new FileReader(
-					TOPOLOGY_FILE));
+					topologyFile));
 
 			while (read2.ready()) {
 				String t = read2.readLine();
@@ -77,6 +59,18 @@ public class Topology {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public Set<NodeId> getChannelsOut() {
+		return channelsOut;
+	}
+
+	public Set<NodeId> getChannelsIn() {
+		return channelsIn;
+	}
+
+	public Map<NodeId, InetSocketAddress> getNodeToServerAddress() {
+		return nodeToServerAddress;
 	}
 
 	private static InetSocketAddress stringToSocketAddress(String s) {

@@ -1,8 +1,8 @@
-package test;
+package testapp;
 
-import core.network.common.Message;
+import core.network.messages.Request;
 
-public class SetRequest extends Message {
+public class SetRequest extends Request {
 
 	private static final long serialVersionUID = -8944465011824972200L;
 

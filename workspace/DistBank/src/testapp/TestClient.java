@@ -1,6 +1,6 @@
-package test;
+package testapp;
 
-import core.network.client.Client;
+import core.network.Client;
 import core.node.NodeId;
 
 public class TestClient extends Client {

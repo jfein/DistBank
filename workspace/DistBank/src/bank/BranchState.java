@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import bank.messages.BranchResponse;
 
-import core.network.common.Topology;
+import core.node.NodeRuntime;
 import core.node.NodeState;
 
 public class BranchState implements NodeState {
@@ -89,7 +89,8 @@ public class BranchState implements NodeState {
 			// Deposit returned null (meaning a network error) but we cannot get
 			// messages from dest branch so its OK
 			if (resp == null
-					&& !Topology.canReceiveFrom(destAccountId.getBranchId()))
+					&& !NodeRuntime.getNetworkInterface().canReceiveFrom(
+							destAccountId.getBranchId()))
 				return withdraw(srcAccountId, amount, serialNumber);
 			// Response was succesful
 			if (resp != null && resp.wasSuccessfull())

@@ -1,8 +1,6 @@
-package test;
+package testapp;
 
-import core.network.common.Message;
-
-public class Response extends Message {
+public class Response extends core.network.messages.Response {
 
 	private static final long serialVersionUID = -2396947497686527656L;
 

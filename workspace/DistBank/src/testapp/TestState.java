@@ -1,4 +1,4 @@
-package test;
+package testapp;
 
 import core.node.NodeState;
 
