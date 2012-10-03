@@ -2,7 +2,9 @@ package bank.main;
 
 import bank.GuiId;
 import core.node.NodeRuntime;
+import bank.gui.BranchController;
 import bank.gui.BranchMain;
+import bank.gui.BranchView;
 
 public class BranchGuiRunner {
 
@@ -14,9 +16,9 @@ public class BranchGuiRunner {
 
 		GuiId id = new GuiId(Integer.parseInt(args[0]));
 		NodeRuntime.init(id, null);
-		BranchMain.createAndShowGUI(Integer.parseInt(args[0]));
-
+		BranchView branchView = new BranchView();
+		BranchController branchController = new BranchController(branchView);
+		branchView.setVisible(true);
 		System.out.println("BankGui ATM " + id + " running.");
 	}
-
 }
