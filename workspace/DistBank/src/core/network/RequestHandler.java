@@ -6,7 +6,7 @@ import core.node.NodeRuntime;
 
 public class RequestHandler {
 
-	public synchronized void handle(Request m) {
+	public void handle(Request m) {
 		try {
 			// Process the request to get a response
 			Response resp = (Response) this.getClass()

@@ -22,13 +22,9 @@ public class MessageListener implements Runnable {
 				Message msgIn = NodeRuntime.getNetworkInterface().getMessage(
 						src);
 
-				// Got a request, handle it
-				if (msgIn instanceof Request)
-					NodeRuntime.getRequestHandler().handle((Request) msgIn);
-
-				// Got a response, send it to Client
-				if (msgIn instanceof Response)
-					Client.responseQueue.put((Response) msgIn);
+				// Process the message synchronously, so only one message can be
+				// processed at once
+				MessageListener.processMessage(msgIn);
 			} catch (Exception e) {
 				e.printStackTrace();
 				break;
@@ -37,5 +33,16 @@ public class MessageListener implements Runnable {
 
 		System.out.println("CONNECTION LISTENER TO NODE " + src
 				+ " SHUTTING DOWN");
+	}
+
+	public synchronized static void processMessage(Message msgIn)
+			throws InterruptedException {
+		// Got a request, handle it
+		if (msgIn instanceof Request)
+			NodeRuntime.getRequestHandler().handle((Request) msgIn);
+
+		// Got a response, send it to Client
+		if (msgIn instanceof Response)
+			Client.responseQueue.put((Response) msgIn);
 	}
 }
