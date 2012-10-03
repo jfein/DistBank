@@ -89,7 +89,7 @@ public class BranchController {
 			
 			if(isValidAccountNumber(branchView.getUISrcAccount()) && 
 					isValidSerialNumber() && isValidAmount(branchView.getUIAmount())){
-			    branchView.disableAllButtons();
+			    branchView.enableAllButtons(false);
 				AccountId accountId = new AccountId(branchView.getUISrcAccount());
 				BranchResponse response = BranchClient.deposit(accountId,
 						Double.parseDouble(branchView.getUIAmount()),
@@ -100,7 +100,7 @@ public class BranchController {
 							+ String.valueOf(response.getAmt()));
 				}
 				branchView.clearAllTextFields();
-				branchView.enableAllButtons();
+				branchView.enableAllButtons(true);
 			}
 		}
 	}
@@ -111,7 +111,7 @@ public class BranchController {
 		public void actionPerformed(ActionEvent e) {
 			if (isValidAccountNumber(branchView.getUISrcAccount()) && 
 					isValidSerialNumber() && isValidAmount(branchView.getUIAmount())) {
-				branchView.disableAllButtons();
+				branchView.enableAllButtons(false);
 				AccountId accountId = new AccountId(branchView.getUISrcAccount());
 				BranchResponse response = BranchClient.withdraw(accountId,
 						Double.parseDouble(branchView.getUIAmount()),
@@ -122,7 +122,7 @@ public class BranchController {
 							+ String.valueOf(response.getAmt()));
 				}
 				branchView.clearAllTextFields();
-				branchView.enableAllButtons();
+				branchView.enableAllButtons(true);
 			}
 		}
 	}
@@ -136,7 +136,7 @@ public class BranchController {
 					isValidAccountNumber(branchView.getUIDestAccount()) &&
 					isValidSerialNumber() && isValidAmount(branchView.getUIAmount())) {
 				// TODO Auto-generated method stub
-				branchView.disableAllButtons();
+				branchView.enableAllButtons(false);
 				AccountId srcAccountId = new AccountId(branchView.getUISrcAccount());
 				AccountId destAccountId = new AccountId(branchView.getUIDestAccount());
 				if (branchView.getUIAmount().equals("")) {
@@ -155,7 +155,7 @@ public class BranchController {
 					}
 				}
 				branchView.clearAllTextFields();
-				branchView.enableAllButtons();
+				branchView.enableAllButtons(true);
 			}
 		}
 	}
@@ -167,7 +167,7 @@ public class BranchController {
 			
 			if(isValidAccountNumber(branchView.getUISrcAccount())
 								&& isValidSerialNumber()) {
-				branchView.disableAllButtons();
+				branchView.enableAllButtons(false);
 				AccountId accountId = new AccountId(branchView.getUISrcAccount());
 				BranchResponse response = BranchClient.query(accountId,
 						Integer.parseInt(branchView.getUISerial()));
@@ -177,7 +177,7 @@ public class BranchController {
 							+ String.valueOf(response.getAmt()));
 				}
 				branchView.clearAllTextFields();
-				branchView.enableAllButtons();
+				branchView.enableAllButtons(false);
 			}
 		}
 	}
