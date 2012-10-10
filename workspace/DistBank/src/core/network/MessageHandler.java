@@ -23,6 +23,7 @@ public class MessageHandler {
 		if (msgIn instanceof SnapshotMessage)
 			NodeRuntime.getSnapshotHandler().handleSnapshotMessage((SnapshotMessage) msgIn);
 		
+		//TODO: process recording of messages here? have to access the snapshot state object in runtime
 		// Got a request; process requests synchronously
 		if (msgIn instanceof Request)
 			handleRequest((Request) msgIn);
