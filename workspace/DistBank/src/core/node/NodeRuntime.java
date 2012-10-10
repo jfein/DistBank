@@ -2,6 +2,7 @@ package core.node;
 
 import core.network.NetworkInterface;
 import core.network.MessageHandler;
+import core.network.messages.SnapshotHandler;
 
 public class NodeRuntime implements Runnable {
 
@@ -12,6 +13,7 @@ public class NodeRuntime implements Runnable {
 	private static NodeState state;
 	private static NetworkInterface networkInterface;
 	private static MessageHandler messageHandler;
+	private static SnapshotHandler snapshotHandler;
 
 	public static <T extends NodeState> T getState() {
 		return (T) state;
@@ -29,6 +31,12 @@ public class NodeRuntime implements Runnable {
 		return (T) messageHandler;
 	}
 
+	public static SnapshotHandler getSnapshotHandler() {
+		return snapshotHandler;
+	}
+	
+	
+	
 	public NodeRuntime(NodeId id, NodeState state, MessageHandler handler) {
 		if (handler == null)
 			NodeRuntime.messageHandler = new MessageHandler();

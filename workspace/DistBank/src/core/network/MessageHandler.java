@@ -3,6 +3,7 @@ package core.network;
 import core.network.messages.Message;
 import core.network.messages.Request;
 import core.network.messages.Response;
+import core.network.messages.SnapshotMessage;
 import core.node.NodeRuntime;
 
 public class MessageHandler {
@@ -18,6 +19,10 @@ public class MessageHandler {
 	 * @param msgIn
 	 */
 	public void handleMessage(Message msgIn) {
+		//Got a snapshot message
+		if (msgIn instanceof SnapshotMessage)
+			NodeRuntime.getSnapshotHandler().handleSnapshotMessage((SnapshotMessage) msgIn);
+		
 		// Got a request; process requests synchronously
 		if (msgIn instanceof Request)
 			handleRequest((Request) msgIn);
@@ -26,6 +31,8 @@ public class MessageHandler {
 		if (msgIn instanceof Response)
 			handleResponse((Response) msgIn);
 	}
+	
+
 
 	/**
 	 * Handles a request in a synchronized fashion. Invokes the appropriate
