@@ -10,9 +10,11 @@ import core.node.NodeState;
 public class BranchState implements NodeState {
 
 	private HashMap<AccountId, Account> branchAccounts;
+	private boolean isInSnapshotState;
 
 	public BranchState() {
 		this.branchAccounts = new HashMap<AccountId, Account>();
+		this.isInSnapshotState = false;
 	}
 
 	private Account getAccountCreateIfNotExist(AccountId accountId) {
@@ -98,5 +100,18 @@ public class BranchState implements NodeState {
 		}
 
 		return false;
+	}
+	
+	public void snapshot(AccountId srcAccountId, Integer serialNumber) {
+		// if snapshot protocol has not been initiated
+			//initiate snapshot state if not initated
+			//start record any incoming requests
+			//make copy of branch state if this is initiation
+			// start waiting to receive snapshot requests from other branches
+		// else if snapshot has already been initiated
+			//check this src account id off if it's on incoming chanel of the branch state
+			//if all the channels in are done ( messages have been received), then we turn off snapshot state
+		
+	
 	}
 }

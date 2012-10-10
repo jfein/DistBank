@@ -42,4 +42,10 @@ public class BranchRequestHandler extends MessageHandler {
 		return new BranchResponse(balance, success);
 	}
 
+	public BranchResponse handleRequest(SnapshotRequest req) {
+		BranchState state = NodeRuntime.getState();
+		boolean success = state.snapshot(req.getSrcAccountId(), req.getSerialNumber());
+		double balance = state.getBalance(req.getSrcAccountId());
+		return new BranchResponse(balance, success);
+	}
 }
