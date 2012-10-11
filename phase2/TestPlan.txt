@@ -8,3 +8,5 @@ Therefore, in order to test transactions in the progress we did the following:
 
 
 Finally, to test multiple concurrent snapshots we did the following:
+
+Whenever we get a message that is not a plug message, then we always re-enter snapshot mode and wait for 
