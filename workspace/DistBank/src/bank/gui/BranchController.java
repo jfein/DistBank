@@ -215,6 +215,7 @@ public class BranchController extends NodeState implements Runnable {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO: make this better
+			branchView.getClearSnapShotPanel();
 			NodeRuntime.getSnapshotHandler().broadcastSnapshotMessage();
 
 			

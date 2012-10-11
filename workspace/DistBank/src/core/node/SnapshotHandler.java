@@ -125,7 +125,7 @@ public class SnapshotHandler {
 
 			// enabled, so plug the channel
 			if (enabled) {
-				System.out.println("GOT TAKE SNAPSHOT TO PLUG A CHANNEL IN");
+				System.out.println("GOT TAKE SNAPSHOT TO PLUG A CHANNEL IN from " + msgIn.getSenderId());
 
 				// no longer waiting for snapshot msg from that channelIn
 				waitingOn.remove(msgIn.getSenderId());
