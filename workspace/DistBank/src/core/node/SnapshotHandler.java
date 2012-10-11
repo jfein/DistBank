@@ -1,5 +1,6 @@
 package core.node;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,39 +15,62 @@ public class SnapshotHandler {
 	private boolean enabled;
 	private boolean takingSnapshot;
 
-	private Set<NodeId> waitingOn;
+	private List<NodeId> unpluggedChannelIns;
 	private NodeState copyNodeState;
 	private List<Message> incomingMessages;
 
 	public SnapshotHandler(boolean enabled) {
 		this.enabled = enabled;
 		takingSnapshot = false;
+		unpluggedChannelIns = new LinkedList<NodeId>();
+		incomingMessages = new LinkedList<Message>();
+		copyNodeState = null;
 	}
 
-	
 	/**
-	 * startTakingSnapshot:
-	 * 	Initiates the snapshot algorithm by initializing variables
-	 * 	that will be storing or recording state of this branch.
-	 * 	Makes a copy of the current branch state.
-	 * 	Initiates a list of incoming channels from which we will be
-	 * 	recording any incoming transactions.
-	 * 	Initiates an empty list that will store recorded messages
+	 * startTakingSnapshot: Initiates the snapshot algorithm by initializing
+	 * variables that will be storing or recording state of this branch. Makes a
+	 * copy of the current branch state. Initiates a list of incoming channels
+	 * from which we will be recording any incoming transactions. Initiates an
+	 * empty list that will store recorded messages
 	 */
-	public void startTakingSnapshot() {
+	public void enterSnapshotMode() {
 		System.out.println("\tcalled start snapshot");
 
-		incomingMessages = new LinkedList<Message>();
-		copyNodeState = NodeRuntime.getState().copy();
-		waitingOn = new HashSet<NodeId>(NodeRuntime.getNetworkInterface()
+		// Not currently taking a snapshot, so record snapshot
+		if (!takingSnapshot) {
+			incomingMessages.clear();
+			copyNodeState = null;
+			if (enabled)
+				copyNodeState = NodeRuntime.getState().copy();
+		}
+
+		unpluggedChannelIns.addAll(NodeRuntime.getNetworkInterface()
 				.whoNeighborsIn());
+
+		takingSnapshot = true;
+
+		// Broadcast a take snapshot message to plug all of our channel outs
+		broadcastSnapshotMessage();
 
 		System.out.println("\tcompleted start snapshot");
 	}
-	
+
+	public void leaveSnapshotMode() {
+		System.out.println("\tcalled end snapshot");
+
+		takingSnapshot = false;
+
+		if (copyNodeState != null) {
+			broadcastDisplaySnapshotRequest();
+		}
+
+		System.out.println("\tcompleted end snapshot");
+	}
+
 	/**
-	 * broadcastSnapshotMessage:
-	 *     Broadcast a SnapshotMessage to all outgoing channels.
+	 * broadcastSnapshotMessage: Broadcast a SnapshotMessage to all outgoing
+	 * channels.
 	 */
 
 	public void broadcastSnapshotMessage() {
@@ -66,11 +90,11 @@ public class SnapshotHandler {
 
 		System.out.println("\tcompleted broadcast snapshot msg");
 	}
-	
+
 	/**
-	 * broadcastDisplaySnapshotDisplay:
-	 * 	Broadcast a DisplaySnapshotRequest to all outgoing channels. It will
-	 *  only be proccessed by GUI nodes who can handle the DisplaySnapshotRequests.
+	 * broadcastDisplaySnapshotDisplay: Broadcast a DisplaySnapshotRequest to
+	 * all outgoing channels. It will only be proccessed by GUI nodes who can
+	 * handle the DisplaySnapshotRequests.
 	 */
 
 	public void broadcastDisplaySnapshotRequest() {
@@ -91,59 +115,54 @@ public class SnapshotHandler {
 
 		System.out.println("\tcompleted broadcast display snapshot req");
 	}
-	
+
 	/**
-	 * processMessage:
-	 * 	  If current node is enabled, meaning it is allowed to run the snapshot algorithm then:
-	 * 		   -If the current node is not in snapshot state, then initiate snapshot 
-	 *  	   -Then change the state of this node to snapshot state. 
-	 *         -Broadcast the snapshot messages to outgoing nodes in topology.
-	 *         -Then remove it from the channels into this branch that we are waiting on which will stop recording any 
-	 *         		transactions received from this branch.
-	 *    If current node is not enabled, we pass on the snapshot message by broadcasting, but we 
-	 *    do not record any state. This is used for GUI nodes.
+	 * processMessage: If current node is enabled, meaning it is allowed to run
+	 * the snapshot algorithm then: -If the current node is not in snapshot
+	 * state, then initiate snapshot -Then change the state of this node to
+	 * snapshot state. -Broadcast the snapshot messages to outgoing nodes in
+	 * topology. -Then remove it from the channels into this branch that we are
+	 * waiting on which will stop recording any transactions received from this
+	 * branch. If current node is not enabled, we pass on the snapshot message
+	 * by broadcasting, but we do not record any state. This is used for GUI
+	 * nodes.
+	 * 
 	 * @param msgIn
 	 */
 
 	public synchronized void processMessage(Message msgIn) {
 		// Snapshot message
 		if (msgIn instanceof SnapshotMessage) {
-			// node in snapshot mode
-			if (!takingSnapshot) {
-				System.out.println("GOT TAKE SNAPSHOT MESSAGE FOR FIRST TIME");
 
-				// enabled, so go to snapshot mode
-				if (enabled) {
-					startTakingSnapshot();
-					takingSnapshot = true;
-				}
-
-				// broadcast snapshot message regardless if enabled
-				// to plug all your channel outs
-				broadcastSnapshotMessage();
+			// Not a plug on the channelIn, so enter a new snapshot mode
+			if (!unpluggedChannelIns.contains(msgIn.getSenderId())) {
+				System.out.println("GOT TAKE NEW SNAPSHOT MESSAGE FROM "
+						+ msgIn.getSenderId());
+				enterSnapshotMode();
 			}
 
-			// enabled, so plug the channel
-			if (enabled) {
-				System.out.println("GOT TAKE SNAPSHOT TO PLUG A CHANNEL IN from " + msgIn.getSenderId());
+			// Plug the channel in that sent the message
+			System.out.println("PLUGGING A CHANNEL IN FROM "
+					+ msgIn.getSenderId());
+			unpluggedChannelIns.remove(msgIn.getSenderId());
 
-				// no longer waiting for snapshot msg from that channelIn
-				waitingOn.remove(msgIn.getSenderId());
-
-				// finished taking snapshot
-				if (waitingOn.isEmpty()) {
-					broadcastDisplaySnapshotRequest();
-					takingSnapshot = false;
-				}
+			// finished taking snapshot
+			if (unpluggedChannelIns.isEmpty()) {
+				leaveSnapshotMode();
+				System.out.println("---------------------------------\n\n");
 			}
 		}
 
-		// Regular message, record if enabled and in snapshot mode and the
-		// channel in isn't plugged
-		else if (enabled && takingSnapshot
-				&& waitingOn.contains(msgIn.getSenderId())) {
+		// Regular message
+		// record if in snapshot mode and the channel in isn't plugged
+		else if (takingSnapshot
+				&& unpluggedChannelIns.contains(msgIn.getSenderId())) {
 			System.out.println("RECORDING MESSAGE");
 			incomingMessages.add(msgIn);
 		}
+	}
+
+	public void initiateSnapshot() {
+		processMessage(new SnapshotMessage());
 	}
 }

@@ -46,7 +46,7 @@ public class BranchController extends NodeState implements Runnable {
 
 		branchView.setVisible(true);
 	}
-	
+
 	public BranchView getBranchView() {
 		return this.branchView;
 	}
@@ -215,54 +215,56 @@ public class BranchController extends NodeState implements Runnable {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO: make this better
-			branchView.getClearSnapShotPanel();
-			NodeRuntime.getSnapshotHandler().broadcastSnapshotMessage();
+			branchView.resetScrollPanel();
+			NodeRuntime.getSnapshotHandler().initiateSnapshot();
 
+			NodeRuntime.getSnapshotHandler().initiateSnapshot();
 			
+			NodeRuntime.getSnapshotHandler().initiateSnapshot();
 		}
 
 	}
-	
+
 	public void displaySnapshot(BranchState branchState, List<Message> messages) {
-		
+
 		JPanel leftPanel = branchView.getClearSnapShotPanel();
-		
-		// Create two scroll panes that will store the list of accounts 
+
+		// Create two scroll panes that will store the list of accounts
 		// transactions in progress.
 		JScrollPane scrollPanel = new JScrollPane(new JLabel("Accounts"));
-		JScrollPane transactionScrollPane = new JScrollPane(new JLabel("Transactions In Progress"));
-		scrollPanel.setPreferredSize(new Dimension(
-				GuiSpecs.GUI_SNAPSHOT_WIDTH,
-				GuiSpecs.GUI_FRAME_HEIGHT/2 - 50));
-		transactionScrollPane.setPreferredSize(new Dimension(
-				GuiSpecs.GUI_SNAPSHOT_WIDTH,
-				GuiSpecs.GUI_FRAME_HEIGHT/2 - 50));
+		JScrollPane transactionScrollPane = new JScrollPane(new JLabel(
+				"Transactions In Progress"));
+		scrollPanel.setPreferredSize(new Dimension(GuiSpecs.GUI_SNAPSHOT_WIDTH,
+				GuiSpecs.GUI_FRAME_HEIGHT / 2 - 50));
+		transactionScrollPane
+				.setPreferredSize(new Dimension(GuiSpecs.GUI_SNAPSHOT_WIDTH,
+						GuiSpecs.GUI_FRAME_HEIGHT / 2 - 50));
 
-		
-	    // Get list of accounts on this branch and add to pane
+		// Get list of accounts on this branch and add to pane
 		DefaultListModel listModel = new DefaultListModel();
 		listModel.addElement("Accounts On This Branch");
 		for (Account account : branchState.getAccounts().values()) {
 			// If account balance is non-zero
-			if(!(account.getAccountBalance().equals(0.0)))
-				listModel.addElement(account.getAccountId() + " : " + account.getAccountBalance());
+			if (!(account.getAccountBalance().equals(0.0)))
+				listModel.addElement(account.getAccountId() + " : "
+						+ account.getAccountBalance());
 		}
 		JList accounts = new JList(listModel);
 		scrollPanel.getViewport().add(accounts);
-		
+
 		// Get list of transactions and add to pane
 		DefaultListModel transactionsListModel = new DefaultListModel();
 		transactionsListModel.addElement("Transactions In Progress");
 		for (Message msg : messages) {
-			transactionsListModel.addElement("Source: " + msg.getSenderId() + " did " + msg.getClass());
+			transactionsListModel.addElement("Source: " + msg.getSenderId()
+					+ " did " + msg.getClass());
 		}
 		JList transactions = new JList(transactionsListModel);
 		transactionScrollPane.getViewport().add(transactions);
-		
-		//Create a clear button
+
+		// Create a clear button
 		JButton clear = new JButton("Clear");
-		clear.setPreferredSize(new Dimension(GuiSpecs.GUI_SNAPSHOT_WIDTH,
-				30));
+		clear.setPreferredSize(new Dimension(GuiSpecs.GUI_SNAPSHOT_WIDTH, 30));
 		clear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				SwingUtilities.invokeLater(new Runnable() {
