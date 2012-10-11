@@ -23,6 +23,13 @@ package bank
 package bank.gui
 	BranchMain.java
 		This is the main file that sets up the GUI layout and GUI interactions between the user. This sets up the appropriate textfields that are needed from the user including the serial number, the source account number, the destination account number, and the amount.  Then the GUI sets up the buttons the user can click to withdraw, deposit, transfer, and query the balance of their account. There are corresponding action methods to the buttons which will contact their counterparts in the BranchClient.java file described above.
+	BranchController.java
+		Controller part of of the MVC model for GUI design. Does the functionality that is requested through user interaction with the BranchView or the GUI. Includes classes declaring listeners for Deposit, Withdraw, Query, Transfer, and TakeSnapshot transactions and appropriate processing for such to display on the GUI.
+	BranchView.java
+		Class that sets up the buttons,textfields, and panes of the GUI that is displayed to the user and with which the user interacts.
+	GuiSpecs.java
+		Class containing static final variables that define GUI specifications.
+
 
 package bank.main
 	BranchGuiRunner.java
@@ -43,30 +50,40 @@ package bank.messages
 		This represents the request that will be generated when the user presses "Transfer" button on the GUI Panel. This object stores the amount and destination account number which is needed additional to the source account number and serial number in order to complete the transaction. This request objects helps the BranchServerHandler distinguish which "handle" method to call.
 	WithdrawRequest.java
 		This represents the request that will be generated when the user presses "Withdraw" button on the GUI Panel. This object stores the amount alongside the account number and serial number. This request objects helps the BranchServerHandler distinguish which "handle" method to call.
-		
-package core.network.client
+	
+
+package core.network
 	Client.java
 		An abstract class that all client APIs should extend. Provides one function called "exec" that other client API functions can call to send a request message to a destination node and return the response message. If there are any network failures along the way, will return Null.
-
-package core.network.server
-	Server.java
-		A single threaded server that is started in a ServerNodeRuntime. Takes in a server handler to process the incoming request messages and produce a response message. A new socket is used for each request/response pair. If anything goes wrong when processing the message, including topology failures, the server will close the socket and continue to accept another connection. If everything is OK, the client will close the socket.
-	ServerHandler.java
-		A class to handle incoming request messages and return a response. Is specific to the application. Uses the generic handle() method to use reflections to route the messages to the appropriate handle() method. A handle() method is determined by the kind of message it takes in. See BranchServerHandler.java for a specific example.
-
-package core.network.common
+	MessageHandler.java
+		Handles messages received by a node. Handles requests, responses, and snapshot messages appropriately. Handles 
+	MessageListener.java
+		A thread that runs continuously at a source node obtaining incoming messages, and sending them off to a message handler to process the message.
 	NetworkInterface.java
 		Wrapper class to send and receive messages on the network. When doing a send, checks through the topology that the sending node has a channel to the destination. The functions are synchronized, so no two network operations can occur simultaneously. 
 	Topology.java
 		Class to hold topology and node mapping information to be retrieved statically from anywhere in the code. Parses the two files "topology_file.txt" and "node_mapping.txt". Provides functions to retrieve a host:port from a NodeId and to check if the current node can send or receive from another NodeId.
+	
+		
+package core.network.messages
+	DisplaySnapshotRequest.java
+		 This message is sent from a branch server to a gui client once a snapshot algorithm is finished. This message includes the local branch state inclusive of the branch state taken at the time of initiation of snapshot and all the transactions in progress that have occurred after the initiation of snapshot but before the snapshot ended.
+ 
+	InitConnMessage.java
 	Message.java
 		A message that can be sent from a source node to a destination node. Includes the sender node's ID by default.
-		
+	Request.java
+		An abstract class that represents a request that can be sent in client-server models from client, generally defined, to server, generally defined. 
+	Response.java
+		An abstract class that represents a response that can be sent in a client-server model from server to client who sent a request, as a response to the request.
+	SnapshotMessage.java
+		 This message is sent between branch servers that either initiates a snapshot at the receiving branch or plugs a channel in for that branch on which the receiving branch stops recording any transactions received from the sending branch
+
 package core.node
 	NodeRuntime.java
 		The static runtime for a node on the network. Has an initialize function that sets the global static NodeId and NodeState for the node running on the JVM. Thus, the NodeId and NodeState can be accessed statically from anywhere in the program.
-	ServerNodeRuntime.java
-		Does the same as NodeRuntime except also starts up a server to run on the given 
+	SnapshotHandler.java
+		
 	NodeId.java
 		General ID to identify a node on the network. A node corresponds to a single JVM. The ID is in the form of an integer.
 	NodeState.java
