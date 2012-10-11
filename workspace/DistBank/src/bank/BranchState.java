@@ -102,6 +102,10 @@ public class BranchState extends NodeState {
 
 		return false;
 	}
+	
+	public HashMap<AccountId, Account> getAccounts() {
+		return this.branchAccounts;
+	}
 
 	@Override
 	public String toString() {

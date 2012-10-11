@@ -4,20 +4,28 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import core.network.messages.Message;
 import core.node.NodeRuntime;
 import core.node.NodeState;
 
+import bank.Account;
 import bank.AccountId;
 import bank.BranchClient;
+import bank.BranchState;
 import bank.messages.BranchResponse;
 
 public class BranchController extends NodeState implements Runnable {
@@ -212,33 +220,63 @@ public class BranchController extends NodeState implements Runnable {
 			// TODO: make this better
 			NodeRuntime.getSnapshotHandler().broadcastSnapshotMessage();
 
-			JPanel leftPanel = branchView.getClearSnapShotPanel();
-			JScrollPane scrollPanel = new JScrollPane();
-			scrollPanel.setPreferredSize(new Dimension(
-					GuiSpecs.GUI_SNAPSHOT_WIDTH,
-					GuiSpecs.GUI_FRAME_HEIGHT - 100));
-
-			JButton clear = new JButton("Clear");
-			clear.setPreferredSize(new Dimension(GuiSpecs.GUI_SNAPSHOT_WIDTH,
-					30));
-
-			clear.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							branchView.resetScrollPanel();
-						}
-
-					});
-				}
-			});
-
-			leftPanel.add(clear, BorderLayout.SOUTH);
-			leftPanel.add(scrollPanel, BorderLayout.CENTER);
-			branchView.clearAllTextFields();
-			leftPanel.revalidate();
+			
 		}
 
+	}
+	
+	public void displaySnapshot(BranchState branchState, List<Message> messages) {
+		JPanel leftPanel = branchView.getClearSnapShotPanel();
+		JLabel title = new JLabel("Accounts");
+		JLabel secondTitle = new JLabel("Transactions In Progress");
+		JScrollPane scrollPanel = new JScrollPane(title);
+		JScrollPane transactionScrollPane = new JScrollPane(secondTitle);
+		scrollPanel.setPreferredSize(new Dimension(
+				GuiSpecs.GUI_SNAPSHOT_WIDTH,
+				GuiSpecs.GUI_FRAME_HEIGHT/2 - 50));
+		transactionScrollPane.setPreferredSize(new Dimension(
+				GuiSpecs.GUI_SNAPSHOT_WIDTH,
+				GuiSpecs.GUI_FRAME_HEIGHT/2 - 50));
+
+		JButton clear = new JButton("Clear");
+		clear.setPreferredSize(new Dimension(GuiSpecs.GUI_SNAPSHOT_WIDTH,
+				30));
+	
+		DefaultListModel listModel = new DefaultListModel();
+		listModel.addElement("Accounts On This Branch");
+		for (Map.Entry<AccountId, Account> entry : branchState.getAccounts().entrySet()) {
+			AccountId key = entry.getKey();
+			Account value = entry.getValue();
+			listModel.addElement(key + " : " + value.getAccountBalance());
+		}
+		
+		JList accounts = new JList(listModel);
+		scrollPanel.getViewport().add(accounts);
+		
+		DefaultListModel transactionsListModel = new DefaultListModel();
+		transactionsListModel.addElement("Transactions In Progress");
+		for (Message msg : messages) {
+			listModel.addElement("Source: " + msg.getSenderId() + " did " + msg.getClass());
+		}
+		JList transactions = new JList(transactionsListModel);
+		transactionScrollPane.getViewport().add(transactions);
+		
+		clear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						branchView.resetScrollPanel();
+					}
+
+				});
+			}
+		});
+
+		leftPanel.add(clear, BorderLayout.SOUTH);
+		leftPanel.add(transactionScrollPane, BorderLayout.NORTH);
+		leftPanel.add(scrollPanel, BorderLayout.CENTER);
+		branchView.clearAllTextFields();
+		leftPanel.revalidate();
 	}
 
 	public boolean checkResponse(BranchResponse response) {

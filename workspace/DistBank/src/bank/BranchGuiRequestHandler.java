@@ -18,6 +18,7 @@ public class BranchGuiRequestHandler extends MessageHandler {
 
 		// TODO: call functions on controller to display the snapshot stuff
 		System.out.println("GUI GOT A SNAPSHOT TO DISPLAY");
+		controller.displaySnapshot(snapshotNodeState, snapshotIncomingMessages);
 
 		System.out.println(snapshotNodeState);
 	}
