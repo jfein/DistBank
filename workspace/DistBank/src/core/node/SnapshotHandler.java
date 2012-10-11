@@ -1,13 +1,10 @@
-package core.network;
+package core.node;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import core.node.NodeId;
-import core.node.NodeRuntime;
-import core.node.NodeState;
 import core.network.messages.DisplaySnapshotRequest;
 import core.network.messages.Message;
 import core.network.messages.SnapshotMessage;
@@ -15,7 +12,7 @@ import core.network.messages.SnapshotMessage;
 public class SnapshotHandler {
 
 	private boolean enabled;
-	private boolean isInSnapshotMode;
+	private boolean takingSnapshot;
 
 	private Set<NodeId> waitingOn;
 	private NodeState copyNodeState;
@@ -23,17 +20,16 @@ public class SnapshotHandler {
 
 	public SnapshotHandler(boolean enabled) {
 		this.enabled = enabled;
-		isInSnapshotMode = false;
+		takingSnapshot = false;
 	}
 
-	public void enterSnapshotMode() {
+	public void startTakingSnapshot() {
 		System.out.println("\tcalled start snapshot");
 
 		incomingMessages = new LinkedList<Message>();
 		copyNodeState = NodeRuntime.getState().copy();
 		waitingOn = new HashSet<NodeId>(NodeRuntime.getNetworkInterface()
 				.whoNeighborsIn());
-		isInSnapshotMode = true;
 
 		System.out.println("\tcompleted start snapshot");
 	}
@@ -56,8 +52,8 @@ public class SnapshotHandler {
 		System.out.println("\tcompleted broadcast snapshot msg");
 	}
 
-	public void leaveSnapshotMode() {
-		System.out.println("\tcalled finish snapshot");
+	public void broadcastDisplaySnapshotRequest() {
+		System.out.println("\tcalled broadcast display snapshot req");
 
 		// Aggregate the snapshot information into a message
 		DisplaySnapshotRequest msg = new DisplaySnapshotRequest(copyNodeState,
@@ -72,22 +68,24 @@ public class SnapshotHandler {
 			}
 		}
 
-		// End snapshot state
-		isInSnapshotMode = false;
-
-		System.out.println("\tcompleted finish snapshot");
+		System.out.println("\tcompleted broadcast display snapshot req");
 	}
 
 	public synchronized void processMessage(Message msgIn) {
 		// Snapshot message
 		if (msgIn instanceof SnapshotMessage) {
 			// node in snapshot mode
-			if (!isInSnapshotMode) {
+			if (!takingSnapshot) {
 				System.out.println("GOT TAKE SNAPSHOT MESSAGE FOR FIRST TIME");
-				// enabled, so go to snapshot mode
-				if (enabled)
-					enterSnapshotMode();
 
+				// enabled, so go to snapshot mode
+				if (enabled) {
+					startTakingSnapshot();
+					takingSnapshot = true;
+				}
+
+				// broadcast snapshot message regardless if enabled
+				// to plug all your channel outs
 				broadcastSnapshotMessage();
 			}
 
@@ -98,19 +96,20 @@ public class SnapshotHandler {
 				// no longer waiting for snapshot msg from that channelIn
 				waitingOn.remove(msgIn.getSenderId());
 
-				// finished with snapshot
-				if (waitingOn.isEmpty())
-					leaveSnapshotMode();
+				// finished taking snapshot
+				if (waitingOn.isEmpty()) {
+					broadcastDisplaySnapshotRequest();
+					takingSnapshot = false;
+				}
 			}
 		}
-		// Other message
-		else {
-			// enabled in snapshot mode and is a message we need to record
-			if (enabled && isInSnapshotMode
-					&& waitingOn.contains(msgIn.getSenderId())) {
-				System.out.println("RECORDING MESSAGE");
-				incomingMessages.add(msgIn);
-			}
+
+		// Regular message, record if enabled and in snapshot mode and the
+		// channel in isn't plugged
+		else if (enabled && takingSnapshot
+				&& waitingOn.contains(msgIn.getSenderId())) {
+			System.out.println("RECORDING MESSAGE");
+			incomingMessages.add(msgIn);
 		}
 	}
 }

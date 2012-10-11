@@ -2,7 +2,6 @@ package core.node;
 
 import core.network.NetworkInterface;
 import core.network.MessageHandler;
-import core.network.SnapshotHandler;
 
 public class NodeRuntime implements Runnable {
 
@@ -41,9 +40,9 @@ public class NodeRuntime implements Runnable {
 			NodeRuntime.messageHandler = new MessageHandler();
 		else
 			NodeRuntime.messageHandler = handler;
-		NodeRuntime.snapshotHandler = new SnapshotHandler(canTakeSnapshot);
 		NodeRuntime.id = id;
 		NodeRuntime.state = state;
+		NodeRuntime.snapshotHandler = new SnapshotHandler(canTakeSnapshot);
 		NodeRuntime.networkInterface = new NetworkInterface(NODE_MAPPING_FILE,
 				TOPOLOGY_FILE);
 	}
@@ -54,7 +53,7 @@ public class NodeRuntime implements Runnable {
 
 	public void run() {
 		System.out.println("NodeRuntime starting node ID " + NodeRuntime.id
-				+ " and  to listen on address "
+				+ " to listen on address "
 				+ NodeRuntime.networkInterface.getNodeAddress(id));
 
 		// Run network to take in new connections

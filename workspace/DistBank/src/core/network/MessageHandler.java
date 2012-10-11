@@ -19,8 +19,7 @@ public class MessageHandler {
 	 */
 	public void handleMessage(Message msgIn) {
 		// Route all messages to the snapshot handler
-		if (NodeRuntime.getSnapshotHandler() != null)
-			NodeRuntime.getSnapshotHandler().processMessage(msgIn);
+		NodeRuntime.getSnapshotHandler().processMessage(msgIn);
 
 		// Got a request; process requests synchronously
 		if (msgIn instanceof Request)
@@ -50,7 +49,8 @@ public class MessageHandler {
 						resp);
 		} catch (Exception e) {
 			// e.printStackTrace();
-			System.out.println("MESSAGE NOT SUPPORTED");
+			System.out.println("WARNING: RECEIVED UNSUPPOSRTED REQUEST: "
+					+ m.getClass().getCanonicalName());
 		}
 	}
 

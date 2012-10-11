@@ -22,8 +22,8 @@ public class BranchGuiRunner {
 		new Thread(new NodeRuntime(id, branchController,
 				new BranchGuiRequestHandler(), false)).start();
 
-		branchController.run();
-
 		System.out.println("BankGui ATM " + id + " running.");
+
+		branchController.run();
 	}
 }
