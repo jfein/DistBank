@@ -208,13 +208,6 @@ public class BranchController extends NodeState implements Runnable {
 	}
 
 	class SnapShotListener implements ActionListener {
-		// TODO CHANGE THIS
-
-		// AccountId accountId = new
-		// AccountId(this.srcAccountNumberField.getText());
-		// BranchResponse response =
-		// BranchClient.takeSnapshot(accountId,Integer.parseInt(this.serialNumberField.getText()));
-		// clearAllTextFields();
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO: make this better
@@ -226,11 +219,13 @@ public class BranchController extends NodeState implements Runnable {
 	}
 	
 	public void displaySnapshot(BranchState branchState, List<Message> messages) {
+		
 		JPanel leftPanel = branchView.getClearSnapShotPanel();
-		JLabel title = new JLabel("Accounts");
-		JLabel secondTitle = new JLabel("Transactions In Progress");
-		JScrollPane scrollPanel = new JScrollPane(title);
-		JScrollPane transactionScrollPane = new JScrollPane(secondTitle);
+		
+		// Create two scroll panes that will store the list of accounts 
+		// transactions in progress.
+		JScrollPane scrollPanel = new JScrollPane(new JLabel("Accounts"));
+		JScrollPane transactionScrollPane = new JScrollPane(new JLabel("Transactions In Progress"));
 		scrollPanel.setPreferredSize(new Dimension(
 				GuiSpecs.GUI_SNAPSHOT_WIDTH,
 				GuiSpecs.GUI_FRAME_HEIGHT/2 - 50));
@@ -238,21 +233,19 @@ public class BranchController extends NodeState implements Runnable {
 				GuiSpecs.GUI_SNAPSHOT_WIDTH,
 				GuiSpecs.GUI_FRAME_HEIGHT/2 - 50));
 
-		JButton clear = new JButton("Clear");
-		clear.setPreferredSize(new Dimension(GuiSpecs.GUI_SNAPSHOT_WIDTH,
-				30));
-	
+		
+	    // Get list of accounts on this branch and add to pane
 		DefaultListModel listModel = new DefaultListModel();
 		listModel.addElement("Accounts On This Branch");
-		for (Map.Entry<AccountId, Account> entry : branchState.getAccounts().entrySet()) {
-			AccountId key = entry.getKey();
-			Account value = entry.getValue();
-			listModel.addElement(key + " : " + value.getAccountBalance());
+		for (Account account : branchState.getAccounts().values()) {
+			// If account balance is non-zero
+			if(!(account.getAccountBalance().equals(0.0)))
+				listModel.addElement(account.getAccountId() + " : " + account.getAccountBalance());
 		}
-		
 		JList accounts = new JList(listModel);
 		scrollPanel.getViewport().add(accounts);
 		
+		// Get list of transactions and add to pane
 		DefaultListModel transactionsListModel = new DefaultListModel();
 		transactionsListModel.addElement("Transactions In Progress");
 		for (Message msg : messages) {
@@ -261,6 +254,10 @@ public class BranchController extends NodeState implements Runnable {
 		JList transactions = new JList(transactionsListModel);
 		transactionScrollPane.getViewport().add(transactions);
 		
+		//Create a clear button
+		JButton clear = new JButton("Clear");
+		clear.setPreferredSize(new Dimension(GuiSpecs.GUI_SNAPSHOT_WIDTH,
+				30));
 		clear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				SwingUtilities.invokeLater(new Runnable() {

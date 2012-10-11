@@ -1,6 +1,14 @@
 package core.network.messages;
 
 import java.util.List;
+/**
+ * DisplaySnapshotRequest
+ * This message is sent from a branch server to a gui client
+ * once a snapshot algorithm is finished. This message includes the 
+ * local branch state inclusive of the branch state taken at the time
+ * of initation of snapshot and all the transactions in progress that have
+ * occured after the initation of snapshot but before the snapshot ended.
+ */
 
 import core.node.NodeState;
 

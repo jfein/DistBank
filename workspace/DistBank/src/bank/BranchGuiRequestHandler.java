@@ -13,14 +13,11 @@ public class BranchGuiRequestHandler extends MessageHandler {
 	public void handleRequest(DisplaySnapshotRequest snapshot) {
 		BranchState snapshotNodeState = snapshot.getNodeState();
 		List<Message> snapshotIncomingMessages = snapshot.getIncomingMessages();
-
 		BranchController controller = NodeRuntime.getState();
-
-		// TODO: call functions on controller to display the snapshot stuff
-		System.out.println("GUI GOT A SNAPSHOT TO DISPLAY");
+		
+		//Display snapshot information on GUI for this branch
 		controller.displaySnapshot(snapshotNodeState, snapshotIncomingMessages);
-
-		System.out.println(snapshotNodeState);
+		System.out.println(snapshotNodeState); //TODO remove
 	}
 
 }

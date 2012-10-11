@@ -23,6 +23,16 @@ public class SnapshotHandler {
 		takingSnapshot = false;
 	}
 
+	
+	/**
+	 * startTakingSnapshot:
+	 * 	Initiates the snapshot algorithm by initializing variables
+	 * 	that will be storing or recording state of this branch.
+	 * 	Makes a copy of the current branch state.
+	 * 	Initiates a list of incoming channels from which we will be
+	 * 	recording any incoming transactions.
+	 * 	Initiates an empty list that will store recorded messages
+	 */
 	public void startTakingSnapshot() {
 		System.out.println("\tcalled start snapshot");
 
@@ -33,6 +43,11 @@ public class SnapshotHandler {
 
 		System.out.println("\tcompleted start snapshot");
 	}
+	
+	/**
+	 * broadcastSnapshotMessage:
+	 *     Broadcast a SnapshotMessage to all outgoing channels.
+	 */
 
 	public void broadcastSnapshotMessage() {
 		System.out.println("\tcalled broadcast snapshot msg");
@@ -51,6 +66,12 @@ public class SnapshotHandler {
 
 		System.out.println("\tcompleted broadcast snapshot msg");
 	}
+	
+	/**
+	 * broadcastDisplaySnapshotDisplay:
+	 * 	Broadcast a DisplaySnapshotRequest to all outgoing channels. It will
+	 *  only be proccessed by GUI nodes who can handle the DisplaySnapshotRequests.
+	 */
 
 	public void broadcastDisplaySnapshotRequest() {
 		System.out.println("\tcalled broadcast display snapshot req");
@@ -70,6 +91,19 @@ public class SnapshotHandler {
 
 		System.out.println("\tcompleted broadcast display snapshot req");
 	}
+	
+	/**
+	 * processMessage:
+	 * 	  If current node is enabled, meaning it is allowed to run the snapshot algorithm then:
+	 * 		   -If the current node is not in snapshot state, then initiate snapshot 
+	 *  	   -Then change the state of this node to snapshot state. 
+	 *         -Broadcast the snapshot messages to outgoing nodes in topology.
+	 *         -Then remove it from the channels into this branch that we are waiting on which will stop recording any 
+	 *         		transactions received from this branch.
+	 *    If current node is not enabled, we pass on the snapshot message by broadcasting, but we 
+	 *    do not record any state. This is used for GUI nodes.
+	 * @param msgIn
+	 */
 
 	public synchronized void processMessage(Message msgIn) {
 		// Snapshot message
