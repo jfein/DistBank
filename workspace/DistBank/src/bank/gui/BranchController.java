@@ -13,24 +13,32 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import core.node.NodeRuntime;
+import core.node.NodeState;
+
 import bank.AccountId;
 import bank.BranchClient;
 import bank.messages.BranchResponse;
 
-public class BranchController {
-	
+public class BranchController extends NodeState implements Runnable {
+
+	private static final long serialVersionUID = -3098432013575721538L;
+
 	private BranchView branchView;
-	
-	public BranchController(BranchView view) {
-		this.branchView = view;
-		
+
+	@Override
+	public void run() {
+		this.branchView = new BranchView();
+
 		branchView.addDepositListener(new DepositListener());
 		branchView.addWithdrawListener(new WithdrawListener());
 		branchView.addQueryListener(new QueryListener());
 		branchView.addTransferListener(new TransferListener());
 		branchView.addTakeSnapShotListener(new SnapShotListener());
+
+		branchView.setVisible(true);
 	}
-	
+
 	public boolean isStringNumeric(String s) {
 		Pattern doublePattern = Pattern.compile("-?\\d+(\\.\\d*)?");
 		if (!doublePattern.matcher(s).matches()) {
@@ -50,7 +58,8 @@ public class BranchController {
 
 	public boolean isValidAccountNumber(String accountNumber) {
 		if (accountNumber.equals("")) {
-			branchView.popUpErrorMessage("Please fill out the required fields.");
+			branchView
+					.popUpErrorMessage("Please fill out the required fields.");
 		} else if (isStringNumeric(accountNumber)) {
 			if (accountNumber.length() == 8) {
 				String[] tokens = accountNumber.split("\\.");
@@ -59,11 +68,11 @@ public class BranchController {
 				}
 
 			}
-			branchView.popUpErrorMessage("Please ensure that account format is: bb.aaaa in numeric format. Ex:00.11111");
+			branchView
+					.popUpErrorMessage("Please ensure that account format is: bb.aaaa in numeric format. Ex:00.11111");
 		}
 		return false;
 	}
-	
 
 	public boolean isValidAmount(String amount) {
 		if (amount.equals("")) {
@@ -73,24 +82,26 @@ public class BranchController {
 			return false;
 		} else {
 			if (Double.parseDouble(amount) < 0.0) {
-				branchView.popUpErrorMessage("Please enter a positive value for the amount.");
+				branchView
+						.popUpErrorMessage("Please enter a positive value for the amount.");
 				return false;
 			}
 		}
 		return true;
 	}
 
-	
 	class DepositListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			// TODO Auto-generated method stub
-			
-			if(isValidAccountNumber(branchView.getUISrcAccount()) && 
-					isValidSerialNumber() && isValidAmount(branchView.getUIAmount())){
-			    branchView.enableAllButtons(false);
-				AccountId accountId = new AccountId(branchView.getUISrcAccount());
+
+			if (isValidAccountNumber(branchView.getUISrcAccount())
+					&& isValidSerialNumber()
+					&& isValidAmount(branchView.getUIAmount())) {
+				branchView.enableAllButtons(false);
+				AccountId accountId = new AccountId(
+						branchView.getUISrcAccount());
 				BranchResponse response = BranchClient.deposit(accountId,
 						Double.parseDouble(branchView.getUIAmount()),
 						Integer.parseInt(branchView.getUISerial()));
@@ -104,15 +115,17 @@ public class BranchController {
 			}
 		}
 	}
-	
-    class WithdrawListener implements ActionListener {
+
+	class WithdrawListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (isValidAccountNumber(branchView.getUISrcAccount()) && 
-					isValidSerialNumber() && isValidAmount(branchView.getUIAmount())) {
+			if (isValidAccountNumber(branchView.getUISrcAccount())
+					&& isValidSerialNumber()
+					&& isValidAmount(branchView.getUIAmount())) {
 				branchView.enableAllButtons(false);
-				AccountId accountId = new AccountId(branchView.getUISrcAccount());
+				AccountId accountId = new AccountId(
+						branchView.getUISrcAccount());
 				BranchResponse response = BranchClient.withdraw(accountId,
 						Double.parseDouble(branchView.getUIAmount()),
 						Integer.parseInt(branchView.getUISerial()));
@@ -126,26 +139,29 @@ public class BranchController {
 			}
 		}
 	}
-    
-    class TransferListener implements ActionListener  {
+
+	class TransferListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			
-			if(isValidAccountNumber(branchView.getUISrcAccount()) &&
-					isValidAccountNumber(branchView.getUIDestAccount()) &&
-					isValidSerialNumber() && isValidAmount(branchView.getUIAmount())) {
+
+			if (isValidAccountNumber(branchView.getUISrcAccount())
+					&& isValidAccountNumber(branchView.getUIDestAccount())
+					&& isValidSerialNumber()
+					&& isValidAmount(branchView.getUIAmount())) {
 				// TODO Auto-generated method stub
 				branchView.enableAllButtons(false);
-				AccountId srcAccountId = new AccountId(branchView.getUISrcAccount());
-				AccountId destAccountId = new AccountId(branchView.getUIDestAccount());
+				AccountId srcAccountId = new AccountId(
+						branchView.getUISrcAccount());
+				AccountId destAccountId = new AccountId(
+						branchView.getUIDestAccount());
 				if (branchView.getUIAmount().equals("")) {
 					JOptionPane.showMessageDialog(new JFrame(),
 							"Please enter an amount.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				} else {
-					BranchResponse response = BranchClient.transfer(srcAccountId,
-							destAccountId,
+					BranchResponse response = BranchClient.transfer(
+							srcAccountId, destAccountId,
 							Double.parseDouble(branchView.getUIAmount()),
 							Integer.parseInt(branchView.getUISerial()));
 					if (checkResponse(response)) {
@@ -159,16 +175,17 @@ public class BranchController {
 			}
 		}
 	}
-    
-    class QueryListener implements ActionListener {
+
+	class QueryListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			
-			if(isValidAccountNumber(branchView.getUISrcAccount())
-								&& isValidSerialNumber()) {
+
+			if (isValidAccountNumber(branchView.getUISrcAccount())
+					&& isValidSerialNumber()) {
 				branchView.enableAllButtons(false);
-				AccountId accountId = new AccountId(branchView.getUISrcAccount());
+				AccountId accountId = new AccountId(
+						branchView.getUISrcAccount());
 				BranchResponse response = BranchClient.query(accountId,
 						Integer.parseInt(branchView.getUISerial()));
 				if (checkResponse(response)) {
@@ -181,55 +198,56 @@ public class BranchController {
 			}
 		}
 	}
-    
-    class SnapShotListener implements ActionListener {
-    	// TODO CHANGE THIS
-    	
 
-    		// AccountId accountId = new
-    		// AccountId(this.srcAccountNumberField.getText());
-    		// BranchResponse response =
-    		// BranchClient.takeSnapshot(accountId,Integer.parseInt(this.serialNumberField.getText()));
-    		// clearAllTextFields();
+	class SnapShotListener implements ActionListener {
+		// TODO CHANGE THIS
+
+		// AccountId accountId = new
+		// AccountId(this.srcAccountNumberField.getText());
+		// BranchResponse response =
+		// BranchClient.takeSnapshot(accountId,Integer.parseInt(this.serialNumberField.getText()));
+		// clearAllTextFields();
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(isValidAccountNumber(branchView.getUISrcAccount())
-								&& isValidSerialNumber()) {
-				JPanel leftPanel = branchView.getClearSnapShotPanel();
-				JScrollPane scrollPanel = new JScrollPane();
-				scrollPanel.setPreferredSize(new Dimension(GuiSpecs.GUI_SNAPSHOT_WIDTH,
-						GuiSpecs.GUI_FRAME_HEIGHT - 100));
-	
-				JButton clear = new JButton("Clear");
-				clear.setPreferredSize(new Dimension(GuiSpecs.GUI_SNAPSHOT_WIDTH, 30));
-	
-				clear.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent arg0) {
-						SwingUtilities.invokeLater(new Runnable() {
-							public void run() {
-								branchView.resetScrollPanel();
-							}
-	
-						});
-					}
-				});
-	
-				leftPanel.add(clear, BorderLayout.SOUTH);
-				leftPanel.add(scrollPanel, BorderLayout.CENTER);
-				branchView.clearAllTextFields();
-				leftPanel.revalidate();
-			}
-			
+			// TODO: make this better
+			NodeRuntime.getSnapshotHandler().broadcastSnapshotMessage();
+
+			JPanel leftPanel = branchView.getClearSnapShotPanel();
+			JScrollPane scrollPanel = new JScrollPane();
+			scrollPanel.setPreferredSize(new Dimension(
+					GuiSpecs.GUI_SNAPSHOT_WIDTH,
+					GuiSpecs.GUI_FRAME_HEIGHT - 100));
+
+			JButton clear = new JButton("Clear");
+			clear.setPreferredSize(new Dimension(GuiSpecs.GUI_SNAPSHOT_WIDTH,
+					30));
+
+			clear.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							branchView.resetScrollPanel();
+						}
+
+					});
+				}
+			});
+
+			leftPanel.add(clear, BorderLayout.SOUTH);
+			leftPanel.add(scrollPanel, BorderLayout.CENTER);
+			branchView.clearAllTextFields();
+			leftPanel.revalidate();
 		}
+
 	}
-    
-	
+
 	public boolean checkResponse(BranchResponse response) {
 		if (response == null) {
 			branchView.popUpErrorMessage("Network Failure.");
 			return false;
 		} else if (!response.wasSuccessfull()) {
-			branchView.popUpErrorMessage("Your request was unsuccessfull. Please try again. Check your serial number.");
+			branchView
+					.popUpErrorMessage("Your request was unsuccessfull. Please try again. Check your serial number.");
 			branchView.setBalanceLabel("Your Account ["
 					+ branchView.getUISrcAccount() + "] Balance: "
 					+ String.valueOf(response.getAmt()));

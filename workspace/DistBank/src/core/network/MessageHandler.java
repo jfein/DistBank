@@ -3,7 +3,6 @@ package core.network;
 import core.network.messages.Message;
 import core.network.messages.Request;
 import core.network.messages.Response;
-import core.network.messages.SnapshotMessage;
 import core.node.NodeRuntime;
 
 public class MessageHandler {
@@ -19,11 +18,10 @@ public class MessageHandler {
 	 * @param msgIn
 	 */
 	public void handleMessage(Message msgIn) {
-		//Got a snapshot message
-		if (msgIn instanceof SnapshotMessage)
-			NodeRuntime.getSnapshotHandler().handleSnapshotMessage((SnapshotMessage) msgIn);
-		
-		//TODO: process recording of messages here? have to access the snapshot state object in runtime
+		// Route all messages to the snapshot handler
+		if (NodeRuntime.getSnapshotHandler() != null)
+			NodeRuntime.getSnapshotHandler().processMessage(msgIn);
+
 		// Got a request; process requests synchronously
 		if (msgIn instanceof Request)
 			handleRequest((Request) msgIn);
@@ -32,8 +30,6 @@ public class MessageHandler {
 		if (msgIn instanceof Response)
 			handleResponse((Response) msgIn);
 	}
-	
-
 
 	/**
 	 * Handles a request in a synchronized fashion. Invokes the appropriate
@@ -53,7 +49,8 @@ public class MessageHandler {
 				NodeRuntime.getNetworkInterface().sendMessage(m.getSenderId(),
 						resp);
 		} catch (Exception e) {
-			e.printStackTrace();
+			// e.printStackTrace();
+			System.out.println("MESSAGE NOT SUPPORTED");
 		}
 	}
 

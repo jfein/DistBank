@@ -35,6 +35,10 @@ public class NetworkInterface implements Runnable {
 		return topology.getChannelsOut();
 	}
 
+	public Set<NodeId> whoNeighborsIn() {
+		return topology.getChannelsIn();
+	}
+
 	public boolean canSendTo(NodeId id) {
 		return topology.getChannelsOut().contains(id);
 	}
@@ -90,11 +94,12 @@ public class NetworkInterface implements Runnable {
 		// Open socket if it's not available
 		synchronized (connsOut) {
 			if (!connsOut.containsKey(dest) || connsOut.get(dest).isClosed()) {
-				System.out.println("OPENING NEW SOCKET TO SEND ON");
+				System.out.println("OPENING NEW SOCKET TO SEND ON TO " + dest);
 				connOut = openConnOut(dest);
 				connsOut.put(dest, connOut);
 			} else {
-				System.out.println("USING EXISTING SOCKET TO SEND ON");
+				System.out.println("USING EXISTING SOCKET TO SEND ON TO "
+						+ dest);
 				connOut = connsOut.get(dest);
 			}
 		}

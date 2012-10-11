@@ -2,7 +2,7 @@ package core.node;
 
 import core.network.NetworkInterface;
 import core.network.MessageHandler;
-import core.network.messages.SnapshotHandler;
+import core.network.SnapshotHandler;
 
 public class NodeRuntime implements Runnable {
 
@@ -34,18 +34,22 @@ public class NodeRuntime implements Runnable {
 	public static SnapshotHandler getSnapshotHandler() {
 		return snapshotHandler;
 	}
-	
-	
-	
-	public NodeRuntime(NodeId id, NodeState state, MessageHandler handler) {
+
+	public NodeRuntime(NodeId id, NodeState state, MessageHandler handler,
+			boolean canTakeSnapshot) {
 		if (handler == null)
 			NodeRuntime.messageHandler = new MessageHandler();
 		else
 			NodeRuntime.messageHandler = handler;
+		NodeRuntime.snapshotHandler = new SnapshotHandler(canTakeSnapshot);
 		NodeRuntime.id = id;
 		NodeRuntime.state = state;
 		NodeRuntime.networkInterface = new NetworkInterface(NODE_MAPPING_FILE,
 				TOPOLOGY_FILE);
+	}
+
+	public NodeRuntime(NodeId id, NodeState state, MessageHandler handler) {
+		this(id, state, handler, true);
 	}
 
 	public void run() {

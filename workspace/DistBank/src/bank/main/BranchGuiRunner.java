@@ -2,11 +2,10 @@ package bank.main;
 
 import java.io.IOException;
 
+import bank.BranchGuiRequestHandler;
 import bank.GuiId;
 import core.node.NodeRuntime;
 import bank.gui.BranchController;
-import bank.gui.BranchMain;
-import bank.gui.BranchView;
 
 public class BranchGuiRunner {
 
@@ -18,11 +17,12 @@ public class BranchGuiRunner {
 
 		GuiId id = new GuiId(Integer.parseInt(args[0]));
 
-		new Thread(new NodeRuntime(id, null, null)).start();
+		BranchController branchController = new BranchController();
 
-		BranchView branchView = new BranchView();
-		BranchController branchController = new BranchController(branchView);
-		branchView.setVisible(true);
+		new Thread(new NodeRuntime(id, branchController,
+				new BranchGuiRequestHandler(), false)).start();
+
+		branchController.run();
 
 		System.out.println("BankGui ATM " + id + " running.");
 	}

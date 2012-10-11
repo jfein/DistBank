@@ -1,20 +1,21 @@
 package bank;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import bank.messages.BranchResponse;
 
 import core.node.NodeRuntime;
 import core.node.NodeState;
 
-public class BranchState implements NodeState {
+public class BranchState extends NodeState {
+
+	private static final long serialVersionUID = -1275375970531871241L;
 
 	private HashMap<AccountId, Account> branchAccounts;
-	private boolean isInSnapshotState;
 
 	public BranchState() {
 		this.branchAccounts = new HashMap<AccountId, Account>();
-		this.isInSnapshotState = false;
 	}
 
 	private Account getAccountCreateIfNotExist(AccountId accountId) {
@@ -101,6 +102,20 @@ public class BranchState implements NodeState {
 
 		return false;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("Branch ID: " + NodeRuntime.getId() + "\n");
+
+		for (Map.Entry<AccountId, Account> entry : branchAccounts.entrySet()) {
+			AccountId key = entry.getKey();
+			Account value = entry.getValue();
+			sb.append("Account " + key + ": $" + value.getAccountBalance());
+		}
+
+		return sb.toString();
+	}
+
 }
