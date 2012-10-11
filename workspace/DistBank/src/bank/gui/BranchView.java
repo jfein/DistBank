@@ -258,5 +258,13 @@ public class BranchView extends JFrame {
 		snapshotPanel.add(welcomeMessage, BorderLayout.CENTER);
 		snapshotPanel.revalidate();
 	}
+	
+	public JButton getDepositButton() {
+		return this.depositButton;
+	}
+	
+	public JButton getSnapshotButton() {
+		return this.takeSnapshotButton;
+	}
 
 }

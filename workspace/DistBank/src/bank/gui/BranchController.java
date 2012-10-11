@@ -46,6 +46,10 @@ public class BranchController extends NodeState implements Runnable {
 
 		branchView.setVisible(true);
 	}
+	
+	public BranchView getBranchView() {
+		return this.branchView;
+	}
 
 	public boolean isStringNumeric(String s) {
 		Pattern doublePattern = Pattern.compile("-?\\d+(\\.\\d*)?");
@@ -249,7 +253,7 @@ public class BranchController extends NodeState implements Runnable {
 		DefaultListModel transactionsListModel = new DefaultListModel();
 		transactionsListModel.addElement("Transactions In Progress");
 		for (Message msg : messages) {
-			listModel.addElement("Source: " + msg.getSenderId() + " did " + msg.getClass());
+			transactionsListModel.addElement("Source: " + msg.getSenderId() + " did " + msg.getClass());
 		}
 		JList transactions = new JList(transactionsListModel);
 		transactionScrollPane.getViewport().add(transactions);

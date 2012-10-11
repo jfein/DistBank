@@ -1,15 +1,14 @@
-package bank.main;
+package testapp;
 
 import java.io.IOException;
 
 import bank.BranchGuiRequestHandler;
 import bank.GuiId;
-import core.node.NodeRuntime;
 import bank.gui.BranchController;
 import bank.gui.BranchView;
+import core.node.NodeRuntime;
 
-public class BranchGuiRunner {
-
+public class GuiTestRunner {
 	public static void main(String[] args) throws IOException {
 		if (args.length != 1) {
 			System.out.println("Parameter Error: Enter 1 arg for branch name.");
@@ -27,5 +26,10 @@ public class BranchGuiRunner {
 
 		branchController.run();
 		
+		//TODO call methods through branch controller
+		NodeRuntime.getSnapshotHandler().broadcastSnapshotMessage();
+		BranchView bW = branchController.getBranchView();
+		
+		bW.getSnapshotButton().doClick();
 	}
 }

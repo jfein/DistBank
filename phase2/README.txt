@@ -236,4 +236,10 @@ TRANSFER TEST:
 		Src account: 00.00050
 		Dest account: 02.00052
 		Amount: 10
+PHASE 2 TESTS
+---------------------
+Assuming that tests above have been already tested in phase 1. The following tests show the correctness of the snapshot algorithm implemented in this phase:
+(1) Testing bank account balances on taking snapshots.
+	- On launch, deposit, withdraw, or transfer any amounts of your choice between the different branches. At any point in time, if you take a snapshot, the account balances on each branch for each account on that branch will be accurate to what user input you have provided.
+
 

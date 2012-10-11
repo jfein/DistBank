@@ -1,1 +1,3 @@
-TOPOexp.txt
+
+None except those imposed in Phase 1:
+ - bi-directional links between GUI and their corresponding branch server nodes.
