@@ -194,16 +194,23 @@ STATE CONSISTENCY:
 		Src account: 00.00050
 		Dest account: 
 		Amount: 10
+
+    - Click Take Snapshot button, you should see a panel on the left appear with the src account and the deposit amount of 10.0.
+
     - Try to perform another action (deposit,withdraw, check balance) with same serial number 0. This will be rejected.
 		Serial Number: 0
 		Src account: 00.00050
 		Dest account: 
 		Amount: 10
+
     - Withdraw 5$ from this account with serial number 1. 
 		Serial Number: 1
 		Src account: 00.00050
 		Dest account: 
 		Amount: 5
+
+    - Click Take Snapshot button, you should see a panel on the left appear with src account and the balance of 5.0
+
     - Check balance of this account with serial number 2. Will return $5.
 		Serial Number: 2
 		Src account: 00.00050
@@ -218,11 +225,13 @@ TRANSFER TEST:
 		Src account: 00.00050
 		Dest account: 01.00051
 		Amount: 10
+      - Click Take Snapshot button after the transfer button. Because the snapshot process is fast, you may not be able to catch the message transferring. When you click the take snapshot button, you will see on the top part of the left panel any messages that are currently in transaction, and the non-zero account balances for the local branches. Therefore, at account 00.00050 you should see less $10, and at account 01.00051 you should see increase in 10.
 	- attempt doing a transfer with a previously used serial number. Will fail.
 		Serial Number: 4
 		Src account: 00.00050
 		Dest account: 01.00051
 		Amount: 10
+   
 (2) Testing transfer between a branch that has a uni-directional link to another branch.
 	- In this example, we know 01 can communicate with 02, but 02 can not communicate with 01. Therefore, if we try to transfer from 01 to 02, it should withdraw from our account, and should deposit into the account at 02, but we will never get a response.
 		Serial Number: 5
@@ -236,13 +245,15 @@ TRANSFER TEST:
 		Src account: 00.00050
 		Dest account: 02.00052
 		Amount: 10
-PHASE 2 TESTS
+PHASE 2 FURTHER TUTORIAL EXPLANATION
 ---------------------
-Assuming that tests above have been already tested in phase 1. The following tests show the correctness of the snapshot algorithm implemented in this phase:
+You can use take snapshot as specified in the tutorial above from Phase 1.
+
+This is a general description of general user input for testing which you can observe by playing around on your own of taking the snapshots as specified above from the tutorials from Phase 1.
 (1) Testing bank account balances on taking snapshots.
 	- On launch, deposit, withdraw, or transfer any amounts of your choice between the different branches. At any point in time, if you take a snapshot, the account balances on each branch for each account on that branch will be accurate to what user input you have provided.
 
-(2) Testing transa
+(2) Testing transaction
 TEAM MEMBERS 
 ---------------------
 PHASE 1: Vera Kutsenko & Jeremy Fein
