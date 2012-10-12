@@ -4,8 +4,7 @@ In order to test the part of the snapshot that is displayed on the GUI for accou
 The more complicated aspect of testing the snapshot accuracy was testing the transactions in progress. To test this, we had to simulate delays and other situations through code rather than physically using the GUI since the processing of a snapshot is too fast to be able to allow a user to physically perform another transaction while the snapshot is processing.
 
 Therefore, in order to test transactions in the progress we did the following:
-
-
+   We had to modify some of our internal code to directly call functions to test
 
 Finally, to test multiple concurrent snapshots we did the following:
 

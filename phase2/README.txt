@@ -242,4 +242,8 @@ Assuming that tests above have been already tested in phase 1. The following tes
 (1) Testing bank account balances on taking snapshots.
 	- On launch, deposit, withdraw, or transfer any amounts of your choice between the different branches. At any point in time, if you take a snapshot, the account balances on each branch for each account on that branch will be accurate to what user input you have provided.
 
-
+(2) Testing transa
+TEAM MEMBERS 
+---------------------
+PHASE 1: Vera Kutsenko & Jeremy Fein
+PHASE 2: Vera Kutsenko & Jeremy Fein
