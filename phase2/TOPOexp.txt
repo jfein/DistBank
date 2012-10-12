@@ -1,6 +1,5 @@
-The exceptions that were imposed in Phase 1:
- - bi-directional links between GUI and their corresponding branch server nodes.
- - There must exist a path from any two different arbitrary nodes. 
-
-Additional restrictions:
- - no links can exist from a node back to itself
+- All topology restrictions from phase 1 must be enforced in phase 2
+	- One GUI per server
+	- Bidirectional links between GUI and server
+- No node can have a link to itself
+- There must exist an indirect path from any two different aribitrary nodes.
