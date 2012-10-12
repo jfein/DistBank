@@ -1,4 +1,4 @@
-package testapp;
+package test;
 
 import java.io.IOException;
 
@@ -19,17 +19,17 @@ public class GuiTestRunner {
 
 		BranchController branchController = new BranchController();
 
-		new Thread(new NodeRuntime(id, branchController,
-				new BranchGuiRequestHandler(), false)).start();
+		new Thread(new NodeRuntime(id, null, new BranchGuiRequestHandler()))
+				.start();
 
 		System.out.println("BankGui ATM " + id + " running.");
 
 		branchController.run();
-		
-		//TODO call methods through branch controller
+
+		// TODO call methods through branch controller
 		NodeRuntime.getSnapshotHandler().broadcastSnapshotMessage();
 		BranchView bW = branchController.getBranchView();
-		
+
 		bW.getSnapshotButton().doClick();
 	}
 }

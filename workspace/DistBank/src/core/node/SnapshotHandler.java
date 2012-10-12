@@ -1,10 +1,7 @@
 package core.node;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import core.network.messages.DisplaySnapshotRequest;
 import core.network.messages.Message;
@@ -12,15 +9,13 @@ import core.network.messages.SnapshotMessage;
 
 public class SnapshotHandler {
 
-	private boolean enabled;
 	private boolean takingSnapshot;
 
 	private List<NodeId> unpluggedChannelIns;
 	private NodeState copyNodeState;
 	private List<Message> incomingMessages;
 
-	public SnapshotHandler(boolean enabled) {
-		this.enabled = enabled;
+	public SnapshotHandler() {
 		takingSnapshot = false;
 		unpluggedChannelIns = new LinkedList<NodeId>();
 		incomingMessages = new LinkedList<Message>();
@@ -41,7 +36,7 @@ public class SnapshotHandler {
 		if (!takingSnapshot) {
 			incomingMessages.clear();
 			copyNodeState = null;
-			if (enabled)
+			if (NodeRuntime.getState() != null)
 				copyNodeState = NodeRuntime.getState().copy();
 		}
 
@@ -72,7 +67,6 @@ public class SnapshotHandler {
 	 * broadcastSnapshotMessage: Broadcast a SnapshotMessage to all outgoing
 	 * channels.
 	 */
-
 	public void broadcastSnapshotMessage() {
 		System.out.println("\tcalled broadcast snapshot msg");
 
@@ -96,7 +90,6 @@ public class SnapshotHandler {
 	 * all outgoing channels. It will only be proccessed by GUI nodes who can
 	 * handle the DisplaySnapshotRequests.
 	 */
-
 	public void broadcastDisplaySnapshotRequest() {
 		System.out.println("\tcalled broadcast display snapshot req");
 
@@ -117,19 +110,16 @@ public class SnapshotHandler {
 	}
 
 	/**
-	 * processMessage: If current node is enabled, meaning it is allowed to run
-	 * the snapshot algorithm then: -If the current node is not in snapshot
-	 * state, then initiate snapshot -Then change the state of this node to
-	 * snapshot state. -Broadcast the snapshot messages to outgoing nodes in
-	 * topology. -Then remove it from the channels into this branch that we are
-	 * waiting on which will stop recording any transactions received from this
-	 * branch. If current node is not enabled, we pass on the snapshot message
-	 * by broadcasting, but we do not record any state. This is used for GUI
-	 * nodes.
+	 * processMessage: -If the current node is not in snapshot state, then
+	 * initiate snapshot -Then change the state of this node to snapshot state.
+	 * -Broadcast the snapshot messages to outgoing nodes in topology. -Then
+	 * remove it from the channels into this branch that we are waiting on which
+	 * will stop recording any transactions received from this branch. If
+	 * current node is not enabled, we pass on the snapshot message by
+	 * broadcasting, but we do not record any state. This is used for GUI nodes.
 	 * 
 	 * @param msgIn
 	 */
-
 	public synchronized void processMessage(Message msgIn) {
 		// Snapshot message
 		System.out.println("Message received: " + msgIn);

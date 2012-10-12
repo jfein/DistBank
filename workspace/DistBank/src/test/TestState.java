@@ -1,8 +1,8 @@
-package testapp;
+package test;
 
 import core.node.NodeState;
 
-public class TestState implements NodeState {
+public class TestState extends NodeState {
 
 	private int x;
 

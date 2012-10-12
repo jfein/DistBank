@@ -1,6 +1,7 @@
 package core.network.messages;
 
 import java.util.List;
+
 /**
  * DisplaySnapshotRequest
  * This message is sent from a branch server to a gui client

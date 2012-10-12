@@ -16,6 +16,7 @@ import java.util.concurrent.Executors;
 
 import core.network.messages.InitConnMessage;
 import core.network.messages.Message;
+import core.network.messages.SnapshotMessage;
 import core.node.NodeId;
 import core.node.NodeRuntime;
 
@@ -180,7 +181,10 @@ public class NetworkInterface implements Runnable {
 	private <T extends Message> T getMessage(Socket connIn) throws Exception {
 		InputStream streamIn = connIn.getInputStream();
 		ObjectInputStream in = new ObjectInputStream(streamIn);
-		return (T) in.readObject();
+		T obj = (T) in.readObject();
+		if (obj instanceof SnapshotMessage)
+			Thread.sleep(1000); // SIMULATE NETWORK DELAY
+		return obj;
 	}
 
 	private <T extends Message> void sendMessage(Socket connOut, T msg)

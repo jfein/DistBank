@@ -1,4 +1,4 @@
-package testapp;
+package test;
 
 import core.network.Client;
 import core.node.NodeId;

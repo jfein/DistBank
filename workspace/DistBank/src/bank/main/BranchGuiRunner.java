@@ -6,7 +6,6 @@ import bank.BranchGuiRequestHandler;
 import bank.GuiId;
 import core.node.NodeRuntime;
 import bank.gui.BranchController;
-import bank.gui.BranchView;
 
 public class BranchGuiRunner {
 
@@ -20,12 +19,12 @@ public class BranchGuiRunner {
 
 		BranchController branchController = new BranchController();
 
-		new Thread(new NodeRuntime(id, branchController,
-				new BranchGuiRequestHandler(), false)).start();
+		new Thread(new NodeRuntime(id, null, new BranchGuiRequestHandler()))
+				.start();
 
 		System.out.println("BankGui ATM " + id + " running.");
 
 		branchController.run();
-		
+
 	}
 }

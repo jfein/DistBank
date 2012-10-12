@@ -1,4 +1,4 @@
-package testapp;
+package test;
 
 public class Response extends core.network.messages.Response {
 

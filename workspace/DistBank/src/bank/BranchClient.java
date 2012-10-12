@@ -17,7 +17,6 @@ public class BranchClient extends Client {
 
 	public static BranchResponse deposit(AccountId accountId, double amount,
 			Integer serial) {
-		System.out.println("DEPOSIT -- DEPOSIT in Branch Client");
 		DepositRequest req = new DepositRequest(accountId, amount, serial);
 		return BranchClient.exec(accountId.getBranchId(), req);
 	}

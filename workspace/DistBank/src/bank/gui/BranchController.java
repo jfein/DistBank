@@ -33,10 +33,13 @@ import bank.messages.QueryRequest;
 import bank.messages.TransferRequest;
 import bank.messages.WithdrawRequest;
 
-public class BranchController extends NodeState implements Runnable {
+public class BranchController implements Runnable {
 
 	private static final long serialVersionUID = -3098432013575721538L;
-    private Integer  count = 90;
+
+	public static BranchController controller = null;
+
+	private Integer count = 90;
 	private BranchView branchView;
 
 	@Override
@@ -50,6 +53,8 @@ public class BranchController extends NodeState implements Runnable {
 		branchView.addTakeSnapShotListener(new SnapShotListener());
 
 		branchView.setVisible(true);
+
+		BranchController.controller = this;
 	}
 
 	public BranchView getBranchView() {
@@ -219,20 +224,18 @@ public class BranchController extends NodeState implements Runnable {
 	class SnapShotListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO: make this better
 			branchView.resetScrollPanel();
-			
-			count ++;
 
 			NodeRuntime.getSnapshotHandler().initiateSnapshot();
-			BranchClient.transfer(new AccountId("00.00000"), new AccountId("01.00001"), 15, count);
-			BranchClient.transfer(new AccountId("02.00002"), new AccountId("00.00000"), 20, count);
-			NodeRuntime.getSnapshotHandler().initiateSnapshot();
-			count ++;
-	
-			
 
-			
+			// BranchClient.transfer(new AccountId("00.00000"), new
+			// AccountId("01.00001"), 15, count);
+
+			// BranchClient.transfer(new AccountId("02.00002"), new
+			// AccountId("00.00000"), 20, count++);
+
+			// NodeRuntime.getSnapshotHandler().initiateSnapshot();
+
 		}
 
 	}
@@ -269,24 +272,34 @@ public class BranchController extends NodeState implements Runnable {
 		transactionsListModel.addElement("Transactions In Progress");
 		for (Message msg : messages) {
 			String transaction = "";
-			
-			if(msg instanceof DepositRequest){
+
+			if (msg instanceof DepositRequest) {
 				DepositRequest dReq = (DepositRequest) msg;
-				transaction += " Deposit " + dReq.getAmount() + " from " + dReq.getSenderId() + "." + dReq.getSrcAccountId().getAccountNumber();
+				transaction += " Deposit " + dReq.getAmount() + " from "
+						+ dReq.getSenderId() + "."
+						+ dReq.getSrcAccountId().getAccountNumber();
 			} else if (msg instanceof WithdrawRequest) {
 				WithdrawRequest wReq = (WithdrawRequest) msg;
-				transaction += " Withdraw " + wReq.getAmount() + " from " + wReq.getSenderId() + "." + wReq.getSrcAccountId().getAccountNumber();
-			} else if (msg instanceof TransferRequest)  {
+				transaction += " Withdraw " + wReq.getAmount() + " from "
+						+ wReq.getSenderId() + "."
+						+ wReq.getSrcAccountId().getAccountNumber();
+			} else if (msg instanceof TransferRequest) {
 				TransferRequest tReq = (TransferRequest) msg;
-				transaction += " Transfer " + tReq.getAmount() + " from " + tReq.getSenderId() + "." + tReq.getSrcAccountId().getAccountNumber() + " to " + tReq.getDestAccountId().getBranchId() + "." +tReq.getDestAccountId().getAccountNumber();
+				transaction += " Transfer " + tReq.getAmount() + " from "
+						+ tReq.getSenderId() + "."
+						+ tReq.getSrcAccountId().getAccountNumber() + " to "
+						+ tReq.getDestAccountId().getBranchId() + "."
+						+ tReq.getDestAccountId().getAccountNumber();
 			} else if (msg instanceof QueryRequest) {
 				QueryRequest qReq = (QueryRequest) msg;
-				transaction += " Query account " + qReq.getSenderId() + "." + qReq.getSrcAccountId().getAccountNumber();
+				transaction += " Query account " + qReq.getSenderId() + "."
+						+ qReq.getSrcAccountId().getAccountNumber();
 			} else if (msg instanceof BranchResponse) {
 				BranchResponse resp = (BranchResponse) msg;
-				transaction += "Branch response from " + resp.getSenderId() + " was " + resp.wasSuccessfull();
+				transaction += "Branch response from " + resp.getSenderId()
+						+ " was " + resp.wasSuccessfull();
 			}
-	
+
 			transactionsListModel.addElement(transaction);
 		}
 		JList transactions = new JList(transactionsListModel);

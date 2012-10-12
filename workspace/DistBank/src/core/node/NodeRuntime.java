@@ -34,21 +34,16 @@ public class NodeRuntime implements Runnable {
 		return snapshotHandler;
 	}
 
-	public NodeRuntime(NodeId id, NodeState state, MessageHandler handler,
-			boolean canTakeSnapshot) {
+	public NodeRuntime(NodeId id, NodeState state, MessageHandler handler) {
 		if (handler == null)
 			NodeRuntime.messageHandler = new MessageHandler();
 		else
 			NodeRuntime.messageHandler = handler;
 		NodeRuntime.id = id;
 		NodeRuntime.state = state;
-		NodeRuntime.snapshotHandler = new SnapshotHandler(canTakeSnapshot);
+		NodeRuntime.snapshotHandler = new SnapshotHandler();
 		NodeRuntime.networkInterface = new NetworkInterface(NODE_MAPPING_FILE,
 				TOPOLOGY_FILE);
-	}
-
-	public NodeRuntime(NodeId id, NodeState state, MessageHandler handler) {
-		this(id, state, handler, true);
 	}
 
 	public void run() {
