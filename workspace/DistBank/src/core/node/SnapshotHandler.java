@@ -132,6 +132,7 @@ public class SnapshotHandler {
 
 	public synchronized void processMessage(Message msgIn) {
 		// Snapshot message
+		System.out.println("Message received: " + msgIn);
 		if (msgIn instanceof SnapshotMessage) {
 
 			// Not a plug on the channelIn, so enter a new snapshot mode

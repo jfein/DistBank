@@ -29,8 +29,10 @@ public abstract class Client {
 		try {
 			// Send the request
 			NodeRuntime.getNetworkInterface().sendMessage(dest, req);
-			// Block waiting for a response on the responseQueue
-			resp = (T) responseQueue.take();
+			// Block waiting for a response on the responseQueue if we can
+			// receive a response
+			if (NodeRuntime.getNetworkInterface().canReceiveFrom(dest))
+				resp = (T) responseQueue.take();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

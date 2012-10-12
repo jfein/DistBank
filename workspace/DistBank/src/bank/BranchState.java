@@ -33,7 +33,7 @@ public class BranchState extends NodeState {
 	public boolean deposit(AccountId accountId, double amount,
 			Integer serialNumber) {
 		Account accnt = getAccountCreateIfNotExist(accountId);
-
+        System.out.println("DEPOSIT to" + accountId.getAccountNumber());
 		// Do serial number check
 		if (accnt.isUsedSerialNumber(serialNumber))
 			return false;
@@ -48,7 +48,7 @@ public class BranchState extends NodeState {
 	public boolean withdraw(AccountId accountId, double amount,
 			Integer serialNumber) {
 		Account accnt = getAccountCreateIfNotExist(accountId);
-
+        System.out.println("WITHDRAW from " + accountId.getAccountNumber());
 		// Do serial number check
 		if (accnt.isUsedSerialNumber(serialNumber))
 			return false;
@@ -74,7 +74,7 @@ public class BranchState extends NodeState {
 	public boolean transfer(AccountId srcAccountId, AccountId destAccountId,
 			double amount, Integer serialNumber) {
 		Account srcAccnt = getAccountCreateIfNotExist(srcAccountId);
-
+       System.out.println("Transfer from " + srcAccountId.getAccountNumber() + "to " + destAccountId.getAccountNumber());
 		// Do serial number check
 		if (srcAccnt.isUsedSerialNumber(serialNumber))
 			return false;

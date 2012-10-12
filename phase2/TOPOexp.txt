@@ -1,6 +1,6 @@
-
 The exceptions that were imposed in Phase 1:
  - bi-directional links between GUI and their corresponding branch server nodes.
+ - There must exist a path from any two different arbitrary nodes. 
 
 Additional restrictions:
-- no links can exist from a node back to itself
+ - no links can exist from a node back to itself
