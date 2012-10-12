@@ -25,14 +25,15 @@ public class SnapshotHandler {
 	/**
 	 * startTakingSnapshot: Initiates the snapshot algorithm by initializing
 	 * variables that will be storing or recording state of this branch. Makes a
-	 * copy of the current branch state. Initiates a list of incoming channels
-	 * from which we will be recording any incoming transactions. Initiates an
-	 * empty list that will store recorded messages
+	 * copy of the current branch state if we are not already taking a snapshot.
+	 * Add all channelIns to our unplugged list to wait for them (can contain
+	 * duplicates). Initiates an empty list that will store recorded messages if
+	 * its not currently in snapshot mode.
 	 */
 	public void enterSnapshotMode() {
 		System.out.println("\tcalled start snapshot");
 
-		// Not currently taking a snapshot, so record snapshot
+		// Not currently taking a snapshot, so record state
 		if (!takingSnapshot) {
 			incomingMessages.clear();
 			copyNodeState = null;
@@ -102,13 +103,25 @@ public class SnapshotHandler {
 	}
 
 	/**
-	 * processMessage: -If the current node is not in snapshot state, then
-	 * initiate snapshot -Then change the state of this node to snapshot state.
-	 * -Broadcast the snapshot messages to outgoing nodes in topology. -Then
-	 * remove it from the channels into this branch that we are waiting on which
-	 * will stop recording any transactions received from this branch. If
-	 * current node is not enabled, we pass on the snapshot message by
-	 * broadcasting, but we do not record any state. This is used for GUI nodes.
+	 * Upon receipt of a snapshot message:
+	 * 
+	 * - If we are not in snapshot more OR we are and the message is from a
+	 * plugged channel In, then we re-enter snapshot mode. This means we wait
+	 * for more "plugs" from our channel Ins, and if we are entering for first
+	 * time we record our state. Thus, if two snapshots are initiated, we will
+	 * get a snapshot message from a plugged channel, and will then wait for
+	 * more channels to be plugged possible plugged twice. When entering
+	 * snapshot mode, we then broadcat our "take snapshot message", our "plug",
+	 * on our channel out.
+	 * 
+	 * - Then, regardless of previous step, we remove the channel In from the
+	 * unplugged list. This essentially plugs the channel the message was sent
+	 * from.
+	 * 
+	 * - If all channels are plugged, we exit snapshot mode. We then broadcast a
+	 * "DisplaySnapshotMessage" to all of our channel outs. Since we only have
+	 * one GUI, and since only GUIs can process these messages, the GUI will
+	 * receive the request and display snapshot info.
 	 * 
 	 * @param msgIn
 	 */

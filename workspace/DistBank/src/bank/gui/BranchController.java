@@ -227,15 +227,6 @@ public class BranchController implements Runnable {
 			branchView.resetScrollPanel();
 
 			NodeRuntime.getSnapshotHandler().initiateSnapshot();
-
-			// BranchClient.transfer(new AccountId("00.00000"), new
-			// AccountId("01.00001"), 15, count);
-
-			// BranchClient.transfer(new AccountId("02.00002"), new
-			// AccountId("00.00000"), 20, count++);
-
-			// NodeRuntime.getSnapshotHandler().initiateSnapshot();
-
 		}
 
 	}
