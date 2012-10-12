@@ -255,9 +255,8 @@ This is a general description of general user input for testing which you can ob
 
 (2) Testing transactions
 It will be hard to test transactions only by use of user input into the GUI. Although you can try to do actions (Withdraw, Deposit, Transfer) really fast after taking the snapshots, due to the fast nature of algorithm, it will probably not catch any messages in transition. However, we have tested this aspect by emulating delays in message sending which is further described in our TestPlan. We,however, decided to remove the delays because we did not want to include them in the main product. 
-
-
- -- You can test transactions, by uncommenting the Thread.Sleep in the NetworkInterface class. As described in TestPlan.txt, we used this to help simulate delays in order to catch messages in progress to display after snapshot finished.
+HOWEVER:
+ -- You can test transactions, by uncommenting the Thread.Sleep in the NetworkInterface class in the getMessage() method. If you uncomment this, you can start a snapshot, then say deposit,withdraw, or transfer, and possibly catch it in the transactions of one of the branches! As described in TestPlan.txt, we used this to help simulate delays in order to catch messages in progress to display after snapshot finished.
 
 TEAM MEMBERS 
 ---------------------

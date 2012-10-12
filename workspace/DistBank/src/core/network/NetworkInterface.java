@@ -177,7 +177,7 @@ public class NetworkInterface implements Runnable {
 		InputStream streamIn = connIn.getInputStream();
 		ObjectInputStream in = new ObjectInputStream(streamIn);
 		T obj = (T) in.readObject();
-		// Thread.sleep(1000); // SIMULATE NETWORK DELAY
+	  // Thread.sleep(1000); // SIMULATE NETWORK DELAY
 		return obj;
 	}
 
