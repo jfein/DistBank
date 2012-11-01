@@ -1,6 +1,0 @@
-Jeremy Fein (jdf226):
-Helped with the design and integration of overall snapshot algorithm that was used. Restructured network middleware to support handling of messages during the duration of a snapshot mode. Helped write and integrate the snapshot handler (manager) and snapshot state. Helped in the design for the aforementioned. This is included in core network and core node packages. Wrote a part of the documentation/write up. Created a simple test application to test the snapshot algorithm. Spent about 30 hours on the project.
-
-Vera Kutsenko (vsk23):
-Helped with the design and integration of overall snapshot algorithm that was used. Created the framework for Snapshot Handling and the Snapshot state. Helped write and integrate this into the network middleware interface. Redesigned GUI layout to follow a MVC model, allowing better manipulation and easier access to controlling what is displayed on GUI. Added extra handling for displaying data received from the snapshot. Helped with debugging and testing of the program. Wrote part of the documentation/write up. Spent about 30 hours on the project.
-
