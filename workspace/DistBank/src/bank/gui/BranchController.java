@@ -35,8 +35,6 @@ public class BranchController extends AppState implements Runnable {
 
 	private static final long serialVersionUID = -3098432013575721538L;
 
-	public static BranchController controller = null;
-
 	private AppId myAppId;
 	private BranchView branchView;
 
@@ -49,8 +47,6 @@ public class BranchController extends AppState implements Runnable {
 		branchView.addQueryListener(new QueryListener());
 		branchView.addTransferListener(new TransferListener());
 		branchView.addTakeSnapShotListener(new SnapShotListener());
-
-		BranchController.controller = this;
 	}
 
 	@Override
