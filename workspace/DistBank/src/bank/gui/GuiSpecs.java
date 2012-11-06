@@ -10,7 +10,6 @@ public class GuiSpecs {
 	//main panel width
 	public static final Integer GUI_BRANCH_PANEL_WIDTH = (int) (.7 * GuiSpecs.GUI_FRAME_WIDTH); 
 	
-	
 
 	public static final Integer MENU_BUTTON_START_N = 125; //offset of first button
 	public static final Integer ORACLE_MENU_BUTTON_START_N = 50; 

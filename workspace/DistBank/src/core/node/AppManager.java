@@ -131,5 +131,13 @@ public class AppManager<A extends App<?>> {
 		System.out.println("App Manager looking for app " + appId);
 		return myApps.get(appId);
 	}
+	
+	public void removeFailedNode(NodeId nodeId) {
+		for(Map.Entry<AppId, LinkedList<NodeId>> entry: appToNodes.entrySet()) {
+			LinkedList<NodeId> listOfNodes = entry.getValue();
+			listOfNodes.remove(nodeId);
+			appToNodes.put(entry.getKey(), entry.getValue());
+		}
+	}
 
 }
