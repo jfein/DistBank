@@ -7,4 +7,3 @@ start java -cp "./bin" "bank/gui/BranchGuiRunner" 150
 start java -cp "./bin" "bank/gui/BranchGuiRunner" 151
 
 start java -cp "./bin" "bank/branch/BranchRunner" 100
-start java -cp "./bin" "bank/branch/BranchRunner" 101

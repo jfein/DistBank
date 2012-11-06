@@ -46,6 +46,7 @@ public class Topology {
 				NodeId src = new NodeId(Integer.parseInt(parts[0]));
 				NodeId dest = new NodeId(Integer.parseInt(parts[1]));
 
+				// TODO: make bidirectional
 				if (src.equals(myId)) {
 					System.out.println("I can send messages to " + dest);
 					channelsOut.add(dest);

@@ -26,8 +26,7 @@ public class NetworkInterface implements Runnable {
 	private final Map<NodeId, Socket> connsOut;
 
 	public NetworkInterface() {
-		topology = new Topology(NodeRuntime.NODES_FILE,
-				NodeRuntime.TOPOLOGY_FILE);
+		topology = new Topology(NodeRuntime.NODES_FILE, NodeRuntime.TOPOLOGY_FILE);
 		connsIn = new HashMap<NodeId, Socket>();
 		connsOut = new HashMap<NodeId, Socket>();
 	}
@@ -43,12 +42,16 @@ public class NetworkInterface implements Runnable {
 	public boolean canSendTo(NodeId id) {
 		if (id == null)
 			return false;
+		if (id.equals(NodeRuntime.getId()))
+			return true;
 		return topology.getChannelsOut().contains(id);
 	}
 
 	public boolean canReceiveFrom(NodeId id) {
 		if (id == null)
 			return false;
+		if (id.equals(NodeRuntime.getId()))
+			return true;
 		return topology.getChannelsIn().contains(id);
 	}
 
@@ -89,8 +92,7 @@ public class NetworkInterface implements Runnable {
 	 * @param msg
 	 * @throws Exception
 	 */
-	public <T extends Message> void sendMessage(NodeId dest, T msg)
-			throws Exception {
+	public <T extends Message> void sendMessage(NodeId dest, T msg) throws Exception {
 		if (!canSendTo(dest))
 			throw new Exception("Error: This node cannot send to " + dest);
 
@@ -131,8 +133,7 @@ public class NetworkInterface implements Runnable {
 		}
 
 		// Create thread pool
-		ExecutorService threadPool = Executors.newFixedThreadPool(topology
-				.getChannelsIn().size());
+		ExecutorService threadPool = Executors.newFixedThreadPool(topology.getChannelsIn().size());
 
 		while (!serverSocket.isClosed()) {
 			Socket connIn = null;
@@ -147,8 +148,7 @@ public class NetworkInterface implements Runnable {
 
 				// Make sure we can receive from the client
 				if (!canReceiveFrom(src)) {
-					throw new Exception("Received connection from client "
-							+ "that we cannot receive messages from");
+					throw new Exception("Received connection from client " + "that we cannot receive messages from");
 				}
 
 				// Add the new connIn, close any existing
@@ -181,12 +181,11 @@ public class NetworkInterface implements Runnable {
 		InputStream streamIn = connIn.getInputStream();
 		ObjectInputStream in = new ObjectInputStream(streamIn);
 		T obj = (T) in.readObject();
-		// Thread.sleep(1000); // SIMULATE NETWORK DELAY
+		Thread.sleep(1000); // SIMULATE NETWORK DELAY
 		return obj;
 	}
 
-	private <T extends Message> void sendMessage(Socket connOut, T msg)
-			throws Exception {
+	private <T extends Message> void sendMessage(Socket connOut, T msg) throws Exception {
 		OutputStream streamOut = connOut.getOutputStream();
 		ObjectOutputStream out = new ObjectOutputStream(streamOut);
 		out.writeObject(msg);

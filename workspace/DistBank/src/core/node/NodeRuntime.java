@@ -2,7 +2,6 @@ package core.node;
 
 import core.app.App;
 import core.network.NetworkInterface;
-import core.network.MessageHandler;
 
 public class NodeRuntime implements Runnable {
 
@@ -12,8 +11,7 @@ public class NodeRuntime implements Runnable {
 
 	private static NodeId id;
 	private static NetworkInterface networkInterface;
-	private static MessageHandler messageHandler;
-	private static AppManager appManager;
+	private static AppManager<? extends App<?>> appManager;
 
 	public static NodeId getId() {
 		return id;
@@ -23,29 +21,25 @@ public class NodeRuntime implements Runnable {
 		return networkInterface;
 	}
 
-	public static MessageHandler getMessageHandler() {
-		return messageHandler;
-	}
-
-	public static AppManager getAppManager() {
+	public static AppManager<?> getAppManager() {
 		return appManager;
 	}
 
-	public <A extends App<?>> NodeRuntime(NodeId id, Class<A> appClass)
-			throws Exception {
+	public <A extends App<?>> NodeRuntime(NodeId id, Class<A> appClass) throws Exception {
 		NodeRuntime.id = id;
-		NodeRuntime.messageHandler = new MessageHandler();
 		NodeRuntime.networkInterface = new NetworkInterface();
-		NodeRuntime.appManager = new AppManager(appClass);
+		NodeRuntime.appManager = new AppManager<A>(appClass);
 	}
 
 	public void run() {
-		System.out.println("NodeRuntime starting node ID " + NodeRuntime.id
-				+ " to listen on address "
+		System.out.println("NodeRuntime starting node ID " + NodeRuntime.id + " to listen on address "
 				+ NodeRuntime.networkInterface.getNodeAddress(id));
 
+		// Start message handling threads
+		appManager.startApps();
+
 		// Run network to take in new connections
-		NodeRuntime.networkInterface.run();
+		networkInterface.run();
 	}
 
 }
