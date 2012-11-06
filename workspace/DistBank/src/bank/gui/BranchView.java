@@ -19,8 +19,8 @@ import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 
-import bank.AccountId;
 import bank.BranchClient;
+import bank.branch.AccountId;
 import bank.messages.BranchResponse;
 
 import core.node.NodeRuntime;

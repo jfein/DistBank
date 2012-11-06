@@ -1,6 +1,6 @@
 package bank.messages;
 
-import bank.AccountId;
+import bank.branch.AccountId;
 
 public class DepositRequest extends BranchRequest {
 

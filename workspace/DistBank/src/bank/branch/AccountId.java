@@ -1,22 +1,24 @@
-package bank;
+package bank.branch;
 
 import java.io.Serializable;
+
+import core.app.AppId;
 
 public class AccountId implements Serializable {
 
 	private static final long serialVersionUID = 4110648994886366615L;
 
-	private BranchId branchId;
+	private AppId branchAppId;
 	private Integer accountNumber;
 
 	public AccountId(String accountId) {
 		String[] tokens = accountId.split("\\.");
-		this.branchId = new BranchId(Integer.parseInt(tokens[0]));
+		this.branchAppId = new AppId(Integer.parseInt(tokens[0]));
 		this.accountNumber = Integer.parseInt(tokens[1]);
 	}
 
-	public BranchId getBranchId() {
-		return this.branchId;
+	public AppId getBranchAppId() {
+		return this.branchAppId;
 	}
 
 	public Integer getAccountNumber() {
@@ -37,7 +39,7 @@ public class AccountId implements Serializable {
 
 	@Override
 	public String toString() {
-		return this.branchId.getNodeId() + "." + this.accountNumber;
+		return this.branchAppId.getAppId() + "." + this.accountNumber;
 	}
 
 }

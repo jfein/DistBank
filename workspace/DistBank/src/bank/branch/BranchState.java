@@ -1,14 +1,15 @@
-package bank;
+package bank.branch;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import bank.BranchClient;
 import bank.messages.BranchResponse;
 
+import core.app.AppState;
 import core.node.NodeRuntime;
-import core.node.NodeState;
 
-public class BranchState extends NodeState {
+public class BranchState extends AppState {
 
 	private static final long serialVersionUID = -1275375970531871241L;
 
@@ -77,7 +78,8 @@ public class BranchState extends NodeState {
 			return false;
 
 		// Call deposit on local branch
-		if (destAccountId.getBranchId().equals(srcAccountId.getBranchId())) {
+		if (destAccountId.getBranchAppId()
+				.equals(srcAccountId.getBranchAppId())) {
 			boolean success = this.deposit(destAccountId, amount, serialNumber);
 			if (success)
 				return withdraw(srcAccountId, amount, serialNumber);
@@ -89,8 +91,12 @@ public class BranchState extends NodeState {
 			// Deposit returned null (meaning a network error) but we cannot get
 			// messages from dest branch so its OK
 			if (resp == null
+					&& NodeRuntime.getNetworkInterface().canSendTo(
+							NodeRuntime.getAppManager().appToPrimaryNode(
+									destAccountId.getBranchAppId()))
 					&& !NodeRuntime.getNetworkInterface().canReceiveFrom(
-							destAccountId.getBranchId()))
+							NodeRuntime.getAppManager().appToPrimaryNode(
+									destAccountId.getBranchAppId())))
 				return withdraw(srcAccountId, amount, serialNumber);
 			// Response was succesful
 			if (resp != null && resp.wasSuccessfull())

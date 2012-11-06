@@ -1,4 +1,4 @@
-package bank;
+package bank.branch;
 
 import java.io.Serializable;
 import java.util.HashSet;

@@ -1,4 +1,4 @@
-package core.node;
+package core.app;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -7,7 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-public abstract class NodeState implements Serializable {
+public abstract class AppState implements Serializable {
 
 	private static final long serialVersionUID = -1833000607088749064L;
 
@@ -18,7 +18,7 @@ public abstract class NodeState implements Serializable {
 	 * 
 	 * @return
 	 */
-	public <T extends NodeState> T copy() {
+	public <T extends AppState> T copy() {
 		T newNodeState = null;
 		try {
 			// Write the object out to a byte array

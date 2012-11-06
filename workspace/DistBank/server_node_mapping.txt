@@ -1,6 +1,0 @@
-50 localhost:10050
-51 localhost:10051
-52 localhost:10052
-00 localhost:10000
-01 localhost:10001
-02 localhost:10002

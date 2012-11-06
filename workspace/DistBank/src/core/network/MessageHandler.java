@@ -1,8 +1,15 @@
 package core.network;
 
+import java.util.List;
+
+import core.app.App;
+import core.app.AppId;
 import core.network.messages.Message;
 import core.network.messages.Request;
 import core.network.messages.Response;
+import core.network.messages.SynchRequest;
+import core.network.messages.SynchResponse;
+import core.node.NodeId;
 import core.node.NodeRuntime;
 
 public class MessageHandler {
@@ -18,16 +25,38 @@ public class MessageHandler {
 	 * @param msgIn
 	 */
 	public void handleMessage(Message msgIn) {
-		// Route all messages to the snapshot handler
-		NodeRuntime.getSnapshotHandler().processMessage(msgIn);
+		// Got a synch request
+		if (msgIn instanceof SynchRequest)
+			handleSynchRequest((SynchRequest) msgIn);
 
 		// Got a request; process requests synchronously
-		if (msgIn instanceof Request)
+		else if (msgIn instanceof Request)
 			handleRequest((Request) msgIn);
 
 		// Got a response
-		if (msgIn instanceof Response)
+		else if (msgIn instanceof Response)
 			handleResponse((Response) msgIn);
+	}
+
+	public void handleSynchRequest(SynchRequest m) {
+		AppId appId = m.getReceiverAppId();
+		App app = NodeRuntime.getAppManager().getApp(appId);
+
+		System.out.println("GOT SYNCH REQUEST FROM NODE " + m.getSenderNodeId()
+				+ " AND APP " + appId);
+
+		synchronized (app) {
+			app.setState(m.getState());
+		}
+
+		try {
+			NodeRuntime.getNetworkInterface().sendMessage(m.getSenderNodeId(),
+					new SynchResponse());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("SENT SYNCH RESPONSE TO " + m.getSenderNodeId());
 	}
 
 	/**
@@ -40,15 +69,44 @@ public class MessageHandler {
 	 */
 	public synchronized void handleRequest(Request m) {
 		try {
+			AppId appId = m.getReceiverAppId();
+			App app = NodeRuntime.getAppManager().getApp(appId);
+
 			// Process the request to get a response
-			Response resp = (Response) this.getClass()
-					.getMethod("handleRequest", m.getClass()).invoke(this, m);
+			Response resp = null;
+			synchronized (app) {
+				resp = (Response) app.getClass()
+						.getMethod("handleRequest", m.getClass())
+						.invoke(app, m);
+			}
+
+			// Send state to all backups
+			boolean success = false;
+			while (!success) {
+				List<NodeId> backups = NodeRuntime.getAppManager()
+						.appToBackupNodes(appId);
+				for (NodeId backup : backups) {
+					System.out.println("Attemtping to synch to backup node "
+							+ backup);
+					SynchRequest req = new SynchRequest(appId, app.getState());
+					SynchResponse resp2 = Client.exec(backup, req);
+					if (resp2 == null) {
+						System.out.println("FAILED Synching backup " + backup);
+						success = false;
+						break;
+					} else {
+						System.out.println("Synched backup " + backup);
+						success = true;
+					}
+				}
+			}
+
 			// Send the response
 			if (resp != null)
-				NodeRuntime.getNetworkInterface().sendMessage(m.getSenderId(),
-						resp);
+				NodeRuntime.getNetworkInterface().sendMessage(
+						m.getSenderNodeId(), resp);
 		} catch (Exception e) {
-			// e.printStackTrace();
+			e.printStackTrace();
 			System.out.println("WARNING: RECEIVED UNSUPPOSRTED REQUEST: "
 					+ m.getClass().getCanonicalName());
 		}
@@ -62,6 +120,8 @@ public class MessageHandler {
 	 * @param m
 	 */
 	public void handleResponse(Response m) {
+		System.out.println("\tGOT RESPONSE FROM NODE " + m.getSenderNodeId()
+				+ " OF TYPE " + m.getClass().getCanonicalName());
 		try {
 			// Send the incoming response to the client
 			Client.responseQueue.put((Response) m);

@@ -1,6 +1,6 @@
 package bank.messages;
 
-import bank.AccountId;
+import bank.branch.AccountId;
 
 public class QueryRequest extends BranchRequest {
 
@@ -9,5 +9,5 @@ public class QueryRequest extends BranchRequest {
 	public QueryRequest(AccountId accountId, Integer serial) {
 		super(accountId, serial);
 	}
-	
+
 }

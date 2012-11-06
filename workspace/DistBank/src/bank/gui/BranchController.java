@@ -18,22 +18,22 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import core.app.AppState;
 import core.network.messages.Message;
 import core.network.messages.Response;
 import core.node.NodeRuntime;
-import core.node.NodeState;
 
-import bank.Account;
-import bank.AccountId;
 import bank.BranchClient;
-import bank.BranchState;
+import bank.branch.Account;
+import bank.branch.AccountId;
+import bank.branch.BranchState;
 import bank.messages.BranchResponse;
 import bank.messages.DepositRequest;
 import bank.messages.QueryRequest;
 import bank.messages.TransferRequest;
 import bank.messages.WithdrawRequest;
 
-public class BranchController implements Runnable {
+public class BranchController extends AppState implements Runnable {
 
 	private static final long serialVersionUID = -3098432013575721538L;
 
@@ -226,7 +226,6 @@ public class BranchController implements Runnable {
 		public void actionPerformed(ActionEvent e) {
 			branchView.resetScrollPanel();
 
-			NodeRuntime.getSnapshotHandler().initiateSnapshot();
 		}
 
 	}
@@ -267,27 +266,27 @@ public class BranchController implements Runnable {
 			if (msg instanceof DepositRequest) {
 				DepositRequest dReq = (DepositRequest) msg;
 				transaction += " Deposit " + dReq.getAmount() + " from "
-						+ dReq.getSenderId() + "."
+						+ dReq.getSenderNodeId() + "."
 						+ dReq.getSrcAccountId().getAccountNumber();
 			} else if (msg instanceof WithdrawRequest) {
 				WithdrawRequest wReq = (WithdrawRequest) msg;
 				transaction += " Withdraw " + wReq.getAmount() + " from "
-						+ wReq.getSenderId() + "."
+						+ wReq.getSenderNodeId() + "."
 						+ wReq.getSrcAccountId().getAccountNumber();
 			} else if (msg instanceof TransferRequest) {
 				TransferRequest tReq = (TransferRequest) msg;
 				transaction += " Transfer " + tReq.getAmount() + " from "
-						+ tReq.getSenderId() + "."
+						+ tReq.getSenderNodeId() + "."
 						+ tReq.getSrcAccountId().getAccountNumber() + " to "
-						+ tReq.getDestAccountId().getBranchId() + "."
+						+ tReq.getDestAccountId().getBranchAppId() + "."
 						+ tReq.getDestAccountId().getAccountNumber();
 			} else if (msg instanceof QueryRequest) {
 				QueryRequest qReq = (QueryRequest) msg;
-				transaction += " Query account " + qReq.getSenderId() + "."
+				transaction += " Query account " + qReq.getSenderNodeId() + "."
 						+ qReq.getSrcAccountId().getAccountNumber();
 			} else if (msg instanceof BranchResponse) {
 				BranchResponse resp = (BranchResponse) msg;
-				transaction += "Branch response from " + resp.getSenderId()
+				transaction += "Branch response from " + resp.getSenderNodeId()
 						+ " was " + resp.wasSuccessfull();
 			}
 

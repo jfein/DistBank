@@ -1,22 +1,19 @@
 package core.node;
 
+import core.app.App;
 import core.network.NetworkInterface;
 import core.network.MessageHandler;
 
 public class NodeRuntime implements Runnable {
 
-	public static final String NODE_MAPPING_FILE = "server_node_mapping.txt";
+	public static final String NODES_FILE = "nodes.txt";
 	public static final String TOPOLOGY_FILE = "topology_file.txt";
+	public static final String APPS_FILE = "apps.txt";
 
 	private static NodeId id;
-	private static NodeState state;
 	private static NetworkInterface networkInterface;
 	private static MessageHandler messageHandler;
-	private static SnapshotHandler snapshotHandler;
-
-	public static <T extends NodeState> T getState() {
-		return (T) state;
-	}
+	private static AppManager appManager;
 
 	public static NodeId getId() {
 		return id;
@@ -26,24 +23,20 @@ public class NodeRuntime implements Runnable {
 		return networkInterface;
 	}
 
-	public static <T extends MessageHandler> T getMessageHandler() {
-		return (T) messageHandler;
+	public static MessageHandler getMessageHandler() {
+		return messageHandler;
 	}
 
-	public static SnapshotHandler getSnapshotHandler() {
-		return snapshotHandler;
+	public static AppManager getAppManager() {
+		return appManager;
 	}
 
-	public NodeRuntime(NodeId id, NodeState state, MessageHandler handler) {
-		if (handler == null)
-			NodeRuntime.messageHandler = new MessageHandler();
-		else
-			NodeRuntime.messageHandler = handler;
+	public <A extends App<?>> NodeRuntime(NodeId id, Class<A> appClass)
+			throws Exception {
 		NodeRuntime.id = id;
-		NodeRuntime.state = state;
-		NodeRuntime.snapshotHandler = new SnapshotHandler();
-		NodeRuntime.networkInterface = new NetworkInterface(NODE_MAPPING_FILE,
-				TOPOLOGY_FILE);
+		NodeRuntime.messageHandler = new MessageHandler();
+		NodeRuntime.networkInterface = new NetworkInterface();
+		NodeRuntime.appManager = new AppManager(appClass);
 	}
 
 	public void run() {

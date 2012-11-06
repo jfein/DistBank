@@ -16,7 +16,6 @@ import java.util.concurrent.Executors;
 
 import core.network.messages.InitConnMessage;
 import core.network.messages.Message;
-import core.network.messages.SnapshotMessage;
 import core.node.NodeId;
 import core.node.NodeRuntime;
 
@@ -26,8 +25,9 @@ public class NetworkInterface implements Runnable {
 	private final Map<NodeId, Socket> connsIn;
 	private final Map<NodeId, Socket> connsOut;
 
-	public NetworkInterface(String nodeMappingFile, String topologyFile) {
-		topology = new Topology(nodeMappingFile, topologyFile);
+	public NetworkInterface() {
+		topology = new Topology(NodeRuntime.NODES_FILE,
+				NodeRuntime.TOPOLOGY_FILE);
 		connsIn = new HashMap<NodeId, Socket>();
 		connsOut = new HashMap<NodeId, Socket>();
 	}
@@ -41,10 +41,14 @@ public class NetworkInterface implements Runnable {
 	}
 
 	public boolean canSendTo(NodeId id) {
+		if (id == null)
+			return false;
 		return topology.getChannelsOut().contains(id);
 	}
 
 	public boolean canReceiveFrom(NodeId id) {
+		if (id == null)
+			return false;
 		return topology.getChannelsIn().contains(id);
 	}
 
@@ -139,7 +143,7 @@ public class NetworkInterface implements Runnable {
 
 				// Get the first InitConnMessage on the channelIn
 				InitConnMessage initConnMessage = getMessage(connIn);
-				NodeId src = initConnMessage.getSenderId();
+				NodeId src = initConnMessage.getSenderNodeId();
 
 				// Make sure we can receive from the client
 				if (!canReceiveFrom(src)) {
@@ -177,7 +181,7 @@ public class NetworkInterface implements Runnable {
 		InputStream streamIn = connIn.getInputStream();
 		ObjectInputStream in = new ObjectInputStream(streamIn);
 		T obj = (T) in.readObject();
-	  // Thread.sleep(1000); // SIMULATE NETWORK DELAY
+		// Thread.sleep(1000); // SIMULATE NETWORK DELAY
 		return obj;
 	}
 

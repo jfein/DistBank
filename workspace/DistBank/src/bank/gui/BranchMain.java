@@ -29,8 +29,8 @@ import javax.swing.SwingUtilities;
 
 import core.node.NodeRuntime;
 
-import bank.AccountId;
 import bank.BranchClient;
+import bank.branch.AccountId;
 import bank.messages.BranchResponse;
 
 public class BranchMain extends JPanel {
