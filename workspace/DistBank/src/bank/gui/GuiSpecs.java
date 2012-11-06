@@ -13,6 +13,7 @@ public class GuiSpecs {
 	
 
 	public static final Integer MENU_BUTTON_START_N = 125; //offset of first button
+	public static final Integer ORACLE_MENU_BUTTON_START_N = 50; 
 	
 	public static final Integer MENU_BUTTON_OFFSET = 25; //offset between buttons
 	public static  final Integer TEXT_FIELD_OFFSET = 25; //offset between textfields
