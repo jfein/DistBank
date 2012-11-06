@@ -1,5 +1,6 @@
 package bank.messages;
 
+import core.app.AppId;
 import core.network.messages.Response;
 
 public class BranchResponse extends Response {
@@ -9,7 +10,8 @@ public class BranchResponse extends Response {
 	private double amt;
 	private boolean wasSuccessfull;
 
-	public BranchResponse(double amt, boolean wasSuccessfull) {
+	public BranchResponse(AppId receiverAppId, double amt, boolean wasSuccessfull) {
+		super(receiverAppId);
 		this.amt = amt;
 		this.wasSuccessfull = wasSuccessfull;
 	}

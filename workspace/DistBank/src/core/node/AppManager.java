@@ -128,6 +128,7 @@ public class AppManager<A extends App<?>> {
 	 * @return
 	 */
 	public A getApp(AppId appId) {
+		System.out.println("App Manager looking for app " + appId);
 		return myApps.get(appId);
 	}
 

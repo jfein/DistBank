@@ -16,28 +16,28 @@ public class BranchApp extends App<BranchState> {
 
 	@Override
 	protected BranchState newState() {
-		return new BranchState();
+		return new BranchState(getAppId());
 	}
 
 	public BranchResponse handleRequest(QueryRequest req) {
 		BranchState state = getState();
 		boolean success = state.query(req.getSrcAccountId(), req.getSerialNumber());
 		double balance = state.getBalance(req.getSrcAccountId());
-		return new BranchResponse(balance, success);
+		return new BranchResponse(req.getSenderAppId(), balance, success);
 	}
 
 	public BranchResponse handleRequest(WithdrawRequest req) {
 		BranchState state = getState();
 		boolean success = state.withdraw(req.getSrcAccountId(), req.getAmount(), req.getSerialNumber());
 		double balance = state.getBalance(req.getSrcAccountId());
-		return new BranchResponse(balance, success);
+		return new BranchResponse(req.getSenderAppId(), balance, success);
 	}
 
 	public BranchResponse handleRequest(DepositRequest req) {
 		BranchState state = getState();
 		boolean success = state.deposit(req.getSrcAccountId(), req.getAmount(), req.getSerialNumber());
 		double balance = state.getBalance(req.getSrcAccountId());
-		return new BranchResponse(balance, success);
+		return new BranchResponse(req.getSenderAppId(), balance, success);
 	}
 
 	public BranchResponse handleRequest(TransferRequest req) {
@@ -45,7 +45,7 @@ public class BranchApp extends App<BranchState> {
 		boolean success = state.transfer(req.getSrcAccountId(), req.getDestAccountId(), req.getAmount(),
 				req.getSerialNumber());
 		double balance = state.getBalance(req.getSrcAccountId());
-		return new BranchResponse(balance, success);
+		return new BranchResponse(req.getSenderAppId(), balance, success);
 	}
 
 }

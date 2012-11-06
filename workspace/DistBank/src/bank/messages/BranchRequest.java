@@ -1,6 +1,7 @@
 package bank.messages;
 
 import bank.branch.AccountId;
+import core.app.AppId;
 import core.network.messages.Request;
 
 public abstract class BranchRequest extends Request {
@@ -10,8 +11,8 @@ public abstract class BranchRequest extends Request {
 	private AccountId srcAccountId;
 	private Integer serialNumber;
 
-	public BranchRequest(AccountId accountId, Integer serial) {
-		super(accountId.getBranchAppId());
+	public BranchRequest(AppId senderAppId, AccountId accountId, Integer serial) {
+		super(senderAppId, accountId.getBranchAppId());
 		this.srcAccountId = accountId;
 		this.serialNumber = serial;
 	}

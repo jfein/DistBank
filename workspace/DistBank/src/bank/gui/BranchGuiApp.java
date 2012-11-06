@@ -11,7 +11,7 @@ public class BranchGuiApp extends App<BranchController> {
 
 	@Override
 	protected BranchController newState() {
-		BranchController controller = new BranchController();
+		BranchController controller = new BranchController(getAppId());
 		new Thread(controller).start();
 		return controller;
 	}

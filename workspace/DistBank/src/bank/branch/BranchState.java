@@ -3,9 +3,9 @@ package bank.branch;
 import java.util.HashMap;
 import java.util.Map;
 
-import bank.BranchClient;
 import bank.messages.BranchResponse;
 
+import core.app.AppId;
 import core.app.AppState;
 import core.node.NodeRuntime;
 
@@ -14,9 +14,11 @@ public class BranchState extends AppState {
 	private static final long serialVersionUID = -1275375970531871241L;
 
 	private HashMap<AccountId, Account> branchAccounts;
+	private AppId myBranchAppId;
 
-	public BranchState() {
+	public BranchState(AppId myBranchAppId) {
 		this.branchAccounts = new HashMap<AccountId, Account>();
+		this.myBranchAppId = myBranchAppId;
 	}
 
 	private Account getAccountCreateIfNotExist(AccountId accountId) {
@@ -31,8 +33,7 @@ public class BranchState extends AppState {
 		return 0.0;
 	}
 
-	public boolean deposit(AccountId accountId, double amount,
-			Integer serialNumber) {
+	public boolean deposit(AccountId accountId, double amount, Integer serialNumber) {
 		Account accnt = getAccountCreateIfNotExist(accountId);
 		// Do serial number check
 		if (accnt.isUsedSerialNumber(serialNumber))
@@ -45,8 +46,7 @@ public class BranchState extends AppState {
 		return true;
 	}
 
-	public boolean withdraw(AccountId accountId, double amount,
-			Integer serialNumber) {
+	public boolean withdraw(AccountId accountId, double amount, Integer serialNumber) {
 		Account accnt = getAccountCreateIfNotExist(accountId);
 		// Do serial number check
 		if (accnt.isUsedSerialNumber(serialNumber))
@@ -70,33 +70,28 @@ public class BranchState extends AppState {
 		return true;
 	}
 
-	public boolean transfer(AccountId srcAccountId, AccountId destAccountId,
-			double amount, Integer serialNumber) {
+	public boolean transfer(AccountId srcAccountId, AccountId destAccountId, double amount, Integer serialNumber) {
 		Account srcAccnt = getAccountCreateIfNotExist(srcAccountId);
 		// Do serial number check
 		if (srcAccnt.isUsedSerialNumber(serialNumber))
 			return false;
 
 		// Call deposit on local branch
-		if (destAccountId.getBranchAppId()
-				.equals(srcAccountId.getBranchAppId())) {
+		if (destAccountId.getBranchAppId().equals(srcAccountId.getBranchAppId())) {
 			boolean success = this.deposit(destAccountId, amount, serialNumber);
 			if (success)
 				return withdraw(srcAccountId, amount, serialNumber);
 		}
 		// Call deposit on other branch
 		else {
-			BranchResponse resp = BranchClient.deposit(destAccountId, amount,
-					serialNumber);
+			BranchResponse resp = BranchClient.deposit(myBranchAppId, destAccountId, amount, serialNumber);
 			// Deposit returned null (meaning a network error) but we cannot get
 			// messages from dest branch so its OK
 			if (resp == null
 					&& NodeRuntime.getNetworkInterface().canSendTo(
-							NodeRuntime.getAppManager().appToPrimaryNode(
-									destAccountId.getBranchAppId()))
+							NodeRuntime.getAppManager().appToPrimaryNode(destAccountId.getBranchAppId()))
 					&& !NodeRuntime.getNetworkInterface().canReceiveFrom(
-							NodeRuntime.getAppManager().appToPrimaryNode(
-									destAccountId.getBranchAppId())))
+							NodeRuntime.getAppManager().appToPrimaryNode(destAccountId.getBranchAppId())))
 				return withdraw(srcAccountId, amount, serialNumber);
 			// Response was succesful
 			if (resp != null && resp.wasSuccessfull())

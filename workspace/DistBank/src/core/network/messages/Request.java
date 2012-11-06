@@ -2,18 +2,19 @@ package core.network.messages;
 
 import core.app.AppId;
 
-public abstract class Request extends Message {
+public abstract class Request extends AppMessage {
 
 	private static final long serialVersionUID = 1L;
 
-	private AppId receiverAppId;
+	private AppId senderAppId;
 
-	public Request(AppId receiverAppId) {
-		this.receiverAppId = receiverAppId;
+	public Request(AppId senderAppId, AppId receiverAppId) {
+		super(receiverAppId);
+		this.senderAppId = senderAppId;
 	}
 
-	public AppId getReceiverAppId() {
-		return receiverAppId;
+	public AppId getSenderAppId() {
+		return senderAppId;
 	}
 
 }

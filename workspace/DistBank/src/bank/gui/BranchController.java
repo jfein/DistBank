@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.swing.DefaultListModel;
@@ -18,14 +17,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import core.app.AppId;
 import core.app.AppState;
 import core.network.messages.Message;
-import core.network.messages.Response;
-import core.node.NodeRuntime;
 
-import bank.BranchClient;
 import bank.branch.Account;
 import bank.branch.AccountId;
+import bank.branch.BranchClient;
 import bank.branch.BranchState;
 import bank.messages.BranchResponse;
 import bank.messages.DepositRequest;
@@ -39,11 +37,11 @@ public class BranchController extends AppState implements Runnable {
 
 	public static BranchController controller = null;
 
-	private Integer count = 90;
+	private AppId myAppId;
 	private BranchView branchView;
 
-	@Override
-	public void run() {
+	public BranchController(AppId myAppId) {
+		this.myAppId = myAppId;
 		this.branchView = new BranchView();
 
 		branchView.addDepositListener(new DepositListener());
@@ -52,9 +50,12 @@ public class BranchController extends AppState implements Runnable {
 		branchView.addTransferListener(new TransferListener());
 		branchView.addTakeSnapShotListener(new SnapShotListener());
 
-		branchView.setVisible(true);
-
 		BranchController.controller = this;
+	}
+
+	@Override
+	public void run() {
+		branchView.setVisible(true);
 	}
 
 	public BranchView getBranchView() {
@@ -80,8 +81,7 @@ public class BranchController extends AppState implements Runnable {
 
 	public boolean isValidAccountNumber(String accountNumber) {
 		if (accountNumber.equals("")) {
-			branchView
-					.popUpErrorMessage("Please fill out the required fields.");
+			branchView.popUpErrorMessage("Please fill out the required fields.");
 		} else if (isStringNumeric(accountNumber)) {
 			if (accountNumber.length() == 8) {
 				String[] tokens = accountNumber.split("\\.");
@@ -104,8 +104,7 @@ public class BranchController extends AppState implements Runnable {
 			return false;
 		} else {
 			if (Double.parseDouble(amount) < 0.0) {
-				branchView
-						.popUpErrorMessage("Please enter a positive value for the amount.");
+				branchView.popUpErrorMessage("Please enter a positive value for the amount.");
 				return false;
 			}
 		}
@@ -118,18 +117,14 @@ public class BranchController extends AppState implements Runnable {
 		public void actionPerformed(ActionEvent arg0) {
 			// TODO Auto-generated method stub
 
-			if (isValidAccountNumber(branchView.getUISrcAccount())
-					&& isValidSerialNumber()
+			if (isValidAccountNumber(branchView.getUISrcAccount()) && isValidSerialNumber()
 					&& isValidAmount(branchView.getUIAmount())) {
 				branchView.enableAllButtons(false);
-				AccountId accountId = new AccountId(
-						branchView.getUISrcAccount());
-				BranchResponse response = BranchClient.deposit(accountId,
-						Double.parseDouble(branchView.getUIAmount()),
-						Integer.parseInt(branchView.getUISerial()));
+				AccountId accountId = new AccountId(branchView.getUISrcAccount());
+				BranchResponse response = BranchClient.deposit(myAppId, accountId,
+						Double.parseDouble(branchView.getUIAmount()), Integer.parseInt(branchView.getUISerial()));
 				if (checkResponse(response)) {
-					branchView.setBalanceLabel("Your Account ["
-							+ branchView.getUISrcAccount() + "] Balance: "
+					branchView.setBalanceLabel("Your Account [" + branchView.getUISrcAccount() + "] Balance: "
 							+ String.valueOf(response.getAmt()));
 				}
 				branchView.clearAllTextFields();
@@ -142,18 +137,14 @@ public class BranchController extends AppState implements Runnable {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (isValidAccountNumber(branchView.getUISrcAccount())
-					&& isValidSerialNumber()
+			if (isValidAccountNumber(branchView.getUISrcAccount()) && isValidSerialNumber()
 					&& isValidAmount(branchView.getUIAmount())) {
 				branchView.enableAllButtons(false);
-				AccountId accountId = new AccountId(
-						branchView.getUISrcAccount());
-				BranchResponse response = BranchClient.withdraw(accountId,
-						Double.parseDouble(branchView.getUIAmount()),
-						Integer.parseInt(branchView.getUISerial()));
+				AccountId accountId = new AccountId(branchView.getUISrcAccount());
+				BranchResponse response = BranchClient.withdraw(myAppId, accountId,
+						Double.parseDouble(branchView.getUIAmount()), Integer.parseInt(branchView.getUISerial()));
 				if (checkResponse(response)) {
-					branchView.setBalanceLabel("Your Account ["
-							+ branchView.getUISrcAccount() + "] Balance: "
+					branchView.setBalanceLabel("Your Account [" + branchView.getUISrcAccount() + "] Balance: "
 							+ String.valueOf(response.getAmt()));
 				}
 				branchView.clearAllTextFields();
@@ -168,27 +159,20 @@ public class BranchController extends AppState implements Runnable {
 		public void actionPerformed(ActionEvent e) {
 
 			if (isValidAccountNumber(branchView.getUISrcAccount())
-					&& isValidAccountNumber(branchView.getUIDestAccount())
-					&& isValidSerialNumber()
+					&& isValidAccountNumber(branchView.getUIDestAccount()) && isValidSerialNumber()
 					&& isValidAmount(branchView.getUIAmount())) {
 				// TODO Auto-generated method stub
 				branchView.enableAllButtons(false);
-				AccountId srcAccountId = new AccountId(
-						branchView.getUISrcAccount());
-				AccountId destAccountId = new AccountId(
-						branchView.getUIDestAccount());
+				AccountId srcAccountId = new AccountId(branchView.getUISrcAccount());
+				AccountId destAccountId = new AccountId(branchView.getUIDestAccount());
 				if (branchView.getUIAmount().equals("")) {
-					JOptionPane.showMessageDialog(new JFrame(),
-							"Please enter an amount.", "Error",
+					JOptionPane.showMessageDialog(new JFrame(), "Please enter an amount.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				} else {
-					BranchResponse response = BranchClient.transfer(
-							srcAccountId, destAccountId,
-							Double.parseDouble(branchView.getUIAmount()),
-							Integer.parseInt(branchView.getUISerial()));
+					BranchResponse response = BranchClient.transfer(myAppId, srcAccountId, destAccountId,
+							Double.parseDouble(branchView.getUIAmount()), Integer.parseInt(branchView.getUISerial()));
 					if (checkResponse(response)) {
-						branchView.setBalanceLabel("Your Account ["
-								+ branchView.getUISrcAccount() + "] Balance: "
+						branchView.setBalanceLabel("Your Account [" + branchView.getUISrcAccount() + "] Balance: "
 								+ String.valueOf(response.getAmt()));
 					}
 				}
@@ -203,16 +187,13 @@ public class BranchController extends AppState implements Runnable {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
-			if (isValidAccountNumber(branchView.getUISrcAccount())
-					&& isValidSerialNumber()) {
+			if (isValidAccountNumber(branchView.getUISrcAccount()) && isValidSerialNumber()) {
 				branchView.enableAllButtons(false);
-				AccountId accountId = new AccountId(
-						branchView.getUISrcAccount());
-				BranchResponse response = BranchClient.query(accountId,
+				AccountId accountId = new AccountId(branchView.getUISrcAccount());
+				BranchResponse response = BranchClient.query(myAppId, accountId,
 						Integer.parseInt(branchView.getUISerial()));
 				if (checkResponse(response)) {
-					branchView.setBalanceLabel("Your Account ["
-							+ branchView.getUISrcAccount() + "] Balance: "
+					branchView.setBalanceLabel("Your Account [" + branchView.getUISrcAccount() + "] Balance: "
 							+ String.valueOf(response.getAmt()));
 				}
 				branchView.clearAllTextFields();
@@ -237,13 +218,10 @@ public class BranchController extends AppState implements Runnable {
 		// Create two scroll panes that will store the list of accounts
 		// transactions in progress.
 		JScrollPane scrollPanel = new JScrollPane(new JLabel("Accounts"));
-		JScrollPane transactionScrollPane = new JScrollPane(new JLabel(
-				"Transactions In Progress"));
-		scrollPanel.setPreferredSize(new Dimension(GuiSpecs.GUI_SNAPSHOT_WIDTH,
+		JScrollPane transactionScrollPane = new JScrollPane(new JLabel("Transactions In Progress"));
+		scrollPanel.setPreferredSize(new Dimension(GuiSpecs.GUI_SNAPSHOT_WIDTH, GuiSpecs.GUI_FRAME_HEIGHT / 2 - 50));
+		transactionScrollPane.setPreferredSize(new Dimension(GuiSpecs.GUI_SNAPSHOT_WIDTH,
 				GuiSpecs.GUI_FRAME_HEIGHT / 2 - 50));
-		transactionScrollPane
-				.setPreferredSize(new Dimension(GuiSpecs.GUI_SNAPSHOT_WIDTH,
-						GuiSpecs.GUI_FRAME_HEIGHT / 2 - 50));
 
 		// Get list of accounts on this branch and add to pane
 		DefaultListModel listModel = new DefaultListModel();
@@ -251,8 +229,7 @@ public class BranchController extends AppState implements Runnable {
 		for (Account account : branchState.getAccounts().values()) {
 			// If account balance is non-zero
 			if (!(account.getAccountBalance().equals(0.0)))
-				listModel.addElement(account.getAccountId() + " : "
-						+ account.getAccountBalance());
+				listModel.addElement(account.getAccountId() + " : " + account.getAccountBalance());
 		}
 		JList accounts = new JList(listModel);
 		scrollPanel.getViewport().add(accounts);
@@ -265,29 +242,24 @@ public class BranchController extends AppState implements Runnable {
 
 			if (msg instanceof DepositRequest) {
 				DepositRequest dReq = (DepositRequest) msg;
-				transaction += " Deposit " + dReq.getAmount() + " from "
-						+ dReq.getSenderNodeId() + "."
+				transaction += " Deposit " + dReq.getAmount() + " from " + dReq.getSenderNodeId() + "."
 						+ dReq.getSrcAccountId().getAccountNumber();
 			} else if (msg instanceof WithdrawRequest) {
 				WithdrawRequest wReq = (WithdrawRequest) msg;
-				transaction += " Withdraw " + wReq.getAmount() + " from "
-						+ wReq.getSenderNodeId() + "."
+				transaction += " Withdraw " + wReq.getAmount() + " from " + wReq.getSenderNodeId() + "."
 						+ wReq.getSrcAccountId().getAccountNumber();
 			} else if (msg instanceof TransferRequest) {
 				TransferRequest tReq = (TransferRequest) msg;
-				transaction += " Transfer " + tReq.getAmount() + " from "
-						+ tReq.getSenderNodeId() + "."
-						+ tReq.getSrcAccountId().getAccountNumber() + " to "
-						+ tReq.getDestAccountId().getBranchAppId() + "."
-						+ tReq.getDestAccountId().getAccountNumber();
+				transaction += " Transfer " + tReq.getAmount() + " from " + tReq.getSenderNodeId() + "."
+						+ tReq.getSrcAccountId().getAccountNumber() + " to " + tReq.getDestAccountId().getBranchAppId()
+						+ "." + tReq.getDestAccountId().getAccountNumber();
 			} else if (msg instanceof QueryRequest) {
 				QueryRequest qReq = (QueryRequest) msg;
 				transaction += " Query account " + qReq.getSenderNodeId() + "."
 						+ qReq.getSrcAccountId().getAccountNumber();
 			} else if (msg instanceof BranchResponse) {
 				BranchResponse resp = (BranchResponse) msg;
-				transaction += "Branch response from " + resp.getSenderNodeId()
-						+ " was " + resp.wasSuccessfull();
+				transaction += "Branch response from " + resp.getSenderNodeId() + " was " + resp.wasSuccessfull();
 			}
 
 			transactionsListModel.addElement(transaction);
@@ -321,10 +293,8 @@ public class BranchController extends AppState implements Runnable {
 			branchView.popUpErrorMessage("Network Failure.");
 			return false;
 		} else if (!response.wasSuccessfull()) {
-			branchView
-					.popUpErrorMessage("Your request was unsuccessfull. Please try again. Check your serial number.");
-			branchView.setBalanceLabel("Your Account ["
-					+ branchView.getUISrcAccount() + "] Balance: "
+			branchView.popUpErrorMessage("Your request was unsuccessfull. Please try again. Check your serial number.");
+			branchView.setBalanceLabel("Your Account [" + branchView.getUISrcAccount() + "] Balance: "
 					+ String.valueOf(response.getAmt()));
 			return false;
 		} else {

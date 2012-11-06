@@ -2,6 +2,7 @@ package core.network;
 
 import core.app.App;
 import core.network.messages.Message;
+import core.network.messages.AppMessage;
 import core.network.messages.Request;
 import core.network.messages.Response;
 import core.node.NodeId;
@@ -29,16 +30,22 @@ public class MessageListener implements Runnable {
 
 				System.out.println("\t\tMessage Listener new message from " + src);
 
-				// Place the msgIn in the right App's request buffer
-				if (msgIn instanceof Request) {
-					App<?> app = NodeRuntime.getAppManager().getApp(((Request) msgIn).getReceiverAppId());
-					app.requestBuffer.put((Request) msgIn);
-					System.out.println("\t\tMessage Listener put request on app "
-							+ ((Request) msgIn).getReceiverAppId() + " buffer");
-				}
-				// Place the msgIn in the client response buffer
-				else if (msgIn instanceof Response) {
-					Client.responseBuffer.put((Response) msgIn);
+				// Got a message meant for an app
+				if (msgIn instanceof AppMessage) {
+					App<?> app = NodeRuntime.getAppManager().getApp(((AppMessage) msgIn).getReceiverAppId());
+
+					// Place the msgIn in the App's request buffer
+					if (msgIn instanceof Request) {
+						app.requestBuffer.put((Request) msgIn);
+						System.out.println("\t\tMessage Listener put request on app "
+								+ ((Request) msgIn).getReceiverAppId() + " buffer");
+					}
+					// Place the msgIn in the App's response buffer
+					else if (msgIn instanceof Response) {
+						app.responseBuffer.put((Response) msgIn);
+						System.out.println("\t\tMessage Listener put response on app "
+								+ ((Response) msgIn).getReceiverAppId() + " buffer");
+					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

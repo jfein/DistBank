@@ -3,7 +3,6 @@ package core.app;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import core.network.Client;
 import core.network.messages.Request;
 import core.network.messages.Response;
 import core.network.messages.SynchRequest;
@@ -14,6 +13,7 @@ import core.node.NodeRuntime;
 public abstract class App<S extends AppState> implements Runnable {
 
 	public final BlockingQueue<Request> requestBuffer = new ArrayBlockingQueue<Request>(100, true);
+	public final BlockingQueue<Response> responseBuffer = new ArrayBlockingQueue<Response>(1, true);
 
 	private AppId appId;
 	private S appState;
@@ -37,6 +37,28 @@ public abstract class App<S extends AppState> implements Runnable {
 		this.appState = newAppState;
 		System.out.println("NEW STATE:");
 		System.out.println(this.appState);
+	}
+
+	public synchronized <T extends Response> T sendRequestGetResponse(NodeId nodeDest, Request req) {
+		T resp = null;
+
+		try {
+			// Send the request
+			System.out.println("\tApp Client exec sending request...");
+			NodeRuntime.getNetworkInterface().sendMessage(nodeDest, req);
+			System.out.println("\tApp Client exec request sent!...");
+
+			// If can receive from the node, block waiting for a response
+			if (NodeRuntime.getNetworkInterface().canReceiveFrom(nodeDest)) {
+				System.out.println("\tApp Client exec waiting for response...");
+				resp = (T) responseBuffer.take();
+				System.out.println("\tApp Client exec got response from node " + resp.getSenderNodeId());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return resp;
 	}
 
 	/**
@@ -69,8 +91,8 @@ public abstract class App<S extends AppState> implements Runnable {
 			do {
 				for (NodeId backup : NodeRuntime.getAppManager().appToBackupNodes(appId)) {
 					System.out.println("Attemtping to synch to backup node " + backup);
-					SynchRequest<S> synchReq = new SynchRequest<S>(appId, appState);
-					SynchResponse synchResp = Client.exec(backup, synchReq);
+					SynchRequest<S> synchReq = new SynchRequest<S>(appId, appId, appState);
+					SynchResponse synchResp = sendRequestGetResponse(backup, synchReq);
 					if (synchResp == null) {
 						System.out.println("FAILED Synching backup " + backup);
 						success = false;
@@ -91,7 +113,7 @@ public abstract class App<S extends AppState> implements Runnable {
 	public SynchResponse handleRequest(SynchRequest<S> m) {
 		System.out.println("GOT SYNCH REQUEST FROM NODE " + m.getSenderNodeId() + " AND APP " + appId);
 		setState(m.getState());
-		return new SynchResponse();
+		return new SynchResponse(appId);
 	}
 
 }

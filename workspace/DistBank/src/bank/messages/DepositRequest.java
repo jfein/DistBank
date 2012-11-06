@@ -1,5 +1,6 @@
 package bank.messages;
 
+import core.app.AppId;
 import bank.branch.AccountId;
 
 public class DepositRequest extends BranchRequest {
@@ -8,8 +9,8 @@ public class DepositRequest extends BranchRequest {
 
 	private Double amount;
 
-	public DepositRequest(AccountId accountId, Double amount, Integer serial) {
-		super(accountId, serial);
+	public DepositRequest(AppId senderAppId, AccountId accountId, Double amount, Integer serial) {
+		super(senderAppId, accountId, serial);
 		this.amount = amount;
 	}
 
