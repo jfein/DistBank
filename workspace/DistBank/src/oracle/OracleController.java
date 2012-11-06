@@ -29,11 +29,10 @@ public class OracleController implements Runnable {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
 			//Get input from oracle about node id to fail
 			//Generate a fail request
-			//set fail request to that node
-			//
+			//send a DIE request to that node
+		
 			
 		}
 		
@@ -43,7 +42,9 @@ public class OracleController implements Runnable {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			
+			//Get input from oracle about node if to notify about
+			// send a mess id to all apps that are interested in that node id
+			//change the state of the oracle and remove into a "fail list" (if we want to 
 		}
 		
 	}
