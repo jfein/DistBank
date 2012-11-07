@@ -1,6 +1,6 @@
 package test;
 
-import core.network.messages.Request;
+import core.messages.Request;
 
 public class SetRequest extends Request {
 

@@ -2,7 +2,7 @@ package bank.messages;
 
 import bank.branch.AccountId;
 import core.app.AppId;
-import core.network.messages.Request;
+import core.messages.Request;
 
 public abstract class BranchRequest extends Request {
 

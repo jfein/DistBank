@@ -1,7 +1,7 @@
 package bank.messages;
 
 import core.app.AppId;
-import core.network.messages.Response;
+import core.messages.Response;
 
 public class BranchResponse extends Response {
 

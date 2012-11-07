@@ -1,7 +1,7 @@
 package bank.branch;
 
 import core.app.AppId;
-import core.network.Client;
+import core.app.Client;
 
 import bank.messages.BranchResponse;
 import bank.messages.DepositRequest;

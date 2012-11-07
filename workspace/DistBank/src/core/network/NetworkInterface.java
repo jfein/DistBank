@@ -14,8 +14,8 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import core.network.messages.InitConnMessage;
-import core.network.messages.Message;
+import core.messages.InitConnMessage;
+import core.messages.Message;
 import core.node.NodeId;
 import core.node.NodeRuntime;
 

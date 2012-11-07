@@ -87,6 +87,7 @@ public class BranchState extends AppState {
 			BranchResponse resp = BranchClient.deposit(myBranchAppId, destAccountId, amount, serialNumber);
 			// Deposit returned null (meaning a network error) but we cannot get
 			// messages from dest branch so its OK
+			// TODO: make sure "appToPrimaryNode" recovers OK
 			if (resp == null
 					&& NodeRuntime.getNetworkInterface().canSendTo(
 							NodeRuntime.getAppManager().appToPrimaryNode(destAccountId.getBranchAppId()))
@@ -109,7 +110,7 @@ public class BranchState extends AppState {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("Branch ID: " + NodeRuntime.getId() + "\n");
+		sb.append("Branch ID: " + myBranchAppId + "\n");
 
 		for (Map.Entry<AccountId, Account> entry : branchAccounts.entrySet()) {
 			AccountId key = entry.getKey();

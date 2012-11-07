@@ -1,4 +1,4 @@
-package core.network.messages;
+package core.messages;
 
 import java.io.Serializable;
 

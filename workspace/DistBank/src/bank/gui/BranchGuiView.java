@@ -2,31 +2,21 @@ package bank.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
-import javax.swing.SwingUtilities;
 
-import bank.branch.AccountId;
-import bank.branch.BranchClient;
-import bank.messages.BranchResponse;
+import core.app.AppId;
 
-import core.node.NodeRuntime;
-
-public class BranchView extends JFrame {
-	private String branchMainIndex = "Main Bank Branch Panel";
+public class BranchGuiView extends JFrame {
 
 	private final String greetingTextLabel = "<html><FONT COLOR = RED SIZE = 18> J&V Bank </FONT></html>";
 
@@ -55,7 +45,7 @@ public class BranchView extends JFrame {
 
 	private SpringLayout mainButtonPanelLayout;
 
-	public BranchView() {
+	public BranchGuiView(AppId myAppId) {
 
 		this.setPreferredSize(new Dimension(GuiSpecs.GUI_FRAME_WIDTH, GuiSpecs.GUI_FRAME_HEIGHT));
 		this.setResizable(false);
@@ -73,7 +63,7 @@ public class BranchView extends JFrame {
 		splitFramePane.setDividerLocation(170 + splitFramePane.getInsets().left);
 
 		// North Panel
-		JLabel northPanel = new JLabel("Welcome to J&V Bank ATM #" + NodeRuntime.getId(), JLabel.CENTER);
+		JLabel northPanel = new JLabel("Welcome to J&V Bank ATM #" + myAppId, JLabel.CENTER);
 		northPanel.setPreferredSize(new Dimension(500, 100));
 		mainPanel.add(northPanel, BorderLayout.NORTH);
 

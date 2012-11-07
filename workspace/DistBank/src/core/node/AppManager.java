@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import core.app.App;
 import core.app.AppId;
@@ -21,6 +23,7 @@ import core.app.AppId;
 public class AppManager<A extends App<?>> {
 
 	private Map<AppId, LinkedList<NodeId>> appToNodes;
+	private Map<NodeId, LinkedList<AppId>> originalNodeToApps;
 	private Map<AppId, A> myApps;
 
 	public AppManager(Class<A> appClass) throws Exception {
@@ -34,6 +37,8 @@ public class AppManager<A extends App<?>> {
 	 */
 	private void parseAppFile() {
 		appToNodes = new HashMap<AppId, LinkedList<NodeId>>();
+		originalNodeToApps = new HashMap<NodeId, LinkedList<AppId>>();
+
 		try {
 			BufferedReader read1 = new BufferedReader(new FileReader(NodeRuntime.APPS_FILE));
 
@@ -48,9 +53,17 @@ public class AppManager<A extends App<?>> {
 
 					LinkedList<NodeId> nodeIds = new LinkedList<NodeId>();
 					for (int i = 1; i < parts.length; i++) {
-						// Add app to node mapping
+						// Add nodeID to app mapping
 						NodeId nodeId = new NodeId(Integer.parseInt(parts[i]));
 						nodeIds.add(nodeId);
+
+						// Add appID to app mapping
+						LinkedList<AppId> apps = originalNodeToApps.get(nodeId);
+						if (apps == null) {
+							apps = new LinkedList<AppId>();
+							originalNodeToApps.put(nodeId, apps);
+						}
+						apps.add(appId);
 					}
 
 					appToNodes.put(appId, nodeIds);
@@ -102,11 +115,13 @@ public class AppManager<A extends App<?>> {
 	 * @return
 	 */
 	public NodeId appToPrimaryNode(AppId appId) {
-		System.out.println("Looking for primary for app " + appId);
-		LinkedList<NodeId> lst = appToNodes.get(appId);
-		if (lst == null)
-			return null;
-		return lst.peek();
+		synchronized (appToNodes) {
+			System.out.println("Looking for primary for app " + appId);
+			LinkedList<NodeId> lst = appToNodes.get(appId);
+			if (lst == null)
+				return null;
+			return lst.peek();
+		}
 	}
 
 	/**
@@ -116,8 +131,66 @@ public class AppManager<A extends App<?>> {
 	 * @return
 	 */
 	public List<NodeId> appToBackupNodes(AppId appId) {
-		LinkedList<NodeId> nodes = new LinkedList<NodeId>(appToNodes.get(appId));
-		nodes.pop();
+		synchronized (appToNodes) {
+			LinkedList<NodeId> nodes = new LinkedList<NodeId>(appToNodes.get(appId));
+			nodes.pop();
+			return nodes;
+		}
+	}
+
+	/**
+	 * Removes a failed nodeID from appToNodes mapping
+	 * 
+	 * @param nodeId
+	 */
+	public void removeFailedNode(NodeId nodeId) {
+		synchronized (appToNodes) {
+			for (LinkedList<NodeId> nodes : appToNodes.values())
+				nodes.remove(nodeId);
+		}
+	}
+
+	/**
+	 * Adds a recovered nodeID to appToNodes mapping
+	 * 
+	 * @param nodeId
+	 */
+	public void addRecoveredNode(NodeId nodeId) {
+		synchronized (appToNodes) {
+			LinkedList<AppId> apps = originalNodeToApps.get(nodeId);
+			if (apps != null) {
+				for (AppId appId : apps) {
+					appToNodes.get(appId).add(nodeId);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Get all nodes this node is interested in, meaning we run an app also
+	 * running on that node
+	 * 
+	 * @return
+	 */
+	public Set<NodeId> getNodesOfInterest() {
+		if (false) {
+			synchronized (myApps) {
+				Set<NodeId> nodes = new HashSet<NodeId>();
+				for (Map.Entry<NodeId, LinkedList<AppId>> entry : originalNodeToApps.entrySet()) {
+					for (AppId app : myApps.keySet()) {
+						if (entry.getValue().contains(app))
+							nodes.add(entry.getKey());
+					}
+				}
+				nodes.remove(NodeRuntime.getId());
+				return nodes;
+			}
+		}
+
+		// TODO: don't do this
+		Set<NodeId> nodes = new HashSet<NodeId>();
+		nodes.addAll(NodeRuntime.getNetworkInterface().whoNeighbors());
+		nodes.addAll(NodeRuntime.getNetworkInterface().whoNeighborsIn());
 		return nodes;
 	}
 
@@ -131,13 +204,4 @@ public class AppManager<A extends App<?>> {
 		System.out.println("App Manager looking for app " + appId);
 		return myApps.get(appId);
 	}
-	
-	public void removeFailedNode(NodeId nodeId) {
-		for(Map.Entry<AppId, LinkedList<NodeId>> entry: appToNodes.entrySet()) {
-			LinkedList<NodeId> listOfNodes = entry.getValue();
-			listOfNodes.remove(nodeId);
-			appToNodes.put(entry.getKey(), entry.getValue());
-		}
-	}
-
 }

@@ -19,7 +19,7 @@ import javax.swing.SwingUtilities;
 
 import core.app.AppId;
 import core.app.AppState;
-import core.network.messages.Message;
+import core.messages.Message;
 
 import bank.branch.Account;
 import bank.branch.AccountId;
@@ -31,16 +31,16 @@ import bank.messages.QueryRequest;
 import bank.messages.TransferRequest;
 import bank.messages.WithdrawRequest;
 
-public class BranchController extends AppState implements Runnable {
+public class BranchGuiController extends AppState implements Runnable {
 
 	private static final long serialVersionUID = -3098432013575721538L;
 
 	private AppId myAppId;
-	private BranchView branchView;
+	private BranchGuiView branchView;
 
-	public BranchController(AppId myAppId) {
+	public BranchGuiController(AppId myAppId) {
 		this.myAppId = myAppId;
-		this.branchView = new BranchView();
+		this.branchView = new BranchGuiView(myAppId);
 
 		branchView.addDepositListener(new DepositListener());
 		branchView.addWithdrawListener(new WithdrawListener());
@@ -54,7 +54,7 @@ public class BranchController extends AppState implements Runnable {
 		branchView.setVisible(true);
 	}
 
-	public BranchView getBranchView() {
+	public BranchGuiView getBranchView() {
 		return this.branchView;
 	}
 

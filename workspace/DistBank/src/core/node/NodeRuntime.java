@@ -12,6 +12,7 @@ public class NodeRuntime implements Runnable {
 	private static NodeId id;
 	private static NetworkInterface networkInterface;
 	private static AppManager<? extends App<?>> appManager;
+	private static Configurator configurator;
 
 	public static NodeId getId() {
 		return id;
@@ -25,21 +26,31 @@ public class NodeRuntime implements Runnable {
 		return appManager;
 	}
 
+	public static Configurator getConfigurator() {
+		return configurator;
+	}
+
 	public <A extends App<?>> NodeRuntime(NodeId id, Class<A> appClass) throws Exception {
 		NodeRuntime.id = id;
 		NodeRuntime.networkInterface = new NetworkInterface();
 		NodeRuntime.appManager = new AppManager<A>(appClass);
+		NodeRuntime.configurator = new Configurator();
 	}
 
 	public void run() {
 		System.out.println("NodeRuntime starting node ID " + NodeRuntime.id + " to listen on address "
 				+ NodeRuntime.networkInterface.getNodeAddress(id));
 
+		// Run network to take in new connections
+		new Thread(networkInterface).start();
+
+		// Start configurator
+		new Thread(configurator).start();
+		configurator.initialize();
+
 		// Start message handling threads
 		appManager.startApps();
 
-		// Run network to take in new connections
-		networkInterface.run();
 	}
 
 }

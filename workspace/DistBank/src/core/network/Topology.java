@@ -23,8 +23,7 @@ public class Topology {
 
 		try {
 			// Parse node_mapping.txt
-			BufferedReader read1 = new BufferedReader(new FileReader(
-					nodeMappingFile));
+			BufferedReader read1 = new BufferedReader(new FileReader(nodeMappingFile));
 
 			while (read1.ready()) {
 				String t = read1.readLine();
@@ -36,8 +35,7 @@ public class Topology {
 			}
 
 			// Parse topology_file.txt
-			BufferedReader read2 = new BufferedReader(new FileReader(
-					topologyFile));
+			BufferedReader read2 = new BufferedReader(new FileReader(topologyFile));
 
 			while (read2.ready()) {
 				String t = read2.readLine();
@@ -46,13 +44,16 @@ public class Topology {
 				NodeId src = new NodeId(Integer.parseInt(parts[0]));
 				NodeId dest = new NodeId(Integer.parseInt(parts[1]));
 
-				// TODO: make bidirectional
 				if (src.equals(myId)) {
 					System.out.println("I can send messages to " + dest);
 					channelsOut.add(dest);
+					System.out.println("I can get messages from " + dest);
+					channelsIn.add(dest);
 				}
 
 				if (dest.equals(myId)) {
+					System.out.println("I can send messages to " + src);
+					channelsOut.add(src);
 					System.out.println("I can get messages from " + src);
 					channelsIn.add(src);
 				}

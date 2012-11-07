@@ -1,10 +1,10 @@
 package core.network;
 
 import core.app.App;
-import core.network.messages.Message;
-import core.network.messages.AppMessage;
-import core.network.messages.Request;
-import core.network.messages.Response;
+import core.messages.AppMessage;
+import core.messages.Message;
+import core.messages.Request;
+import core.messages.Response;
 import core.node.NodeId;
 import core.node.NodeRuntime;
 
@@ -46,6 +46,10 @@ public class MessageListener implements Runnable {
 						System.out.println("\t\tMessage Listener put response on app "
 								+ ((Response) msgIn).getReceiverAppId() + " buffer");
 					}
+				}
+				// Got a message for the system
+				else {
+					NodeRuntime.getConfigurator().buffer.put(msgIn);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

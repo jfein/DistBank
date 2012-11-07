@@ -1,15 +1,9 @@
-package oracle.gui;
+package oracle;
 
-import java.io.IOException;
-
-import bank.gui.BranchGuiApp;
 import core.node.NodeId;
 import core.node.NodeRuntime;
 
-
-
-public class OracleGuiRunner {
-
+public class OracleRunner {
 
 	public static void main(String[] args) throws Exception {
 		if (args.length != 1) {
@@ -19,9 +13,9 @@ public class OracleGuiRunner {
 
 		NodeId id = new NodeId(Integer.parseInt(args[0]));
 
-		System.out.println("BankGUI Node " + id + " running.");
+		System.out.println("Oracle Node " + id + " running.");
 
-		(new NodeRuntime(id, OracleGuiApp.class)).run();
+		(new NodeRuntime(id, OracleApp.class)).run();
 	}
 
 }

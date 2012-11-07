@@ -5,35 +5,49 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-import core.app.AppId;
-import core.app.AppState;
+import core.node.ConfiguratorClient;
 import core.node.NodeId;
 
-public class OracleState extends AppState{
-//Keep track of failed nodes so we know if a node starts up from recovery or if its starting up for the firs time?
+public class OracleState {
+
+	// All failed nodes
 	private Set<NodeId> failedNodes;
-	private HashMap<NodeId, LinkedList<NodeId>> nodeToSubscriptionList;
-	private AppId myAppId;
-	
-	public OracleState(AppId appId) {
-		//store for each appid nodes of interest
+	// Map who is subscribed to the key
+	private HashMap<NodeId, LinkedList<NodeId>> nodeSubscriptions;
+
+	public OracleState() {
+		// store for each appid nodes of interest
 		failedNodes = new HashSet<NodeId>();
-		nodeToSubscriptionList = new HashMap<NodeId, LinkedList<NodeId>>();
-		myAppId = appId;
+		nodeSubscriptions = new HashMap<NodeId, LinkedList<NodeId>>();
 	}
-	
-	public void addFailedNode(NodeId nodeId) {
-		this.failedNodes.add(nodeId);
-	}
-	
-	public Set<NodeId> getFailedNodes() {
-		return failedNodes;
-	}
-	
-	public void processSubscription(NodeId nodeId, LinkedList<NodeId> subscriptionList) {
-		this.nodeToSubscriptionList.put(nodeId, subscriptionList);
-		if(failedNodes.contains(nodeId)) {//TODO
-			failedNodes.remove(nodeId);
+
+	public void registerNodeFailure(NodeId failedNodeId) {
+		this.failedNodes.add(failedNodeId);
+		LinkedList<NodeId> subscriptions = nodeSubscriptions.get(failedNodeId);
+		for (NodeId subscriber : subscriptions) {
+			ConfiguratorClient.notifyFailure(subscriber, failedNodeId);
 		}
+	}
+
+	public void registerNodeRecovery(NodeId recoveredNodeId) {
+		this.failedNodes.remove(recoveredNodeId);
+		LinkedList<NodeId> subscriptions = nodeSubscriptions.get(recoveredNodeId);
+		for (NodeId subscriber : subscriptions) {
+			ConfiguratorClient.notifyRecovery(subscriber, recoveredNodeId);
+		}
+	}
+
+	public void processSubscription(NodeId subscribingNode, NodeId nodeOfInterest) {
+		LinkedList<NodeId> subscriptions = nodeSubscriptions.get(nodeOfInterest);
+		if (subscriptions == null) {
+			subscriptions = new LinkedList<NodeId>();
+			nodeSubscriptions.put(nodeOfInterest, subscriptions);
+		}
+		subscriptions.add(subscribingNode);
+
+		// If what you're subscribing too is already failed, send a
+		// NotifyFailure message
+		if (failedNodes.contains(nodeOfInterest))
+			ConfiguratorClient.notifyFailure(subscribingNode, nodeOfInterest);
 	}
 }

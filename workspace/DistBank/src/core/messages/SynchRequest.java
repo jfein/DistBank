@@ -1,4 +1,4 @@
-package core.network.messages;
+package core.messages;
 
 import core.app.AppId;
 import core.app.AppState;

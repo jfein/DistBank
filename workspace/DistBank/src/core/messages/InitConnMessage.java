@@ -1,4 +1,4 @@
-package core.network.messages;
+package core.messages;
 
 public class InitConnMessage extends Message {
 
