@@ -39,37 +39,22 @@ public class BranchGuiView extends JFrame {
 
 	private JLabel balanceLabel;
 
-	private JPanel snapshotPanel;
 	private JPanel mainPanel;
-	private JSplitPane splitFramePane;
 
 	private SpringLayout mainButtonPanelLayout;
 
 	public BranchGuiView(AppId myAppId) {
 
-		this.setPreferredSize(new Dimension(GuiSpecs.GUI_FRAME_WIDTH, GuiSpecs.GUI_FRAME_HEIGHT));
+		this.setPreferredSize(new Dimension(GuiSpecs.GUI_BRANCH_PANEL_WIDTH, GuiSpecs.GUI_FRAME_HEIGHT));
 		this.setResizable(false);
 
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
 
-		snapshotPanel = new JPanel();
-		snapshotPanel.setBackground(Color.pink);
-		snapshotPanel.setLayout(new BorderLayout());
-		snapshotPanel.setMaximumSize(new Dimension(GuiSpecs.GUI_SNAPSHOT_WIDTH, GuiSpecs.GUI_FRAME_HEIGHT));
-
-		splitFramePane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, snapshotPanel, mainPanel);
-		splitFramePane.setMaximumSize(new Dimension(GuiSpecs.GUI_BRANCH_PANEL_WIDTH, GuiSpecs.GUI_FRAME_HEIGHT));
-		splitFramePane.setDividerLocation(170 + splitFramePane.getInsets().left);
-
 		// North Panel
 		JLabel northPanel = new JLabel("Welcome to J&V Bank ATM #" + myAppId, JLabel.CENTER);
 		northPanel.setPreferredSize(new Dimension(500, 100));
 		mainPanel.add(northPanel, BorderLayout.NORTH);
-
-		// Snapshot Panel
-		JLabel welcomeMessage = new JLabel(greetingTextLabel, JLabel.CENTER);
-		snapshotPanel.add(welcomeMessage, BorderLayout.CENTER);
 
 		// South Panel
 		balanceLabel = new JLabel("Vera Kutsenko, Jeremy Fein", JLabel.CENTER);
@@ -87,12 +72,10 @@ public class BranchGuiView extends JFrame {
 		withdrawButton = createMenuButton("Withdraw", GuiSpecs.MENU_BUTTON_OFFSET);
 		transferButton = createMenuButton("Transfer", 2 * GuiSpecs.MENU_BUTTON_OFFSET);
 		checkBalanceButton = createMenuButton("Check Balance", 3 * GuiSpecs.MENU_BUTTON_OFFSET);
-		takeSnapshotButton = createMenuButton("Take Snapshot", 4 * GuiSpecs.MENU_BUTTON_OFFSET);
 
 		mainButtonPanel.add(this.transferButton);
 		mainButtonPanel.add(this.depositButton);
 		mainButtonPanel.add(this.checkBalanceButton);
-		mainButtonPanel.add(this.takeSnapshotButton);
 		mainButtonPanel.add(this.withdrawButton);
 
 		// Create Serial Number Field
@@ -121,7 +104,7 @@ public class BranchGuiView extends JFrame {
 		mainButtonPanel.add(buttonChoiceLabel);
 		withdrawButton.setVisible(true);
 		checkBalanceButton.setVisible(true);
-		this.setContentPane(splitFramePane);
+		this.setContentPane(mainPanel);
 		this.pack();
 	}
 
@@ -208,18 +191,6 @@ public class BranchGuiView extends JFrame {
 
 	public void popUpErrorMessage(String message) {
 		JOptionPane.showMessageDialog(new JFrame(), message, "Error", JOptionPane.ERROR_MESSAGE);
-	}
-
-	public JPanel getClearSnapShotPanel() {
-		this.snapshotPanel.removeAll();
-		return this.snapshotPanel;
-	}
-
-	public void resetScrollPanel() {
-		this.snapshotPanel.removeAll();
-		JLabel welcomeMessage = new JLabel(greetingTextLabel, JLabel.CENTER);
-		snapshotPanel.add(welcomeMessage, BorderLayout.CENTER);
-		snapshotPanel.revalidate();
 	}
 
 	public JButton getDepositButton() {

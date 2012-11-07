@@ -46,7 +46,6 @@ public class BranchGuiController extends AppState implements Runnable {
 		branchView.addWithdrawListener(new WithdrawListener());
 		branchView.addQueryListener(new QueryListener());
 		branchView.addTransferListener(new TransferListener());
-		branchView.addTakeSnapShotListener(new SnapShotListener());
 	}
 
 	@Override
@@ -198,91 +197,7 @@ public class BranchGuiController extends AppState implements Runnable {
 		}
 	}
 
-	class SnapShotListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			branchView.resetScrollPanel();
 
-		}
-
-	}
-
-	public void displaySnapshot(BranchState branchState, List<Message> messages) {
-
-		JPanel leftPanel = branchView.getClearSnapShotPanel();
-
-		// Create two scroll panes that will store the list of accounts
-		// transactions in progress.
-		JScrollPane scrollPanel = new JScrollPane(new JLabel("Accounts"));
-		JScrollPane transactionScrollPane = new JScrollPane(new JLabel("Transactions In Progress"));
-		scrollPanel.setPreferredSize(new Dimension(GuiSpecs.GUI_SNAPSHOT_WIDTH, GuiSpecs.GUI_FRAME_HEIGHT / 2 - 50));
-		transactionScrollPane.setPreferredSize(new Dimension(GuiSpecs.GUI_SNAPSHOT_WIDTH,
-				GuiSpecs.GUI_FRAME_HEIGHT / 2 - 50));
-
-		// Get list of accounts on this branch and add to pane
-		DefaultListModel listModel = new DefaultListModel();
-		listModel.addElement("Accounts On This Branch");
-		for (Account account : branchState.getAccounts().values()) {
-			// If account balance is non-zero
-			if (!(account.getAccountBalance().equals(0.0)))
-				listModel.addElement(account.getAccountId() + " : " + account.getAccountBalance());
-		}
-		JList accounts = new JList(listModel);
-		scrollPanel.getViewport().add(accounts);
-
-		// Get list of transactions and add to pane
-		DefaultListModel transactionsListModel = new DefaultListModel();
-		transactionsListModel.addElement("Transactions In Progress");
-		for (Message msg : messages) {
-			String transaction = "";
-
-			if (msg instanceof DepositRequest) {
-				DepositRequest dReq = (DepositRequest) msg;
-				transaction += " Deposit " + dReq.getAmount() + " from " + dReq.getSenderNodeId() + "."
-						+ dReq.getSrcAccountId().getAccountNumber();
-			} else if (msg instanceof WithdrawRequest) {
-				WithdrawRequest wReq = (WithdrawRequest) msg;
-				transaction += " Withdraw " + wReq.getAmount() + " from " + wReq.getSenderNodeId() + "."
-						+ wReq.getSrcAccountId().getAccountNumber();
-			} else if (msg instanceof TransferRequest) {
-				TransferRequest tReq = (TransferRequest) msg;
-				transaction += " Transfer " + tReq.getAmount() + " from " + tReq.getSenderNodeId() + "."
-						+ tReq.getSrcAccountId().getAccountNumber() + " to " + tReq.getDestAccountId().getBranchAppId()
-						+ "." + tReq.getDestAccountId().getAccountNumber();
-			} else if (msg instanceof QueryRequest) {
-				QueryRequest qReq = (QueryRequest) msg;
-				transaction += " Query account " + qReq.getSenderNodeId() + "."
-						+ qReq.getSrcAccountId().getAccountNumber();
-			} else if (msg instanceof BranchResponse) {
-				BranchResponse resp = (BranchResponse) msg;
-				transaction += "Branch response from " + resp.getSenderNodeId() + " was " + resp.wasSuccessfull();
-			}
-
-			transactionsListModel.addElement(transaction);
-		}
-		JList transactions = new JList(transactionsListModel);
-		transactionScrollPane.getViewport().add(transactions);
-
-		// Create a clear button
-		JButton clear = new JButton("Clear");
-		clear.setPreferredSize(new Dimension(GuiSpecs.GUI_SNAPSHOT_WIDTH, 30));
-		clear.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						branchView.resetScrollPanel();
-					}
-
-				});
-			}
-		});
-
-		leftPanel.add(clear, BorderLayout.SOUTH);
-		leftPanel.add(transactionScrollPane, BorderLayout.NORTH);
-		leftPanel.add(scrollPanel, BorderLayout.CENTER);
-		branchView.clearAllTextFields();
-		leftPanel.revalidate();
-	}
 
 	public boolean checkResponse(BranchResponse response) {
 		if (response == null) {
