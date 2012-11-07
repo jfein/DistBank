@@ -31,7 +31,7 @@ import bank.messages.QueryRequest;
 import bank.messages.TransferRequest;
 import bank.messages.WithdrawRequest;
 
-public class BranchGuiController extends AppState implements Runnable {
+public class BranchGuiController extends AppState {
 
 	private static final long serialVersionUID = -3098432013575721538L;
 
@@ -46,10 +46,7 @@ public class BranchGuiController extends AppState implements Runnable {
 		branchView.addWithdrawListener(new WithdrawListener());
 		branchView.addQueryListener(new QueryListener());
 		branchView.addTransferListener(new TransferListener());
-	}
-
-	@Override
-	public void run() {
+		
 		branchView.setVisible(true);
 	}
 

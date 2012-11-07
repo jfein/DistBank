@@ -1,6 +1,7 @@
 package oracle;
 
 import oracle.messages.SubscribeRequest;
+import oracle.messages.SubscribeResponse;
 import core.app.App;
 import core.app.AppId;
 
@@ -12,14 +13,14 @@ public class OracleApp extends App<OracleGuiController> {
 
 	@Override
 	protected OracleGuiController newState() {
-		OracleGuiController controller = new OracleGuiController(getAppId());
-		controller.run();
-		return controller;
+		return new OracleGuiController();
 	}
 
-	public void handleRequest(SubscribeRequest req) {
+	public SubscribeResponse handleRequest(SubscribeRequest req) {
 		System.out.println("New subscription from " + req.getSenderNodeId());
 		OracleState state = getState().getOracleState();
-		state.processSubscription(req.getSenderNodeId(), req.getNodeOfInterest());
+		boolean isFailed = state.processSubscription(req.getSenderNodeId(), req.getNodeOfInterest());
+		return new SubscribeResponse(isFailed);
 	}
+
 }

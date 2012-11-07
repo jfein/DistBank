@@ -116,7 +116,6 @@ public class AppManager<A extends App<?>> {
 	 */
 	public NodeId appToPrimaryNode(AppId appId) {
 		synchronized (appToNodes) {
-			System.out.println("Looking for primary for app " + appId);
 			LinkedList<NodeId> lst = appToNodes.get(appId);
 			if (lst == null)
 				return null;
@@ -132,7 +131,10 @@ public class AppManager<A extends App<?>> {
 	 */
 	public List<NodeId> appToBackupNodes(AppId appId) {
 		synchronized (appToNodes) {
-			LinkedList<NodeId> nodes = new LinkedList<NodeId>(appToNodes.get(appId));
+			LinkedList<NodeId> origNodes = appToNodes.get(appId);
+			if (origNodes == null)
+				return new LinkedList<NodeId>();
+			LinkedList<NodeId> nodes = new LinkedList<NodeId>(origNodes);
 			nodes.pop();
 			return nodes;
 		}
@@ -182,7 +184,6 @@ public class AppManager<A extends App<?>> {
 							nodes.add(entry.getKey());
 					}
 				}
-				nodes.remove(NodeRuntime.getId());
 				return nodes;
 			}
 		}
@@ -191,6 +192,10 @@ public class AppManager<A extends App<?>> {
 		Set<NodeId> nodes = new HashSet<NodeId>();
 		nodes.addAll(NodeRuntime.getNetworkInterface().whoNeighbors());
 		nodes.addAll(NodeRuntime.getNetworkInterface().whoNeighborsIn());
+		// Subscribe to yourself, so that if you recover you will be notified
+		// you are still failed and remove yourself as any primary
+		nodes.add(NodeRuntime.getId());
+
 		return nodes;
 	}
 
@@ -200,8 +205,9 @@ public class AppManager<A extends App<?>> {
 	 * @param appId
 	 * @return
 	 */
-	public A getApp(AppId appId) {
-		System.out.println("App Manager looking for app " + appId);
+	public App<?> getApp(AppId appId) {
+		if (appId == null)
+			return NodeRuntime.getConfigurator();
 		return myApps.get(appId);
 	}
 }

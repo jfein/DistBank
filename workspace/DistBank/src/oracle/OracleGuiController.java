@@ -4,21 +4,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
-import core.app.AppId;
 import core.app.AppState;
 import core.node.ConfiguratorClient;
 
-public class OracleGuiController extends AppState implements Runnable {
+public class OracleGuiController extends AppState {
 
 	private static final long serialVersionUID = -1179691764220594147L;
 	private OracleGuiView oracleView;
 	private OracleState oracleState;
 
-	private String recoverCommand = "/Users/verakutsenko/Documents/DistBank/workspace/DistBank/LAUNCH_MAC.shell ";
-	private AppId myAppId;
-
-	public OracleGuiController(AppId appId) {
-		this.myAppId = appId;
+	public OracleGuiController() {
 		this.oracleView = new OracleGuiView();
 		this.oracleState = new OracleState();
 
@@ -26,10 +21,7 @@ public class OracleGuiController extends AppState implements Runnable {
 		oracleView.addNotifyFailListener(new NotifyFailListener());
 		oracleView.addRecoverListener(new RecoverListener());
 		oracleView.addNotifyRecoverListener(new NotifyRecoverListener());
-	}
 
-	@Override
-	public void run() {
 		oracleView.setVisible(true);
 	}
 

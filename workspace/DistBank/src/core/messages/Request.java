@@ -2,7 +2,7 @@ package core.messages;
 
 import core.app.AppId;
 
-public abstract class Request extends AppMessage {
+public abstract class Request extends Message {
 
 	private static final long serialVersionUID = 1L;
 

@@ -1,5 +1,6 @@
 package core.node;
 
+import oracle.OracleApp;
 import core.app.App;
 import core.network.NetworkInterface;
 
@@ -34,7 +35,9 @@ public class NodeRuntime implements Runnable {
 		NodeRuntime.id = id;
 		NodeRuntime.networkInterface = new NetworkInterface();
 		NodeRuntime.appManager = new AppManager<A>(appClass);
-		NodeRuntime.configurator = new Configurator();
+		// Create configurator if we are not the oracle
+		if (!appClass.equals(OracleApp.class))
+			NodeRuntime.configurator = new Configurator();
 	}
 
 	public void run() {
@@ -45,8 +48,10 @@ public class NodeRuntime implements Runnable {
 		new Thread(networkInterface).start();
 
 		// Start configurator
-		new Thread(configurator).start();
-		configurator.initialize();
+		if (configurator != null) {
+			new Thread(configurator).start();
+			configurator.initialize();
+		}
 
 		// Start message handling threads
 		appManager.startApps();

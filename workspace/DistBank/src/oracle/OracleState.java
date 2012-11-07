@@ -11,33 +11,46 @@ import core.node.NodeId;
 public class OracleState {
 
 	// All failed nodes
-	private Set<NodeId> failedNodes;
-	// Map who is subscribed to the key
-	private HashMap<NodeId, LinkedList<NodeId>> nodeSubscriptions;
+	private final Set<NodeId> failedNodes = new HashSet<NodeId>();
+	// Map list of who is subscribed to the key node
+	private final HashMap<NodeId, LinkedList<NodeId>> nodeSubscriptions = new HashMap<NodeId, LinkedList<NodeId>>();
 
-	public OracleState() {
-		// store for each appid nodes of interest
-		failedNodes = new HashSet<NodeId>();
-		nodeSubscriptions = new HashMap<NodeId, LinkedList<NodeId>>();
-	}
-
+	/**
+	 * Modifies the oracle state to mark a node as failed. Will notify all nodes
+	 * subscribed to the failed node of the failure.
+	 * 
+	 * @param failedNodeId
+	 */
 	public void registerNodeFailure(NodeId failedNodeId) {
-		this.failedNodes.add(failedNodeId);
+		failedNodes.add(failedNodeId);
 		LinkedList<NodeId> subscriptions = nodeSubscriptions.get(failedNodeId);
 		for (NodeId subscriber : subscriptions) {
 			ConfiguratorClient.notifyFailure(subscriber, failedNodeId);
 		}
 	}
 
+	/**
+	 * Modifies the oracle state to mark a node as recovered. Will notify all
+	 * nodes subscribed to the recovered node of the recovery.
+	 * 
+	 * @param recoveredNodeId
+	 */
 	public void registerNodeRecovery(NodeId recoveredNodeId) {
-		this.failedNodes.remove(recoveredNodeId);
+		failedNodes.remove(recoveredNodeId);
 		LinkedList<NodeId> subscriptions = nodeSubscriptions.get(recoveredNodeId);
 		for (NodeId subscriber : subscriptions) {
 			ConfiguratorClient.notifyRecovery(subscriber, recoveredNodeId);
 		}
 	}
 
-	public void processSubscription(NodeId subscribingNode, NodeId nodeOfInterest) {
+	/**
+	 * Registers a node to subscribe to some other node. Returns whether or not
+	 * the nodeOfInterest is already failed.
+	 * 
+	 * @param subscribingNode
+	 * @param nodeOfInterest
+	 */
+	public boolean processSubscription(NodeId subscribingNode, NodeId nodeOfInterest) {
 		LinkedList<NodeId> subscriptions = nodeSubscriptions.get(nodeOfInterest);
 		if (subscriptions == null) {
 			subscriptions = new LinkedList<NodeId>();
@@ -45,9 +58,6 @@ public class OracleState {
 		}
 		subscriptions.add(subscribingNode);
 
-		// If what you're subscribing too is already failed, send a
-		// NotifyFailure message
-		if (failedNodes.contains(nodeOfInterest))
-			ConfiguratorClient.notifyFailure(subscribingNode, nodeOfInterest);
+		return failedNodes.contains(nodeOfInterest);
 	}
 }
