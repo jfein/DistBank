@@ -1,10 +1,10 @@
 package core.node;
 
+import oracle.messages.FailRequest;
 import bank.branch.BranchState;
 import core.app.App;
 import core.app.AppId;
 import core.app.AppState;
-import core.network.messages.FailRequest;
 import core.network.messages.Response;
 
 public class SystemApp extends App<AppState> {

@@ -1,4 +1,4 @@
-package oracle;
+package oracle.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

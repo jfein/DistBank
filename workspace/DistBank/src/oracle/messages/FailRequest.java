@@ -1,6 +1,6 @@
-package core.network.messages;
+package oracle.messages;
 
-public class FailRequest extends Message{
+public class FailRequest extends OracleRequest{
 
 	/**
 	 * 

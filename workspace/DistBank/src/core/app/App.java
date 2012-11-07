@@ -82,7 +82,7 @@ public abstract class App<S extends AppState> implements Runnable {
 		System.out.println("App " + appId + " got new request from node " + req.getSenderNodeId() + " for "
 				+ req.getClass().getCanonicalName());
 		Response resp = (Response) this.getClass().getMethod("handleRequest", req.getClass()).invoke(this, req);
-
+//TODO check if this we are the primary of the req, if not then we make ourselves primary
 		System.out.println("App " + appId + " made response");
 
 		// Send state to all backups (if this request is not a SynchRequest)
