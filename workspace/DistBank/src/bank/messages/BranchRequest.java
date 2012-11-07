@@ -11,7 +11,7 @@ public abstract class BranchRequest extends Request {
 	private AccountId srcAccountId;
 	private Integer serialNumber;
 
-	public BranchRequest(AppId senderAppId, AccountId accountId, Integer serial) {
+	public BranchRequest(AppId<?> senderAppId, AccountId accountId, Integer serial) {
 		super(senderAppId, accountId.getBranchAppId());
 		this.srcAccountId = accountId;
 		this.serialNumber = serial;
@@ -22,7 +22,6 @@ public abstract class BranchRequest extends Request {
 	}
 
 	public Integer getSerialNumber() {
-
 		return this.serialNumber;
 	}
 }

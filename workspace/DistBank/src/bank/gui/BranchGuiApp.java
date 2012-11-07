@@ -5,13 +5,14 @@ import core.app.AppId;
 
 public class BranchGuiApp extends App<BranchGuiController> {
 
-	public BranchGuiApp(AppId appId) {
+	public BranchGuiApp(AppId<BranchGuiApp> appId) {
 		super(appId);
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	protected BranchGuiController newState() {
-		return new BranchGuiController(getAppId());
+		return new BranchGuiController((AppId<BranchGuiApp>) getAppId());
 	}
 
 	// Handle requests below

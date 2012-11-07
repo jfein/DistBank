@@ -132,8 +132,8 @@ public class NetworkInterface implements Runnable {
 			return;
 		}
 
-		// Create thread pool
-		ExecutorService threadPool = Executors.newFixedThreadPool(topology.getChannelsIn().size());
+		// Create thread pool for all possible channelIns and ourself
+		ExecutorService threadPool = Executors.newFixedThreadPool(topology.getChannelsIn().size() + 1);
 
 		while (!serverSocket.isClosed()) {
 			Socket connIn = null;

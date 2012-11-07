@@ -10,7 +10,7 @@ public class TransferRequest extends BranchRequest {
 	private AccountId destAccountId;
 	private Double amount;
 
-	public TransferRequest(AppId myAppId, AccountId accountId, AccountId destAccount, Double amount, Integer serial) {
+	public TransferRequest(AppId<?> myAppId, AccountId accountId, AccountId destAccount, Double amount, Integer serial) {
 		super(myAppId, accountId, serial);
 		this.destAccountId = destAccount;
 		this.amount = amount;

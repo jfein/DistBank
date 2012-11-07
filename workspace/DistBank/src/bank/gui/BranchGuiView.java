@@ -1,7 +1,6 @@
 package bank.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 
@@ -10,15 +9,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
 import core.app.AppId;
 
 public class BranchGuiView extends JFrame {
-
-	private final String greetingTextLabel = "<html><FONT COLOR = RED SIZE = 18> J&V Bank </FONT></html>";
 
 	private JPanel mainButtonPanel;
 
@@ -43,7 +39,7 @@ public class BranchGuiView extends JFrame {
 
 	private SpringLayout mainButtonPanelLayout;
 
-	public BranchGuiView(AppId myAppId) {
+	public BranchGuiView(AppId<BranchGuiApp> myAppId) {
 
 		this.setPreferredSize(new Dimension(GuiSpecs.GUI_BRANCH_PANEL_WIDTH, GuiSpecs.GUI_FRAME_HEIGHT));
 		this.setResizable(false);

@@ -14,9 +14,9 @@ public class BranchState extends AppState {
 	private static final long serialVersionUID = -1275375970531871241L;
 
 	private HashMap<AccountId, Account> branchAccounts;
-	private AppId myBranchAppId;
+	private AppId<BranchApp> myBranchAppId;
 
-	public BranchState(AppId myBranchAppId) {
+	public BranchState(AppId<BranchApp> myBranchAppId) {
 		this.branchAccounts = new HashMap<AccountId, Account>();
 		this.myBranchAppId = myBranchAppId;
 	}

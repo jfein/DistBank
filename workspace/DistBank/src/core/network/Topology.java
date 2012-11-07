@@ -25,6 +25,7 @@ public class Topology {
 			// Parse node_mapping.txt
 			BufferedReader read1 = new BufferedReader(new FileReader(nodeMappingFile));
 
+			read1.readLine();
 			while (read1.ready()) {
 				String t = read1.readLine();
 				String parts[] = t.split(" ");
@@ -37,6 +38,7 @@ public class Topology {
 			// Parse topology_file.txt
 			BufferedReader read2 = new BufferedReader(new FileReader(topologyFile));
 
+			read2.readLine();
 			while (read2.ready()) {
 				String t = read2.readLine();
 				String parts[] = t.split(" ");
@@ -45,16 +47,14 @@ public class Topology {
 				NodeId dest = new NodeId(Integer.parseInt(parts[1]));
 
 				if (src.equals(myId)) {
-					System.out.println("I can send messages to " + dest);
+					System.out.println("\tTopology connected to " + dest);
 					channelsOut.add(dest);
-					System.out.println("I can get messages from " + dest);
 					channelsIn.add(dest);
 				}
 
 				if (dest.equals(myId)) {
-					System.out.println("I can send messages to " + src);
+					System.out.println("\tTopology connected to " + src);
 					channelsOut.add(src);
-					System.out.println("I can get messages from " + src);
 					channelsIn.add(src);
 				}
 			}

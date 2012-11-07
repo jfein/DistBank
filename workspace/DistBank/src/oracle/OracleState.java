@@ -8,6 +8,11 @@ import java.util.Set;
 import core.node.ConfiguratorClient;
 import core.node.NodeId;
 
+/**
+ * The current state of all failed nodes in the system. All methods are
+ * synchronized so all notifications and system state manipulations are
+ * serialized.
+ */
 public class OracleState {
 
 	// All failed nodes
@@ -21,11 +26,12 @@ public class OracleState {
 	 * 
 	 * @param failedNodeId
 	 */
-	public void registerNodeFailure(NodeId failedNodeId) {
+	public synchronized void registerNodeFailure(NodeId failedNodeId) {
 		failedNodes.add(failedNodeId);
 		LinkedList<NodeId> subscriptions = nodeSubscriptions.get(failedNodeId);
 		for (NodeId subscriber : subscriptions) {
-			ConfiguratorClient.notifyFailure(subscriber, failedNodeId);
+			if (!failedNodes.contains(subscriber))
+				ConfiguratorClient.notifyFailure(subscriber, failedNodeId);
 		}
 	}
 
@@ -35,11 +41,12 @@ public class OracleState {
 	 * 
 	 * @param recoveredNodeId
 	 */
-	public void registerNodeRecovery(NodeId recoveredNodeId) {
+	public synchronized void registerNodeRecovery(NodeId recoveredNodeId) {
 		failedNodes.remove(recoveredNodeId);
 		LinkedList<NodeId> subscriptions = nodeSubscriptions.get(recoveredNodeId);
 		for (NodeId subscriber : subscriptions) {
-			ConfiguratorClient.notifyRecovery(subscriber, recoveredNodeId);
+			if (!failedNodes.contains(subscriber))
+				ConfiguratorClient.notifyRecovery(subscriber, recoveredNodeId);
 		}
 	}
 
@@ -50,7 +57,10 @@ public class OracleState {
 	 * @param subscribingNode
 	 * @param nodeOfInterest
 	 */
-	public boolean processSubscription(NodeId subscribingNode, NodeId nodeOfInterest) {
+	public synchronized boolean processSubscription(NodeId subscribingNode, NodeId nodeOfInterest) {
+		// Remove subscriber - he's not dead!
+		failedNodes.remove(subscribingNode);
+
 		LinkedList<NodeId> subscriptions = nodeSubscriptions.get(nodeOfInterest);
 		if (subscriptions == null) {
 			subscriptions = new LinkedList<NodeId>();

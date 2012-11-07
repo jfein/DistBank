@@ -1,9 +1,6 @@
-package bank.branch;
+package core.node;
 
-import core.node.NodeId;
-import core.node.NodeRuntime;
-
-public class BranchRunner {
+public class NodeRunner {
 
 	public static void main(String[] args) throws Exception {
 		if (args.length != 1) {
@@ -13,8 +10,8 @@ public class BranchRunner {
 
 		NodeId id = new NodeId(Integer.parseInt(args[0]));
 
-		System.out.println("BankServer Node " + id + " running.");
+		System.out.println("Node " + id + " running.");
 
-		(new NodeRuntime(id, BranchApp.class)).run();
+		(new NodeRuntime(id)).run();
 	}
 }

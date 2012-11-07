@@ -9,7 +9,7 @@ import core.messages.Fail;
 import core.messages.NotifyFailure;
 import core.messages.NotifyRecovery;
 
-public class Configurator extends App<AppState> {
+public class Configurator extends App {
 
 	public Configurator() {
 		super(null);

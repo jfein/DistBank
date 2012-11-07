@@ -9,7 +9,7 @@ public class WithdrawRequest extends BranchRequest {
 	
 	private Double amount;
 
-	public WithdrawRequest(AppId myAppId, AccountId accountId, Double amount, Integer serial) {
+	public WithdrawRequest(AppId<?> myAppId, AccountId accountId, Double amount, Integer serial) {
 		super(myAppId, accountId, serial);
 		this.amount = amount;
 	}

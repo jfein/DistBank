@@ -6,14 +6,14 @@ public abstract class Request extends Message {
 
 	private static final long serialVersionUID = 1L;
 
-	private AppId senderAppId;
+	private AppId<?> senderAppId;
 
-	public Request(AppId senderAppId, AppId receiverAppId) {
+	public Request(AppId<?> senderAppId, AppId<?> receiverAppId) {
 		super(receiverAppId);
 		this.senderAppId = senderAppId;
 	}
 
-	public AppId getSenderAppId() {
+	public AppId<?> getSenderAppId() {
 		return senderAppId;
 	}
 

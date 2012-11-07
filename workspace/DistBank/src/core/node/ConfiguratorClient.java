@@ -1,33 +1,22 @@
 package core.node;
 
+import core.app.Client;
 import core.messages.Fail;
 import core.messages.NotifyFailure;
 import core.messages.NotifyRecovery;
 
-public class ConfiguratorClient {
+public class ConfiguratorClient extends Client {
 
-	public synchronized static void fail(NodeId nodeToFail) {
-		try {
-			NodeRuntime.getNetworkInterface().sendMessage(nodeToFail, new Fail());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public static void fail(NodeId nodeToFail) {
+		ConfiguratorClient.exec(nodeToFail, new Fail(), false);
 	}
 
-	public synchronized static void notifyFailure(NodeId dest, NodeId failedNode) {
-		try {
-			NodeRuntime.getNetworkInterface().sendMessage(dest, new NotifyFailure(failedNode));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public static void notifyFailure(NodeId dest, NodeId failedNode) {
+		ConfiguratorClient.exec(dest, new NotifyFailure(failedNode), false);
 	}
 
-	public synchronized static void notifyRecovery(NodeId dest, NodeId recoveredNode) {
-		try {
-			NodeRuntime.getNetworkInterface().sendMessage(dest, new NotifyRecovery(recoveredNode));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public static void notifyRecovery(NodeId dest, NodeId recoveredNode) {
+		ConfiguratorClient.exec(dest, new NotifyRecovery(recoveredNode), false);
 	}
 
 }

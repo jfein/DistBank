@@ -7,7 +7,7 @@ import core.app.AppId;
 
 public class OracleApp extends App<OracleGuiController> {
 
-	public OracleApp(AppId appId) {
+	public OracleApp(AppId<OracleApp> appId) {
 		super(appId);
 	}
 

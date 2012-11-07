@@ -1,44 +1,28 @@
 package bank.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 import java.util.regex.Pattern;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
+
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
 
 import core.app.AppId;
 import core.app.AppState;
-import core.messages.Message;
 
-import bank.branch.Account;
 import bank.branch.AccountId;
 import bank.branch.BranchClient;
-import bank.branch.BranchState;
 import bank.messages.BranchResponse;
-import bank.messages.DepositRequest;
-import bank.messages.QueryRequest;
-import bank.messages.TransferRequest;
-import bank.messages.WithdrawRequest;
 
 public class BranchGuiController extends AppState {
 
 	private static final long serialVersionUID = -3098432013575721538L;
 
-	private AppId myAppId;
+	private AppId<BranchGuiApp> myAppId;
 	private BranchGuiView branchView;
 
-	public BranchGuiController(AppId myAppId) {
+	public BranchGuiController(AppId<BranchGuiApp> myAppId) {
 		this.myAppId = myAppId;
 		this.branchView = new BranchGuiView(myAppId);
 
@@ -46,7 +30,7 @@ public class BranchGuiController extends AppState {
 		branchView.addWithdrawListener(new WithdrawListener());
 		branchView.addQueryListener(new QueryListener());
 		branchView.addTransferListener(new TransferListener());
-		
+
 		branchView.setVisible(true);
 	}
 
@@ -194,20 +178,12 @@ public class BranchGuiController extends AppState {
 		}
 	}
 
-
-
 	public boolean checkResponse(BranchResponse response) {
 		if (response == null) {
-			branchView.popUpErrorMessage("Network Failure.");
+			branchView.popUpErrorMessage("Unknown failure of some sorts...");
 			return false;
-		} else if (!response.wasSuccessfull()) {
-			branchView.popUpErrorMessage("Your request was unsuccessfull. Please try again. Check your serial number.");
-			branchView.setBalanceLabel("Your Account [" + branchView.getUISrcAccount() + "] Balance: "
-					+ String.valueOf(response.getAmt()));
-			return false;
-		} else {
-			return true;
 		}
+		return true;
 	}
 
 }

@@ -9,7 +9,7 @@ public class DepositRequest extends BranchRequest {
 
 	private Double amount;
 
-	public DepositRequest(AppId senderAppId, AccountId accountId, Double amount, Integer serial) {
+	public DepositRequest(AppId<?> senderAppId, AccountId accountId, Double amount, Integer serial) {
 		super(senderAppId, accountId, serial);
 		this.amount = amount;
 	}

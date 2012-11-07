@@ -11,9 +11,9 @@ public abstract class Message implements Serializable {
 	private static final long serialVersionUID = -6617634283053225009L;
 
 	private NodeId senderNodeId;
-	private AppId receiverAppId;
+	private AppId<?> receiverAppId;
 
-	public Message(AppId receiverAppId) {
+	public Message(AppId<?> receiverAppId) {
 		this.senderNodeId = NodeRuntime.getId();
 		this.receiverAppId = receiverAppId;
 	}
@@ -22,7 +22,7 @@ public abstract class Message implements Serializable {
 		return senderNodeId;
 	}
 
-	public AppId getReceiverAppId() {
+	public AppId<?> getReceiverAppId() {
 		return receiverAppId;
 	}
 

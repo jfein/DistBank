@@ -2,7 +2,6 @@ package core.node;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -12,6 +11,7 @@ import java.util.Set;
 
 import core.app.App;
 import core.app.AppId;
+import oracle.OracleApp;
 
 /**
  * Class to hold mappings from AppIDs to NodeIDs.
@@ -20,15 +20,15 @@ import core.app.AppId;
  * 
  * @param <A>
  */
-public class AppManager<A extends App<?>> {
+public class AppManager {
 
-	private Map<AppId, LinkedList<NodeId>> appToNodes;
-	private Map<NodeId, LinkedList<AppId>> originalNodeToApps;
-	private Map<AppId, A> myApps;
+	private Map<AppId<?>, LinkedList<NodeId>> appToNodes;
+	private Map<NodeId, LinkedList<AppId<?>>> originalNodeToApps;
+	private Map<AppId<?>, App<?>> myApps;
 
-	public AppManager(Class<A> appClass) throws Exception {
+	public AppManager() throws Exception {
 		parseAppFile();
-		createApps(appClass);
+		createApps();
 	}
 
 	/**
@@ -36,12 +36,13 @@ public class AppManager<A extends App<?>> {
 	 * the map appToNodes.
 	 */
 	private void parseAppFile() {
-		appToNodes = new HashMap<AppId, LinkedList<NodeId>>();
-		originalNodeToApps = new HashMap<NodeId, LinkedList<AppId>>();
+		appToNodes = new HashMap<AppId<?>, LinkedList<NodeId>>();
+		originalNodeToApps = new HashMap<NodeId, LinkedList<AppId<?>>>();
 
 		try {
 			BufferedReader read1 = new BufferedReader(new FileReader(NodeRuntime.APPS_FILE));
 
+			read1.readLine();
 			while (read1.ready()) {
 				String t;
 				try {
@@ -49,29 +50,33 @@ public class AppManager<A extends App<?>> {
 
 					String parts[] = t.split(" ");
 
-					AppId appId = new AppId(Integer.parseInt(parts[0]));
+					AppId<?> appId = new AppId(Integer.parseInt(parts[0]), Class.forName(parts[1]));
+
+					// Found the oracle, set its global app ID
+					if (parts[1].equals("oracle.OracleApp"))
+						NodeRuntime.oracleAppId = (AppId<OracleApp>) appId;
 
 					LinkedList<NodeId> nodeIds = new LinkedList<NodeId>();
-					for (int i = 1; i < parts.length; i++) {
+					for (int i = 2; i < parts.length; i++) {
 						// Add nodeID to app mapping
 						NodeId nodeId = new NodeId(Integer.parseInt(parts[i]));
 						nodeIds.add(nodeId);
 
 						// Add appID to app mapping
-						LinkedList<AppId> apps = originalNodeToApps.get(nodeId);
+						LinkedList<AppId<?>> apps = originalNodeToApps.get(nodeId);
 						if (apps == null) {
-							apps = new LinkedList<AppId>();
+							apps = new LinkedList<AppId<?>>();
 							originalNodeToApps.put(nodeId, apps);
 						}
 						apps.add(appId);
 					}
 
 					appToNodes.put(appId, nodeIds);
-				} catch (IOException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
-		} catch (IOException e2) {
+		} catch (Exception e2) {
 			e2.printStackTrace();
 		}
 	}
@@ -83,16 +88,17 @@ public class AppManager<A extends App<?>> {
 	 * @param appClass
 	 * @throws Exception
 	 */
-	private void createApps(Class<A> appClass) throws Exception {
-		myApps = new HashMap<AppId, A>();
-		for (Map.Entry<AppId, LinkedList<NodeId>> entry : appToNodes.entrySet()) {
-			AppId appId = entry.getKey();
+	private void createApps() throws Exception {
+		myApps = new HashMap<AppId<?>, App<?>>();
+		for (Map.Entry<AppId<?>, LinkedList<NodeId>> entry : appToNodes.entrySet()) {
+			AppId<?> appId = entry.getKey();
 			LinkedList<NodeId> nodes = entry.getValue();
 			for (NodeId node : nodes) {
 				if (node.equals(NodeRuntime.getId())) {
 					// Create app
-					A app = appClass.getConstructor(AppId.class).newInstance(appId);
-					System.out.println("\tStarting app " + appId);
+					App<?> app = appId.getAppClass().getConstructor(AppId.class).newInstance(appId);
+					System.out.println("Starting a " + appId.getAppClass().getCanonicalName() + " with App ID #"
+							+ appId);
 					myApps.put(appId, app);
 				}
 			}
@@ -103,9 +109,35 @@ public class AppManager<A extends App<?>> {
 	 * Starts all apps in the myApps structure.
 	 */
 	public void startApps() {
-		for (A app : myApps.values()) {
+		for (App<?> app : myApps.values()) {
 			new Thread(app).start();
 		}
+	}
+
+	/**
+	 * Returns true if the nodeId is a primary or backup to any app
+	 * 
+	 * @param nodeId
+	 * @return
+	 */
+	public boolean isNodeAlive(NodeId nodeId) {
+		synchronized (appToNodes) {
+			for (LinkedList<NodeId> nodes : appToNodes.values()) {
+				if (nodes.contains(nodeId))
+					return true;
+			}
+			return false;
+		}
+	}
+
+	/**
+	 * Returns true if appID is a primary or a backup on this node.
+	 * 
+	 * @param appId
+	 * @return
+	 */
+	public boolean isMyApp(AppId<?> appId) {
+		return myApps.containsKey(appId);
 	}
 
 	/**
@@ -114,7 +146,7 @@ public class AppManager<A extends App<?>> {
 	 * @param appId
 	 * @return
 	 */
-	public NodeId appToPrimaryNode(AppId appId) {
+	public NodeId appToPrimaryNode(AppId<?> appId) {
 		synchronized (appToNodes) {
 			LinkedList<NodeId> lst = appToNodes.get(appId);
 			if (lst == null)
@@ -129,7 +161,7 @@ public class AppManager<A extends App<?>> {
 	 * @param appId
 	 * @return
 	 */
-	public List<NodeId> appToBackupNodes(AppId appId) {
+	public List<NodeId> appToBackupNodes(AppId<?> appId) {
 		synchronized (appToNodes) {
 			LinkedList<NodeId> origNodes = appToNodes.get(appId);
 			if (origNodes == null)
@@ -159,9 +191,9 @@ public class AppManager<A extends App<?>> {
 	 */
 	public void addRecoveredNode(NodeId nodeId) {
 		synchronized (appToNodes) {
-			LinkedList<AppId> apps = originalNodeToApps.get(nodeId);
+			LinkedList<AppId<?>> apps = originalNodeToApps.get(nodeId);
 			if (apps != null) {
-				for (AppId appId : apps) {
+				for (AppId<?> appId : apps) {
 					appToNodes.get(appId).add(nodeId);
 				}
 			}
@@ -178,8 +210,8 @@ public class AppManager<A extends App<?>> {
 		if (false) {
 			synchronized (myApps) {
 				Set<NodeId> nodes = new HashSet<NodeId>();
-				for (Map.Entry<NodeId, LinkedList<AppId>> entry : originalNodeToApps.entrySet()) {
-					for (AppId app : myApps.keySet()) {
+				for (Map.Entry<NodeId, LinkedList<AppId<?>>> entry : originalNodeToApps.entrySet()) {
+					for (AppId<?> app : myApps.keySet()) {
 						if (entry.getValue().contains(app))
 							nodes.add(entry.getKey());
 					}
@@ -205,7 +237,7 @@ public class AppManager<A extends App<?>> {
 	 * @param appId
 	 * @return
 	 */
-	public App<?> getApp(AppId appId) {
+	public App<?> getApp(AppId<?> appId) {
 		if (appId == null)
 			return NodeRuntime.getConfigurator();
 		return myApps.get(appId);

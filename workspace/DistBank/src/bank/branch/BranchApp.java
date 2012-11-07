@@ -10,13 +10,14 @@ import bank.messages.WithdrawRequest;
 
 public class BranchApp extends App<BranchState> {
 
-	public BranchApp(AppId appId) {
+	public BranchApp(AppId<BranchApp> appId) {
 		super(appId);
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	protected BranchState newState() {
-		return new BranchState(getAppId());
+		return new BranchState((AppId<BranchApp>) getAppId());
 	}
 
 	public BranchResponse handleRequest(QueryRequest req) {

@@ -9,7 +9,7 @@ public class SynchRequest<S extends AppState> extends Request {
 
 	private S state;
 
-	public SynchRequest(AppId senderAppId, AppId receiverAppId, S state) {
+	public SynchRequest(AppId<?> senderAppId, AppId<?> receiverAppId, S state) {
 		super(senderAppId, receiverAppId);
 		this.state = state;
 	}

@@ -1,5 +1,4 @@
-42 200
-50 150
-51 151
-00 100 101
-01 101 100
+AppId AppName NodeIDs
+42 oracle.OracleApp 200
+50 bank.gui.BranchGuiApp 150
+00 bank.branch.BranchApp 100 101 102

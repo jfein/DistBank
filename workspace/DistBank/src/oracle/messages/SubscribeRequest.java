@@ -1,5 +1,6 @@
 package oracle.messages;
 
+import oracle.OracleApp;
 import core.app.AppId;
 import core.messages.Request;
 import core.node.NodeId;
@@ -10,7 +11,7 @@ public class SubscribeRequest extends Request {
 
 	private NodeId nodeOfInterest;
 
-	public SubscribeRequest(AppId receiverAppId, NodeId nodeOfInterest) {
+	public SubscribeRequest(AppId<OracleApp> receiverAppId, NodeId nodeOfInterest) {
 		super(null, receiverAppId);
 		this.nodeOfInterest = nodeOfInterest;
 	}

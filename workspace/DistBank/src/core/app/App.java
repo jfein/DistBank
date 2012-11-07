@@ -15,17 +15,17 @@ public abstract class App<S extends AppState> implements Runnable {
 	public final BlockingQueue<Request> requestBuffer = new ArrayBlockingQueue<Request>(100, true);
 	public final BlockingQueue<Response> responseBuffer = new ArrayBlockingQueue<Response>(1, true);
 
-	private AppId appId;
+	private AppId<? extends App<S>> appId;
 	private S appState;
 
-	public App(AppId appId) {
+	public App(AppId<? extends App<S>> appId) {
 		this.appId = appId;
 		this.appState = newState();
 	}
 
 	protected abstract S newState();
 
-	public AppId getAppId() {
+	public AppId<? extends App<S>> getAppId() {
 		return appId;
 	}
 

@@ -2,6 +2,7 @@ package core.node;
 
 import oracle.OracleApp;
 import core.app.App;
+import core.app.AppId;
 import core.network.NetworkInterface;
 
 public class NodeRuntime implements Runnable {
@@ -12,8 +13,10 @@ public class NodeRuntime implements Runnable {
 
 	private static NodeId id;
 	private static NetworkInterface networkInterface;
-	private static AppManager<? extends App<?>> appManager;
+	private static AppManager appManager;
 	private static Configurator configurator;
+
+	public static AppId<OracleApp> oracleAppId;
 
 	public static NodeId getId() {
 		return id;
@@ -23,7 +26,7 @@ public class NodeRuntime implements Runnable {
 		return networkInterface;
 	}
 
-	public static AppManager<?> getAppManager() {
+	public static AppManager getAppManager() {
 		return appManager;
 	}
 
@@ -31,12 +34,12 @@ public class NodeRuntime implements Runnable {
 		return configurator;
 	}
 
-	public <A extends App<?>> NodeRuntime(NodeId id, Class<A> appClass) throws Exception {
+	public <A extends App<?>> NodeRuntime(NodeId id) throws Exception {
 		NodeRuntime.id = id;
 		NodeRuntime.networkInterface = new NetworkInterface();
-		NodeRuntime.appManager = new AppManager<A>(appClass);
+		NodeRuntime.appManager = new AppManager();
 		// Create configurator if we are not the oracle
-		if (!appClass.equals(OracleApp.class))
+		if (!appManager.isMyApp(oracleAppId))
 			NodeRuntime.configurator = new Configurator();
 	}
 
