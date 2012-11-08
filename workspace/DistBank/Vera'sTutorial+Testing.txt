@@ -162,6 +162,37 @@ It will be hard to test transactions only by use of user input into the GUI. Alt
 HOWEVER:
  -- You can test transactions, by uncommenting the Thread.Sleep in the NetworkInterface class in the getMessage() method. If you uncomment this, you can start a snapshot, then say deposit,withdraw, or transfer, and possibly catch it in the transactions of one of the branches! As described in TestPlan.txt, we used this to help simulate delays in order to catch messages in progress to display after snapshot finished.
 
+PHASE3
+-------------
+Use LAUNCH.cmd to launch 3 GUIs  and 3 servers.
+As specified in the "apps.txt" file, the following is the configuration:
+GUIS: 50 (server 150) ,51 (server 151) ,52 (server 152)
+SERVERS: 100,101,102
+For Branch 50, the primary is 100, and backs are 101,102
+For Branch 51, the primary is 101, and backups are 102,100
+For Branch 52, the primary is 102, and backups are 100, 101
+
+Scenarios to test:
+(1) Failing a Primary:
+	(1) Deposit or Withdraw on branch  50. This will contact server 100, and after processing the transaction, the primary 100 will synch with 101 and 102. Same goes with all other servers.
+	(2) Using the oracle gui, fail node 100. Before notifying, make a deposit or a withdraw at branch 50 again. You will see the client should be waiting for a response from the primary since it has not been notified of 100's failure.
+	(3) Notify the failure of 100 through the oracle. At this point, the GUI client should return with the processed deposit or withdraw request because it will have routed to the backup 101 when it was notified of failure.
+(2)Failing a 2nd Primary:
+	(1) Deposit or withdraw from branch 51. This will contact server 101, and after processing the transaction, the primary 101 will synch with 102, but not with 100 since it has already failed fro scenario (1)
+	(2) Use the oracle gui to fail node 101. Before notifying of the failure, attempt to make a deposit or withdraw at branch 51 again. You will see the client should be waiting for a response from the primary since it has not been notified of 101's failure.
+	(3) Before notifying of the failure, attempt to make a deposit or withdraw at branch 50 again. Because the new primary for 50 was 101 from scenario (1), this should also keep waiting on the failed primary.
+	(4) Notify of the failure, both 50 and 51 should complete their transactions and reroute them to their new primary 102.
+	(5) 102 will be a primary for all 50,51, and 52
+(3) Testing Recovery:
+	(1) Use the oracle gui to recover 100. You can try to deposit or withdraw from branch 50 or 51, and they should still work because they will be contacting 102, and branch 102 will not synch with anything since it has not been notified of recovery of 100 yet. 
+	(2) Use the oracle gui to notify recovery of 100. At this point, 100 will become a backup for both branches 50 and 51 and 52.
+	(3) In order to see that 100 is the backup, we need to fail 102 to see if 50,51,52 will reroute their requests to 100 once notified of the failure of 102. 
+	(4) Therefore, use the oracle gui to fail 102. You can attempt to deposit or withdraw from 50,51,52, but all of them should be waiting since they haven't been notified of the failure.
+	(5) Using the oracle, notify failure of 102. Now 50,51,52 clients should return because their requests would have been rerouted to the new primary 100.
+(4) Testing Transfers + Failures:
+	(1) Use LAUNCH.cmd to launch the original 3 GUIS and 3 SERVERS.
+	
+Deposit
 TEAM MEMBERS 
 ---------------------
 PHASE 1: Vera Kutsenko & Jeremy Fein
