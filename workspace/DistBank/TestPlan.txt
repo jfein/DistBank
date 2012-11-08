@@ -46,3 +46,12 @@ We did this with withdraw, transfer, and deposit requests.
 			Then A will retry the transaction to either 101 or 102, and everything will be fine.
 		iii. If 100 failed after synching to both.
 			Then A will retry the transaction to 101 or 102, but since both already saw the transaction, they will ignore it, and the state will stay the same.
+
+(6) Fail, NotifyFail, NotifyRecovery:
+	(a) Fail Request:
+		When we send a fail request, the node calls sys.exit and dies. 
+	(b) NotifyFail Request:
+		Once we use the oracle to fail the node, we tested that it was failed by using the clients to make requests. Since, as mentioned previously, the clients haven't been notified of the failure, they should hang. However, once we call notify failure and a NotifyFailure request is sent out, the client should complete. This shows that the request was successfully processed.
+	(c ) NotifyRecovery:
+		Once we have failed, and notified of the failure, we call recover. This will call the LANCH_ONE.cmd script which will relaunch the node that you select from the oracle gui's drop down menu. When we try to make transactions before notifying the recovery, we observed whether the recovered node would obtain the syncs. It did not, therefore, after notify recovery, we observed that it did sync on transactions and that the node recovered as backup.
+		
