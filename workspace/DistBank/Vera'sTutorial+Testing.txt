@@ -191,7 +191,8 @@ Scenarios to test:
 	(5) Using the oracle, notify failure of 102. Now 50,51,52 clients should return because their requests would have been rerouted to the new primary 100.
 (4) Testing Transfers + Failures:
 	(1) Use LAUNCH.cmd to launch the original 3 GUIS and 3 SERVERS.
-	
+	(2) Attempt to transfer between two branches. From 50 to 51, from 51 to 52, or any other combination. Then really quickly press the fail button.
+	(2) Because transfers happen a bit too fast for a person to click fail right in the middle of a transfer, one way to 
 Deposit
 TEAM MEMBERS 
 ---------------------
