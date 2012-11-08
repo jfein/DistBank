@@ -27,6 +27,7 @@ We made deposits into A, B. We then failed 101, 100. Before notifying of the fai
 We did this with withdraw, transfer, and deposit requests.
 
 (4) To test transfer requests we:
+	For transfer requests, because of their fast nature, we put sleep statements in different parts of the transfer function in BranchState in order to allow us time to fail a remote node in order to properly test transfer.
 	a. Tested failure before making the request to deposit, but after withdrawing.
 		This is fine because no state would have been recorded. A can retry the transaction to a new primary that it will choose from the backups.
 	b. Tested failure after making the request to deposit to a remove branch, but before receiving a response from the other branch we are trying to transfer to.
