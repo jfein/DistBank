@@ -192,7 +192,10 @@ Scenarios to test:
 (4) Testing Transfers + Failures:
 	(1) Use LAUNCH.cmd to launch the original 3 GUIS and 3 SERVERS.
 	(2) Attempt to transfer between two branches. From 50 to 51, from 51 to 52, or any other combination. Then really quickly press the fail button.
-	(2) Because transfers happen a bit too fast for a person to click fail right in the middle of a transfer, one way to 
+	(2) However, the transfers may happen a bit too fast for a person to click fail right in the middle of a transfer, one way to slow down the transfer transaction is to put sleep statements between the request and response in the transfer function.
+	(3) Once the node that you are transferring to fails and before the oracle notifies of the failure, the transfer will hang.
+	(4) Once you notify the failure of the node being transferred to, the transaction should reroute to a backup of the node and the transfer will complete.
+	
 Deposit
 TEAM MEMBERS 
 ---------------------
