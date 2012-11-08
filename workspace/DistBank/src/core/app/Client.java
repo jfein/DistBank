@@ -7,6 +7,15 @@ import core.messages.Response;
 import core.node.NodeId;
 import core.node.NodeRuntime;
 
+/**
+ * Generic client class. Should be used whenever one app wants to send a request
+ * to another app. Uses the sending app's response buffer as a serialization
+ * point for an app sending request (although shouldnt happen since an app only
+ * runs on one thread).
+ * 
+ * @author JFein
+ * 
+ */
 public abstract class Client {
 
 	public static <T extends Response> T exec(Request req) {
@@ -26,12 +35,8 @@ public abstract class Client {
 		T resp = null;
 
 		while (resp == null) {
-			System.out.println("CLIENT CALL FROM MY APP " + req.getSenderAppId() + " TO DEST APP "
-					+ req.getReceiverAppId());
-
 			// Map app to primary node
 			NodeId dest = NodeRuntime.getAppManager().appToPrimaryNode(req.getReceiverAppId());
-			System.out.println("CLIENT CALL ROUTED TO PRIMARY NODE #" + dest);
 
 			// Send request and wait for response on the sending app's
 			// responseBuffer
@@ -39,11 +44,13 @@ public abstract class Client {
 			if (!waitForResponse || resp != null)
 				break;
 
+			// If we got here, we did not get a response (probably because the
+			// remote node crashed).
 			// Make the client wait before trying again
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
-				// e.printStackTrace();
+
 			}
 		}
 
@@ -59,38 +66,36 @@ public abstract class Client {
 	 * @param waitForResponse
 	 * @return
 	 */
-	// TODO: should this be synchronous????
 	public static <T extends Response> T exec(NodeId nodeDest, Request req, boolean waitForResponse) {
 		T resp = null;
 
-		// Send the request
-		try {
-			System.out.println("\tApp Client exec sending request...");
-			NodeRuntime.getNetworkInterface().sendMessage(nodeDest, req);
-			System.out.println("\tApp Client exec request sent!...");
-		} catch (Exception e) {
-			System.out.println("ERROR: App Client exec unable to send reques to node #" + nodeDest + "!!!!!!!");
-			return resp;
-		}
+		App<?> a = NodeRuntime.getAppManager().getApp(req.getSenderAppId());
 
-		// If can receive from the node, block waiting for a response
-		if (waitForResponse && NodeRuntime.getNetworkInterface().canReceiveFrom(nodeDest)) {
+		synchronized (a.responseBuffer) {
+			// Send the request
 			try {
-				System.out.println("\tApp Client exec waiting for response...");
-
-				while (resp == null) {
-					// Check if the node we want a response from is alive!
-					if (!NodeRuntime.getAppManager().isNodeAlive(nodeDest))
-						throw new Exception();
-
-					App<?> a = NodeRuntime.getAppManager().getApp(req.getSenderAppId());
-					resp = (T) a.responseBuffer.poll(500, TimeUnit.MILLISECONDS);
-				}
-
-				System.out.println("\tApp Client exec got response from node " + resp.getSenderNodeId());
-
+				NodeRuntime.getNetworkInterface().sendMessage(nodeDest, req);
 			} catch (Exception e) {
-				System.out.println("ERROR: App client exec unable to get response from node #" + nodeDest + "!!!!!!");
+				System.out.println("ERROR: App Client exec unable to send reques to node #" + nodeDest);
+				return resp;
+			}
+
+			// If can receive from the node, block waiting for a response
+			if (waitForResponse && NodeRuntime.getNetworkInterface().canReceiveFrom(nodeDest)) {
+				try {
+					while (resp == null) {
+						// Check if the node we want a response from is alive!
+						if (!NodeRuntime.getAppManager().isNodeAlive(nodeDest))
+							throw new Exception();
+
+						// Poll the response buffer for 500ms, then wake up to
+						// check if the node we want a response from is still
+						// alive
+						resp = (T) a.responseBuffer.poll(500, TimeUnit.MILLISECONDS);
+					}
+				} catch (Exception e) {
+					System.out.println("ERROR: App client exec unable to get response from node #" + nodeDest);
+				}
 			}
 		}
 

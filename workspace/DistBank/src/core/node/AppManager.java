@@ -11,12 +11,16 @@ import java.util.Set;
 
 import core.app.App;
 import core.app.AppId;
+import core.app.Client;
+import core.messages.PingRequest;
 import oracle.OracleApp;
 
 /**
- * Class to hold mappings from AppIDs to NodeIDs.
+ * Class to hold mappings from AppIDs to NodeIDs. These mappings are modified
+ * whenever we are notified of a failure or recovery.
  * 
- * Also holds this runtime's specific apps
+ * Also holds this runtime's specific apps, creates all apps, and starts all app
+ * threads. Creates apps based on the APP_FILE.
  * 
  * @param <A>
  */
@@ -33,7 +37,7 @@ public class AppManager {
 
 	/**
 	 * Parses the APPS_FILE in NodeRuntime. Puts the App to Node mapping into
-	 * the map appToNodes.
+	 * the map appToNodes and originalNodeToApps.
 	 */
 	private void parseAppFile() {
 		appToNodes = new HashMap<AppId<?>, LinkedList<NodeId>>();
@@ -50,6 +54,7 @@ public class AppManager {
 
 					String parts[] = t.split(" ");
 
+					// TODO: cleanup holding the class object in the appID?
 					AppId<?> appId = new AppId(Integer.parseInt(parts[0]), Class.forName(parts[1]));
 
 					// Found the oracle, set its global app ID
@@ -82,8 +87,9 @@ public class AppManager {
 	}
 
 	/**
-	 * Creates an App for each AppID on th is node. Stores the app in the map
-	 * myApps.
+	 * Creates an App for each AppID on this node. Stores the app in the map
+	 * myApps. Uses the Class object stored in the appID (parsed from original
+	 * APPS_FILE) to instantiate the app.
 	 * 
 	 * @param appClass
 	 * @throws Exception
@@ -115,7 +121,8 @@ public class AppManager {
 	}
 
 	/**
-	 * Returns true if the nodeId is a primary or backup to any app
+	 * Returns true if the nodeId is a primary or backup to any app (so is
+	 * currently alive)
 	 * 
 	 * @param nodeId
 	 * @return
@@ -158,6 +165,9 @@ public class AppManager {
 	/**
 	 * Returns the current backup NodeIDs for a given AppID.
 	 * 
+	 * Assumes that you are the current primary and returns all other nodes
+	 * mapped to that appID as the backup list.
+	 * 
 	 * @param appId
 	 * @return
 	 */
@@ -167,13 +177,15 @@ public class AppManager {
 			if (origNodes == null)
 				return new LinkedList<NodeId>();
 			LinkedList<NodeId> nodes = new LinkedList<NodeId>(origNodes);
-			nodes.pop();
+			nodes.remove(NodeRuntime.getId());
 			return nodes;
 		}
 	}
 
 	/**
-	 * Removes a failed nodeID from appToNodes mapping
+	 * Removes a failed nodeID from appToNodes mapping. Also removes the failed
+	 * node from the network interface, which will close all sockets to that
+	 * node.
 	 * 
 	 * @param nodeId
 	 */
@@ -182,10 +194,15 @@ public class AppManager {
 			for (LinkedList<NodeId> nodes : appToNodes.values())
 				nodes.remove(nodeId);
 		}
+
+		// Close any channels on this node
+		NodeRuntime.getNetworkInterface().removeFailedNode(nodeId);
 	}
 
 	/**
-	 * Adds a recovered nodeID to appToNodes mapping
+	 * Adds a recovered nodeID to appToNodes mapping. If we are the primary to
+	 * an app that is on the node, then we ping that app (on this current node)
+	 * to force a synch with the newly recovered backup.
 	 * 
 	 * @param nodeId
 	 */
@@ -195,32 +212,23 @@ public class AppManager {
 			if (apps != null) {
 				for (AppId<?> appId : apps) {
 					appToNodes.get(appId).add(nodeId);
+					// Check if we are primary to this app. If so, this
+					// recovered nodeID is our backup and we should synch it.
+					if (appToPrimaryNode(appId).equals(NodeRuntime.getId()))
+						Client.exec(new PingRequest(null, appId), false);
 				}
 			}
 		}
 	}
 
 	/**
-	 * Get all nodes this node is interested in, meaning we run an app also
-	 * running on that node
+	 * Get all nodes this node is interested in. We are interested in all of our
+	 * neighbors, since when a node fails we must be notified to close the
+	 * sockets.
 	 * 
 	 * @return
 	 */
 	public Set<NodeId> getNodesOfInterest() {
-		if (false) {
-			synchronized (myApps) {
-				Set<NodeId> nodes = new HashSet<NodeId>();
-				for (Map.Entry<NodeId, LinkedList<AppId<?>>> entry : originalNodeToApps.entrySet()) {
-					for (AppId<?> app : myApps.keySet()) {
-						if (entry.getValue().contains(app))
-							nodes.add(entry.getKey());
-					}
-				}
-				return nodes;
-			}
-		}
-
-		// TODO: don't do this
 		Set<NodeId> nodes = new HashSet<NodeId>();
 		nodes.addAll(NodeRuntime.getNetworkInterface().whoNeighbors());
 		nodes.addAll(NodeRuntime.getNetworkInterface().whoNeighborsIn());

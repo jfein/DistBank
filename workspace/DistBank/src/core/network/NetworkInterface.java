@@ -59,6 +59,25 @@ public class NetworkInterface implements Runnable {
 		return topology.getNodeToServerAddress().get(nodeId);
 	}
 
+	public void removeFailedNode(NodeId node) {
+		if (connsOut.containsKey(node)) {
+			try {
+				connsOut.get(node).close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			connsOut.remove(node);
+		}
+		if (connsIn.containsKey(node)) {
+			try {
+				connsIn.get(node).close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			connsIn.remove(node);
+		}
+	}
+
 	/**
 	 * Gets a message from the designated src. Blocks on retrieving the message.
 	 * Synchronizes on the connection in, so only one thread can block and read
@@ -199,7 +218,8 @@ public class NetworkInterface implements Runnable {
 			connOut.connect(getNodeAddress(dest));
 			sendMessage(connOut, new InitConnMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
+			// e.printStackTrace();
+			System.out.println("ERROR opening socket to node " + dest);
 		}
 		return connOut;
 	}

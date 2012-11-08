@@ -4,3 +4,5 @@ NodeId HostName
 101 localhost:10001
 102 localhost:10002
 150 localhost:10050
+151 localhost:10051
+152 localhost:10052

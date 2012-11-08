@@ -1,6 +1,7 @@
 package core.messages;
 
 import core.node.NodeId;
+import core.node.NodeRuntime;
 
 public class NotifyFailure extends Request {
 
@@ -9,7 +10,7 @@ public class NotifyFailure extends Request {
 	private NodeId failedNode;
 
 	public NotifyFailure(NodeId failedNode) {
-		super(null, null);
+		super(NodeRuntime.oracleAppId, null);
 		this.failedNode = failedNode;
 	}
 

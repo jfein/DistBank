@@ -16,44 +16,35 @@ public class MessageListener implements Runnable {
 	}
 
 	/**
-	 * Blocks listening for a Message on the inbound connection from src.
-	 * 
-	 * When gets a new msgIn, puts it on the appropriate buffer
+	 * Blocks listening for a Message on the inbound connection from src. When
+	 * gets a new msgIn, puts it on the appropriate buffer (request or response)
+	 * for the appropriate app.
 	 */
 	@Override
 	public void run() {
-		System.out.println("MESSAGE LISTENER FOR REMOTE NODE " + src + " STARTING");
+		System.out.println("\t\tMESSAGE LISTENER FOR REMOTE NODE " + src + " STARTING");
 
 		while (true) {
 			try {
 				// Get an incoming message from the src node
 				Message msgIn = NodeRuntime.getNetworkInterface().getMessage(src);
 
-				System.out.println("\t\tMessage Listener new message from " + src);
-
-				// Got a message meant for an app
-
+				// Load the app to send the message to
 				App<?> app = NodeRuntime.getAppManager().getApp(msgIn.getReceiverAppId());
 
 				// Place the msgIn in the App's request buffer
 				if (msgIn instanceof Request) {
 					app.requestBuffer.put((Request) msgIn);
-					System.out.println("\t\tMessage Listener put request on app "
-							+ ((Request) msgIn).getReceiverAppId() + " buffer, (" + app.requestBuffer.size()
-							+ " elements)");
 				}
 				// Place the msgIn in the App's response buffer
 				else if (msgIn instanceof Response) {
 					app.responseBuffer.put((Response) msgIn);
-					System.out.println("\t\tMessage Listener put response on app "
-							+ ((Response) msgIn).getReceiverAppId() + " buffer");
 				}
 			} catch (Exception e) {
-				// e.printStackTrace();
 				break;
 			}
 		}
 
-		System.out.println("MESSAGE LISTENER FOR REMOTE NODE " + src + " SHUTTING DOWN");
+		System.out.println("\t\tMESSAGE LISTENER FOR REMOTE NODE " + src + " SHUTTING DOWN");
 	}
 }

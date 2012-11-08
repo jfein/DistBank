@@ -91,8 +91,6 @@ public class BranchGuiController extends AppState {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
-
 			if (isValidAccountNumber(branchView.getUISrcAccount()) && isValidSerialNumber()
 					&& isValidAmount(branchView.getUIAmount())) {
 				branchView.enableAllButtons(false);
@@ -137,7 +135,6 @@ public class BranchGuiController extends AppState {
 			if (isValidAccountNumber(branchView.getUISrcAccount())
 					&& isValidAccountNumber(branchView.getUIDestAccount()) && isValidSerialNumber()
 					&& isValidAmount(branchView.getUIAmount())) {
-				// TODO Auto-generated method stub
 				branchView.enableAllButtons(false);
 				AccountId srcAccountId = new AccountId(branchView.getUISrcAccount());
 				AccountId destAccountId = new AccountId(branchView.getUIDestAccount());

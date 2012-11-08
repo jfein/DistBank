@@ -7,6 +7,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+/**
+ * AppState class to represent any state that can be held in an app. The app
+ * itself will modify the state by handling requests, and the state will be
+ * replicated on all backups.
+ * 
+ * @author JFein
+ * 
+ */
 public abstract class AppState implements Serializable {
 
 	private static final long serialVersionUID = -1833000607088749064L;
@@ -30,8 +38,7 @@ public abstract class AppState implements Serializable {
 
 			// Make an input stream from the byte array and read
 			// a copy of the object back in.
-			ObjectInputStream in = new ObjectInputStream(
-					new ByteArrayInputStream(bos.toByteArray()));
+			ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
 			newNodeState = (T) in.readObject();
 		} catch (IOException e) {
 			e.printStackTrace();

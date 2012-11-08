@@ -1,4 +1,4 @@
-package test;
+package testapp;
 
 import java.io.IOException;
 
@@ -11,7 +11,7 @@ public class TestServerRunner {
 			InterruptedException {
 		NodeId id = new NodeId(Integer.parseInt(args[0]));
 
-		new Thread(new NodeRuntime(id, new TestState(), new TestServerHandler())).start();
+		new Thread(new NodeRuntime(id, new TestState(), new TestApp())).start();
 
 		if (id.toString().equals("g0")) {
 			NodeId dest = new NodeId(0);

@@ -12,7 +12,7 @@ public class SubscribeRequest extends Request {
 	private NodeId nodeOfInterest;
 
 	public SubscribeRequest(AppId<OracleApp> receiverAppId, NodeId nodeOfInterest) {
-		super(null, receiverAppId);
+		super(null, receiverAppId); // sender app id null since is configurator
 		this.nodeOfInterest = nodeOfInterest;
 	}
 

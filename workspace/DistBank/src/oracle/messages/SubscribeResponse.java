@@ -9,7 +9,7 @@ public class SubscribeResponse extends Response {
 	boolean isFailed;
 
 	public SubscribeResponse(boolean isFailed) {
-		super(null);
+		super(null); // Null, since meant for configurator.
 		this.isFailed = isFailed;
 	}
 

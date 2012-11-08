@@ -1,6 +1,7 @@
 package core.messages;
 
 import core.node.NodeId;
+import core.node.NodeRuntime;
 
 public class NotifyRecovery extends Request {
 
@@ -9,7 +10,7 @@ public class NotifyRecovery extends Request {
 	private NodeId recoveredNode;
 
 	public NotifyRecovery(NodeId failedNode) {
-		super(null, null);
+		super(NodeRuntime.oracleAppId, null);
 		this.recoveredNode = failedNode;
 	}
 

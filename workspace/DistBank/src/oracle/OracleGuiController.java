@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import core.app.AppState;
 import core.node.ConfiguratorClient;
+import core.node.NodeId;
 
 public class OracleGuiController extends AppState {
 
@@ -46,17 +47,11 @@ public class OracleGuiController extends AppState {
 	class RecoverListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// recover the node, send command line to start up the node
-			Runtime rt = Runtime.getRuntime();
-			try {
-				Process pr = rt.exec("/Users/verakutsenko/Documents/DistBank/workspace/DistBank/LAUNCH_MAC.shell");
-				int exitVal = pr.waitFor();
-				System.out.println("Exited with error code " + exitVal);
+			NodeId node = oracleView.getNodeId();
 
+			try {
+				Runtime.getRuntime().exec("cmd /c start LAUNCH_ONE.cmd " + node);
 			} catch (IOException e1) {
-				e1.printStackTrace();
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}

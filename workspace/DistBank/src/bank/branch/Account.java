@@ -19,11 +19,14 @@ public class Account implements Serializable {
 	}
 
 	public boolean isUsedSerialNumber(Integer serialNumber) {
+		if (serialNumber == null)
+			return false;
 		return usedSerialNumbers.contains(serialNumber);
 	}
 
 	public void insertUsedSerialNumber(Integer serialNumber) {
-		this.usedSerialNumbers.add(serialNumber);
+		if (serialNumber != null)
+			this.usedSerialNumbers.add(serialNumber);
 	}
 
 	public AccountId getAccountId() {
