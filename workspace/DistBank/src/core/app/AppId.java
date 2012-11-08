@@ -5,11 +5,9 @@ import java.io.Serializable;
 /**
  * Represents a unique ID in the global space of all app IDs. This means that if
  * multiple types apps are running in the system, no two can have the same app
- * ID value. Typed to be for a specific app class.
- * 
- * @author JFein
- * 
- * @param <A>
+ * ID value. However, the same app with the same app ID can be running at
+ * multiple nodes on the system - these act as the primary and backups.
+ * Generically typed to be for a specific app class.
  */
 public class AppId<A extends App<?>> implements Serializable {
 

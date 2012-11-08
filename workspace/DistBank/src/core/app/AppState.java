@@ -10,10 +10,7 @@ import java.io.Serializable;
 /**
  * AppState class to represent any state that can be held in an app. The app
  * itself will modify the state by handling requests, and the state will be
- * replicated on all backups.
- * 
- * @author JFein
- * 
+ * replicated on all backups in a "SynchRequest".
  */
 public abstract class AppState implements Serializable {
 

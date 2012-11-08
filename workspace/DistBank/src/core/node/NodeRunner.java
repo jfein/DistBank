@@ -1,5 +1,10 @@
 package core.node;
 
+/**
+ * Starts up a node with the given NodeID. With this, the AppManager can figure
+ * out what apps to start on this node, its topology, and its server listening
+ * IP address.
+ */
 public class NodeRunner {
 
 	/**

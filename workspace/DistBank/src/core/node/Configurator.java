@@ -16,6 +16,15 @@ import core.messages.NotifyRecoveryResponse;
  * specifically to fail, notify fail, and notify recover. Makes appropriate
  * changes to the AppManager on the appropriate requests.
  * 
+ * Has a function "initialize" that sends the oracle a subscription request for
+ * each node of interest. If the response tells us that node is failed,
+ * registers it as failed with the AppManager. "Nodes of interest" are defined
+ * as any node connected to us in the topology, since if any of those fail we
+ * must register it to know to close the sockets. Will subscribe to ourselves,
+ * so that on startup we can know if we are technically still failed in the
+ * overall system; this is to trigger ourselves as still failed and thus
+ * removing ourselves from any primaries.
+ * 
  * The configurator has an appID of null.
  */
 public class Configurator extends App {
@@ -31,7 +40,10 @@ public class Configurator extends App {
 
 	/**
 	 * Sends the oracle a subscription request for each node of interest. If the
-	 * response tells us that node is failed, we mark it as failed.
+	 * response tells us that node is failed, we mark it as failed. Will
+	 * subscribe to ourselves, so that on startup we can know if we are
+	 * technically still failed in the overall system; this is to trigger
+	 * ourselves as still failed and thus removing ourselves from any primaries.
 	 */
 	public void initialize() {
 		for (NodeId nodeOfInterest : NodeRuntime.getAppManager().getNodesOfInterest()) {

@@ -19,6 +19,17 @@ import core.messages.Message;
 import core.node.NodeId;
 import core.node.NodeRuntime;
 
+/**
+ * Wrapper class to send and receive messages on the network. When doing a send,
+ * checks through the topology that the sending node has a channel to the
+ * destination. The functions are synchronized based on remote node, so no two
+ * network operations to the same node can occur simultaneously and no two
+ * network operations receiving from the same node can occur simultaneously.
+ * 
+ * Contains a main loop that will continuously listen on this node's server
+ * socket for new incoming channels. When a new socket is established, spawns a
+ * MessageListener thread to continuously get messages from the socket.
+ */
 public class NetworkInterface implements Runnable {
 
 	private final Topology topology;

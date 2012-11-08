@@ -9,9 +9,9 @@ import core.node.NodeId;
 import core.node.NodeRuntime;
 
 /**
- * The current state of all failed nodes in the system. All methods are
- * synchronized so all notifications and system state manipulations are
- * serialized.
+ * The current state of all failed nodes in the system and state of what nodes
+ * are subscribed to what. All methods are synchronized so all notifications and
+ * system state manipulations are serialized.
  */
 public class OracleState {
 

@@ -16,13 +16,13 @@ import core.messages.PingRequest;
 import oracle.OracleApp;
 
 /**
- * Class to hold mappings from AppIDs to NodeIDs. These mappings are modified
- * whenever we are notified of a failure or recovery.
+ * Class to hold mappings from AppIDs to NodeIDs. Parses the APP_FILE "apps.txt"
+ * to figure out what apps run on what nodes, including which apps to start on
+ * this node. This app to node mapping is modified whenever the configurator is
+ * notified of a failure or recovery.
  * 
  * Also holds this runtime's specific apps, creates all apps, and starts all app
- * threads. Creates apps based on the APP_FILE.
- * 
- * @param <A>
+ * threads. As mentioned above, creates apps based on the APP_FILE.
  */
 public class AppManager {
 

@@ -5,6 +5,17 @@ import core.app.App;
 import core.app.AppId;
 import core.network.NetworkInterface;
 
+/**
+ * The static runtime for a JVM node on the network. Holds static variables to
+ * be accessed any time from any thread on the node - specifically, the node ID,
+ * the NetworkInterface, the AppManager, the configurator, and the oracle's
+ * AppId. When run, will start a NetworkInterface thread to take in incoming
+ * sockets, a Configurator app thread that will be able to interact with the
+ * oracle, and finally one thread for each app on the system.
+ * 
+ * @author JFein
+ * 
+ */
 public class NodeRuntime implements Runnable {
 
 	public static final String NODES_FILE = "nodes.txt";

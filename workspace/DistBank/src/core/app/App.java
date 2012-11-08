@@ -63,9 +63,8 @@ public abstract class App<S extends AppState> implements Runnable {
 	}
 
 	/**
-	 * An App's main loop.
-	 * 
-	 * Reads requests from the request buffer and calls handleRequest for each.s
+	 * An App's main loop. Reads requests from the request buffer and calls
+	 * handleRequest for each.
 	 */
 	public void run() {
 		while (true) {
@@ -141,7 +140,7 @@ public abstract class App<S extends AppState> implements Runnable {
 
 	/**
 	 * Common handler across all apps to handle a ping. Does nothing, but will
-	 * force a synchronization to occur.
+	 * force a synchronization to occur and return a response.
 	 * 
 	 * @param m
 	 */

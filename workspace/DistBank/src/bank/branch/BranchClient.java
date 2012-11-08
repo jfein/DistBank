@@ -9,6 +9,9 @@ import bank.messages.QueryRequest;
 import bank.messages.TransferRequest;
 import bank.messages.WithdrawRequest;
 
+/**
+ * A client for any app to interact with a BranchApp.
+ */
 public class BranchClient extends Client {
 
 	public static BranchResponse query(AppId<?> myAppId, AccountId accountId, Integer serial) {

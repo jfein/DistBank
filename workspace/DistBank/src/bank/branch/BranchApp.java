@@ -8,6 +8,18 @@ import bank.messages.QueryRequest;
 import bank.messages.TransferRequest;
 import bank.messages.WithdrawRequest;
 
+/**
+ * This is the main app that runs a single branch on a node. Holds the branch's
+ * BranchState and AppId. Contains request handlers to handle requests made by a
+ * separate app using a BranchClient. This file contains overloaded handle
+ * methods that differ in the arguments they take which are the request objects
+ * generated in BranchClient.java(WithdrawRequest, DepositRequest, QueryRequest,
+ * TransferRequest). Each handle method handles the distinct Request objects
+ * appropriately. For example, the handle for a WithdrawRequest, calls the
+ * BranchState's withdraw method and waits for the BranchState's function to
+ * return success or failure, then the handle method returns a BranchResponse
+ * object with the balance of this account and whether it was successful.
+ */
 public class BranchApp extends App<BranchState> {
 
 	public BranchApp(AppId<BranchApp> appId) {

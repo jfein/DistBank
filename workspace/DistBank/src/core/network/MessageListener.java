@@ -7,6 +7,13 @@ import core.messages.Response;
 import core.node.NodeId;
 import core.node.NodeRuntime;
 
+/**
+ * A thread that runs continuously on a node listening for incoming messages
+ * from one specific remote node. When it gets a new message, retrieves the app
+ * running on this node that the message is meant for. Then, if request, puts
+ * the message on that app's request buffer. If its a response, puts it on the
+ * app's response buffer.
+ */
 public class MessageListener implements Runnable {
 
 	private NodeId src;

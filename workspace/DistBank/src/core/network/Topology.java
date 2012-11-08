@@ -11,6 +11,13 @@ import java.util.HashSet;
 import core.node.NodeId;
 import core.node.NodeRuntime;
 
+/**
+ * Class to hold topology and node mapping information to be retrieved
+ * statically from anywhere in the code. Parses the two files
+ * "topology_file.txt" and "node_mapping.txt". Provides functions to retrieve a
+ * host:port from a NodeId and to check if the current node can send or receive
+ * from another NodeId.
+ */
 public class Topology {
 
 	private final Set<NodeId> channelsOut = new HashSet<NodeId>();

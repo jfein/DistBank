@@ -6,6 +6,17 @@ import java.util.Map;
 import core.app.AppId;
 import core.app.AppState;
 
+/**
+ * BranchState holds all the main methods for changing the state of an account
+ * which changes the state of the branch, hence the name BranchState. It
+ * contains methods like deposit, withdraw, query, and transfer. Each method
+ * will get the account or create a new account with the balance of 0.0 if it
+ * does not exist. It will then proceed by checking if the serial number that
+ * came with this request has been used in previous requests with this account.
+ * If it has not, then we will do the appropriate change (withdraw, deposit,
+ * transfer, check the balance), and add the serial number to the list of used
+ * serial numbers, then return.
+ */
 public class BranchState extends AppState {
 
 	private static final long serialVersionUID = -1275375970531871241L;

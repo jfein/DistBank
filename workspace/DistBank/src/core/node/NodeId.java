@@ -2,6 +2,12 @@ package core.node;
 
 import java.io.Serializable;
 
+/**
+ * ID to identify a node on the network. A node corresponds to a single JVM
+ * running a single NodeRuntime. The ID is in the form of an integer. The node
+ * then starts up multiple apps with different AppIds. It is important to
+ * understand the difference between NodeIDs and AppIDs.
+ */
 public class NodeId implements Serializable {
 
 	private static final long serialVersionUID = 1083289454276019163L;

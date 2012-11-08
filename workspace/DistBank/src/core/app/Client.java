@@ -20,11 +20,8 @@ import core.node.NodeRuntime;
  * 
  * The other method simply sends a request to a specific node (not an app) and
  * can either block on a response or not. If block waiting for a response, uses
- * the sending app's repsonse buffer. If block waiting for a response and
+ * the sending app's response buffer. If block waiting for a response and
  * returns NULL, then it can be assumed the request failed.
- * 
- * @author JFein
- * 
  */
 public abstract class Client {
 
@@ -107,8 +104,7 @@ public abstract class Client {
 							throw new Exception();
 
 						// Poll the response buffer for 500ms, then wake up to
-						// check if the node we want a response from is still
-						// alive
+						// check if the node we're waiting on is still alive
 						resp = (T) a.responseBuffer.poll(500, TimeUnit.MILLISECONDS);
 					}
 				} catch (Exception e) {

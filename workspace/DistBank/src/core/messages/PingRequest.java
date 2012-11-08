@@ -3,8 +3,9 @@ package core.messages;
 import core.app.AppId;
 
 /**
- * Ping request is a simple NOP that will trigger an app to synchronize to its
- * backups.
+ * A blank "ping" message sent to an app. Will cause the app to register the
+ * request as an "updateHist", and trigger a SYNCH to all backups. Once that
+ * happens, will send a PingResponse.
  */
 public class PingRequest extends Request {
 
