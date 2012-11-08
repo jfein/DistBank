@@ -1,4 +1,0 @@
-- separate configuration from appmanager (not necessary)
-- drop down box on oracle for nodes
-
-- write new assumption for serial numbers during transfer
