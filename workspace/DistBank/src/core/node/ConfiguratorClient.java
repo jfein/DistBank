@@ -15,11 +15,11 @@ public class ConfiguratorClient extends Client {
 	}
 
 	public static void notifyFailure(NodeId dest, NodeId failedNode) {
-		ConfiguratorClient.exec(dest, new NotifyFailure(failedNode), false);
+		ConfiguratorClient.exec(dest, new NotifyFailure(failedNode), true);
 	}
 
 	public static void notifyRecovery(NodeId dest, NodeId recoveredNode) {
-		ConfiguratorClient.exec(dest, new NotifyRecovery(recoveredNode), false);
+		ConfiguratorClient.exec(dest, new NotifyRecovery(recoveredNode), true);
 	}
 
 }

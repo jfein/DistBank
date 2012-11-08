@@ -6,7 +6,9 @@ import core.app.App;
 import core.app.AppState;
 import core.messages.Fail;
 import core.messages.NotifyFailure;
+import core.messages.NotifyFailureResponse;
 import core.messages.NotifyRecovery;
+import core.messages.NotifyRecoveryResponse;
 
 /**
  * Configurator class that is on all nodes (besides the oracle node).
@@ -47,15 +49,16 @@ public class Configurator extends App {
 		System.exit(0);
 	}
 
-	public void handleRequest(NotifyFailure m) {
+	public NotifyFailureResponse handleRequest(NotifyFailure m) {
 		System.out.println("Configurator notified of failure " + m.getFailedNode());
 		NodeRuntime.getAppManager().removeFailedNode(m.getFailedNode());
+		return new NotifyFailureResponse(m.getSenderAppId());
 	}
 
-	public void handleRequest(NotifyRecovery m) {
+	public NotifyRecoveryResponse handleRequest(NotifyRecovery m) {
 		System.out.println("Configurator notified of recovery " + m.getRecoveredNode());
 		NodeRuntime.getAppManager().addRecoveredNode(m.getRecoveredNode());
-
+		return new NotifyRecoveryResponse(m.getSenderAppId());
 	}
 
 }

@@ -4,6 +4,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 import core.messages.PingRequest;
+import core.messages.PingResponse;
 import core.messages.Request;
 import core.messages.Response;
 import core.messages.SynchRequest;
@@ -89,7 +90,6 @@ public abstract class App<S extends AppState> implements Runnable {
 		// Process the request to get a response (including synch requests)
 		System.out.println("\tApp " + appId + " got new request from node " + req.getSenderNodeId());
 		Response resp = (Response) this.getClass().getMethod("handleRequest", req.getClass()).invoke(this, req);
-		System.out.println("\tApp " + appId + " handled request");
 
 		// Send state to all backups (if this request is not a SynchRequest)
 		if (!(req instanceof SynchRequest)) {
@@ -115,7 +115,6 @@ public abstract class App<S extends AppState> implements Runnable {
 		if (resp != null) {
 			System.out.println("\tApp " + appId + " sending response to node " + req.getSenderNodeId());
 			NodeRuntime.getNetworkInterface().sendMessage(req.getSenderNodeId(), resp);
-			System.out.println("\tApp " + appId + " sent response");
 		}
 	}
 
@@ -139,8 +138,9 @@ public abstract class App<S extends AppState> implements Runnable {
 	 * 
 	 * @param m
 	 */
-	public void handleRequest(PingRequest m) {
+	public PingResponse handleRequest(PingRequest m) {
 		System.out.println("App " + getAppId() + " pinged!");
+		return new PingResponse(m.getSenderAppId());
 	}
 
 }

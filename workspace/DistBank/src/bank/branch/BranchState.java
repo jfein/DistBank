@@ -102,7 +102,7 @@ public class BranchState extends AppState {
 		for (Map.Entry<AccountId, Account> entry : branchAccounts.entrySet()) {
 			AccountId key = entry.getKey();
 			Account value = entry.getValue();
-			sb.append("\tAccount " + key + ": $" + value.getAccountBalance() + "\n");
+			sb.append("  Account " + key + ": $" + value.getAccountBalance() + "\n");
 		}
 
 		return sb.toString();

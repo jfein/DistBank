@@ -207,6 +207,7 @@ public class AppManager {
 	 * @param nodeId
 	 */
 	public void addRecoveredNode(NodeId nodeId) {
+		List<AppId<?>> appsToPing = new LinkedList<AppId<?>>();
 		synchronized (appToNodes) {
 			LinkedList<AppId<?>> apps = originalNodeToApps.get(nodeId);
 			if (apps != null) {
@@ -215,10 +216,12 @@ public class AppManager {
 					// Check if we are primary to this app. If so, this
 					// recovered nodeID is our backup and we should synch it.
 					if (appToPrimaryNode(appId).equals(NodeRuntime.getId()))
-						Client.exec(new PingRequest(null, appId), false);
+						appsToPing.add(appId);
 				}
 			}
 		}
+		for (AppId<?> appId : appsToPing)
+			Client.exec(new PingRequest(null, appId));
 	}
 
 	/**
