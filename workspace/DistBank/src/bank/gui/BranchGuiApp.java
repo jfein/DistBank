@@ -15,6 +15,4 @@ public class BranchGuiApp extends App<BranchGuiController> {
 		return new BranchGuiController((AppId<BranchGuiApp>) getAppId());
 	}
 
-	// Handle requests below
-
 }

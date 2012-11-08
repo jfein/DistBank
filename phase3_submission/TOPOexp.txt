@@ -1,0 +1,5 @@
+- All topology restrictions from phase 1 must be enforced in phase 2
+	- One GUI per server
+	- Bidirectional links between GUI and server
+- No node can have a link to itself
+- There must exist an indirect path from any two different aribitrary nodes.

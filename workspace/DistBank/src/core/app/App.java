@@ -17,8 +17,15 @@ import core.node.NodeRuntime;
  * own thread with a unique appID, and infinitely listens for requests on its
  * requestBuffer. Could either be a primary or a backup.
  * 
- * Type of the App is the state this app holds. This state is what is replicated
- * to backups when a request happens.
+ * Generic type of the App is the "appstate" this app holds. This state is what
+ * is replicated to backups when a request happens.
+ * 
+ * An app can either act a backup or a primary. Although this information is
+ * known, the App does not use it to make decisions. If it gets a SYNCH request,
+ * it assumes its a backup and performs the SYNCH. If it gets any other request
+ * (essentially UpdateHist), then it processes it accordingly and sends SYNCHs
+ * to all other nodes running this app (so it assumes we are primary and
+ * everyone else is backup).
  * 
  * The AppID is unique in the sense that a specific reachable app has a unique
  * ID, and all primaries and backups across different nodes will have the same

@@ -177,7 +177,7 @@ public class BranchGuiController extends AppState {
 
 	public boolean checkResponse(BranchResponse response) {
 		if (response == null) {
-			branchView.popUpErrorMessage("Unknown failure of some sorts...");
+			branchView.popUpErrorMessage("Cannot reach branch");
 			return false;
 		}
 		return true;

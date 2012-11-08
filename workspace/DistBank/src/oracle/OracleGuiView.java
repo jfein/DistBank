@@ -7,7 +7,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Set;
 
 import javax.swing.JButton;
@@ -15,10 +14,8 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
-import core.app.AppId;
 import core.node.NodeId;
 import core.node.NodeRuntime;
 
@@ -26,21 +23,15 @@ import bank.gui.GuiSpecs;
 
 public class OracleGuiView extends JFrame {
 
-	/**
-	 * 
-	 */
-
 	private JButton failButton;
 	private JButton notifyFailButton;
 	private JButton recoverButton;
 	private JButton notifyRecoverButton;
 
-	private JTextField nodeIdField;
-
 	private JPanel buttonsPanel;
 	private SpringLayout buttonsPanelLayout;
 	private JPanel mainPanel;
-	
+
 	private JComboBox nodeList;
 
 	private static final long serialVersionUID = 1L;
@@ -61,15 +52,11 @@ public class OracleGuiView extends JFrame {
 		this.buttonsPanelLayout.putConstraint(SpringLayout.NORTH, nodeId, 5, SpringLayout.NORTH, buttonsPanel);
 		this.buttonsPanelLayout.putConstraint(SpringLayout.EAST, nodeId, -150, SpringLayout.EAST, buttonsPanel);
 		System.out.println(parseNodeIds().size());
-	
-		 nodeList = new JComboBox(parseNodeIds().toArray());
-		nodeList.setPreferredSize(new Dimension(150,30));
+
+		nodeList = new JComboBox(parseNodeIds().toArray());
+		nodeList.setPreferredSize(new Dimension(150, 30));
 		this.buttonsPanelLayout.putConstraint(SpringLayout.NORTH, nodeList, 25, SpringLayout.NORTH, buttonsPanel);
 		this.buttonsPanelLayout.putConstraint(SpringLayout.EAST, nodeList, -100, SpringLayout.EAST, buttonsPanel);
-		///nodeIdField = new JTextField("");
-		//this.buttonsPanelLayout.putConstraint(SpringLayout.NORTH, nodeIdField, 25, SpringLayout.NORTH, buttonsPanel);
-		//this.buttonsPanelLayout.putConstraint(SpringLayout.EAST, nodeIdField, -100, SpringLayout.EAST, buttonsPanel);
-		//nodeIdField.setPreferredSize(new Dimension(150, 30));
 
 		failButton = createButton("Fail", 0);
 		notifyFailButton = createButton("Notify of Failure", GuiSpecs.MENU_BUTTON_OFFSET);
@@ -87,13 +74,15 @@ public class OracleGuiView extends JFrame {
 		this.pack();
 
 	}
-public String[] convertToArray(Set<NodeId> nodes) {
-	ArrayList<String> listOfNodes = new ArrayList<String>();
-	for(NodeId id: nodes) {
-		listOfNodes.add(id.toString());
+
+	public String[] convertToArray(Set<NodeId> nodes) {
+		ArrayList<String> listOfNodes = new ArrayList<String>();
+		for (NodeId id : nodes) {
+			listOfNodes.add(id.toString());
+		}
+		return listOfNodes.toArray(new String[listOfNodes.size()]);
 	}
-	return listOfNodes.toArray(new String[listOfNodes.size()]);
-}
+
 	public void addFailListener(ActionListener fal) {
 		this.failButton.addActionListener(fal);
 	}
@@ -111,8 +100,8 @@ public String[] convertToArray(Set<NodeId> nodes) {
 	}
 
 	public NodeId getNodeId() {
-			String NodeId = (String)this.nodeList.getSelectedItem();
-			return new NodeId(Integer.parseInt(NodeId));
+		String NodeId = (String) this.nodeList.getSelectedItem();
+		return new NodeId(Integer.parseInt(NodeId));
 	}
 
 	public JButton createButton(String name, Integer northOffset) {
@@ -123,7 +112,7 @@ public String[] convertToArray(Set<NodeId> nodes) {
 		button.setPreferredSize(new Dimension(150, 30));
 		return button;
 	}
-	
+
 	public Set<String> parseNodeIds() {
 		Set<String> listOfNodes = new HashSet<String>();
 		try {
@@ -135,7 +124,7 @@ public String[] convertToArray(Set<NodeId> nodes) {
 				try {
 					t = read1.readLine();
 					String parts[] = t.split(" ");
-					if(!(parts[1].equals("oracle.OracleApp") || parts[1].equals("bank.gui.BranchGuiApp"))) {
+					if (!(parts[1].equals("oracle.OracleApp") || parts[1].contains("gui"))) {
 						for (int i = 2; i < parts.length; i++) {
 							// Add nodeID to app mapping
 							String nodeId = Integer.toString((Integer.parseInt(parts[i])));
