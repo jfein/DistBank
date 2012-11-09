@@ -2,18 +2,12 @@ TUTORIAL TO USE
 
 The following describes the topology and test cases that can be made after running LAUNCH.cmd
 
-In order to appropriately test all the cases, we have included a topology file that contains three branches (branch 00, branch 01, and branch 02) connected in this manner:
-
-00->01
-01->00
-01->02
+In order to appropriately test all the cases, we have included a topology file that represents bi-directional physical links between primary,backup servers, and GUI clients.
 
 We also launch an ATM (GUI) with each branch above.
-ATM 00050 goes with branch 00
-ATM 00051 goes with branch 01
-ATM 00052 goes with branch 02
-
-Therefore, branch 0 and 1 can communicate with each other. Branch 1 has a unidirectional link to branch 2, and branch 2 has no links with branch 0. This topology layout covers all the possible cases of how the branches can be connected to each other. Either there is a uni-directional link both ways between the branches, or there is only one uni-directional link from one branch to another, or there are no links between two branches at all.
+ATM 00050 [ NodeId: 150 ] goes with branch 00 [Primary 100, Backups: 101, 102]
+ATM 00051 [ NodeId: 151 ] goes with branch 01 [Primary 101, Backups: 102, 100]
+ATM 00052 [ NodeId: 152 ] goes with branch 02 [Primary 102, Backups: 100, 101]
 
 Inputs to the GUI:
 	- Serial Number: An integer representing the unique serial number
@@ -65,58 +59,16 @@ GENERAL TESTS (from any account):
 		Src account: 00.00050
 		Dest account: 
 		Amount: CS5414
-
-STATE CONSISTENCY:
-    - Deposit 10$ into account 00.00000 with serial number 0 on ATM 50.
-		Serial Number: 0
-		Src account: 00.00050
-		Dest account: 
-		Amount: 10
-
-    - Click Take Snapshot button, you should see a panel on the left appear with the src account and the deposit amount of 10.0.
-
-    - Try to perform another action (deposit,withdraw, check balance) with same serial number 0. This will be rejected.
-		Serial Number: 0
-		Src account: 00.00050
-		Dest account: 
-		Amount: 10
-
-    - Withdraw 5$ from this account with serial number 1. 
-		Serial Number: 1
-		Src account: 00.00050
-		Dest account: 
-		Amount: 5
-
-    - Click Take Snapshot button, you should see a panel on the left appear with src account and the balance of 5.0
-
-    - Check balance of this account with serial number 2. Will return $5.
-		Serial Number: 2
-		Src account: 00.00050
-		Dest account: 
-		Amount: 
 	
 TRANSFER TEST:
  (1) Testing transfer between two branches that can communicate with each other.
-    - Since we know that there exist a uni-directional connection both ways between branch 00 and branch 01, that means 00.00050 and 01.00051 can make transfers between each other. So
+    - Since we know that there exist a bi-directional connection both ways between branch 00 and branch 01, that means 00.00050 and 01.00051 can make transfers between each other. So
 	- Either on branch 00 or branch 01, using a different serial number, make a transfer of some amount from src account being either 00.00050 or 01.00051 to the destination account 01.00051 or 00.00050. On success of the transaction, go to the other branch to make sure it received the transfer by checking the balance on that account.
 		Serial Number: 4
 		Src account: 00.00050
 		Dest account: 01.00051
 		Amount: 10
-      - Click Take Snapshot button after the transfer button. Because the snapshot process is fast, you may not be able to catch the message transferring. When you click the take snapshot button, you will see on the top part of the left panel any messages that are currently in transaction, and the non-zero account balances for the local branches. Therefore, at account 00.00050 you should see less $10, and at account 01.00051 you should see increase in 10.
-	- attempt doing a transfer with a previously used serial number. Will fail.
-		Serial Number: 4
-		Src account: 00.00050
-		Dest account: 01.00051
-		Amount: 10
-   
-(2) Testing transfer between a branch that has a uni-directional link to another branch.
-	- In this example, we know 01 can communicate with 02, but 02 can not communicate with 01. Therefore, if we try to transfer from 01 to 02, it should withdraw from our account, and should deposit into the account at 02, but we will never get a response.
-		Serial Number: 5
-		Src account: 01.00050
-		Dest account: 02.00052
-		Amount: 10
-(3) Testing a transfer when there is no link.
+(2) Testing a transfer when there is no link.
 	If 00 tries to transfer to 02, the transfer should fail as no link exists between 00 and 02. 
 	- Make a transfer from 00 to 02. An error will come up.
 		Serial Number: 0
