@@ -1,0 +1,4 @@
+
+A rationale for your choice of primary/backup protocol, if you implement a protocol that is different from the ones we discussed in class. If the protocol is not one we discussed in class then include a description (at most 2 pages) and a pointer to a publication (paper or textbook) where this protocol is discussed.
+
+A description (at most 2 pages) of the recovery protocol that was implemented along with an informal correctness argument (at the level that might be presented during a lecture in cs5414). Give a pointer to a publication (paper or textbook) if your protocol is derived from that prior work.

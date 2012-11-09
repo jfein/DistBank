@@ -133,10 +133,14 @@ package oracle.messages
 		
 		
 OTHER FILE DESCRIPTION:
+	topology_file.txt
+		Indicated what nodes are connected. A line of this file is of the form "NodeID1 NodeID2" and indicated a bidirectional channel between NodeID1 and NodeID2.
 	nodes.txt
 		This file lists all of the server nodes in the system and maps it to a host:port address on the network. This address is the host and port the node is listening on; thus, other ndoes can use this mapping to figure out where to send messages to reach a node when only the server node ID is known. Each line of the file is of the form "NodeID host:port".
 	apps.txt
 		Defines all apps that run in the distributed environment. An App is defined by a unique AppID, an App class name, and a list of nodes that run the app. The first node on the list is the original primary, and the rest are the backups. Thus, each line of the file is of the form  "ID path.to.App nodePrimary nodeBackup1 nodeBackup2 ... nodeBackupN". For example, if this line is present, then an app with AppID 01, defined by bank.branch.BranchApp, will run on nodes 100 (the primary), 101, and 102 - "01 bank.branch.BranchApp 100 101 102"
+	LAUNCH_ONE.cmd
+		A batch script that starts up one node with the given NodeID from the command line. Used for the Oracle to start up one specific node.
 		
 		
 -------------------------------------------------------------------------------
@@ -148,162 +152,41 @@ INSTALLATION TUTORIAL:
 		
 		set PATH=C:\Program Files\Java\jdk1.7.0_18\bin;%PATH%
 		
-	Now, you can compile the BranchGui and BranchServer with the following two commands:
-	
-		javac .\src\bank\main\BranchServerRunner.java -sourcepath .\src -d .\bin
-		javac .\src\bank\main\BranchGuiRunner.java -sourcepath .\src -d .\bin
-	
-	To run a BranchGui, use the following command. The XX is a 2 digit ID for the GUI; this 2 digit ID is used in the file "topology_file.txt" to identify the channels of the running GUI, and can be modified to be the desired topology.
-	
-		start java -cp "./bin" "bank/main/BranchGuiRunner" XX
+	Now, you can compile the BranchGui, BranchServer, and Oracle with the following three sets of commands:
+		javac .\src\core\node\NodeRunner.java -sourcepath .\src -d .\bin
+		javac .\src\bank\branch\BranchApp.java -sourcepath .\src -d .\bin
 		
-	To run a BranchServer, use the following command. The XX is a 2 digit ID for the GUI; this 2 digit ID is used in the file "topology_file.txt" to identify the channels of the running GUI, and can be modified to be the desired topology. It is also used in the file "server_node_mapping.txt", where the 2 digit server ID is mapped to an address on the network the server is listening on. This file can be modified to have the desired amount of BranchServers listening on the desired ports.
-	
-		start java -cp "./bin" "bank/main/BranchServerRunner" XX
+		javac .\src\core\node\NodeRunner.java -sourcepath .\src -d .\bin		
+		javac .\src\bank\gui\BranchGuiApp.java -sourcepath .\src -d .\bin
 		
-	The script "LAUNCH.cmd" performs the necessary commands to start BranchGui's and BranchServer's that correspond to the default "topology_file.txt" and "server_node_mapping.txt". The script will start 3 GUIs and 3 servers; servers 00 and 01 can communicate bidirectionally, and server 01 can send messages unidirectionally to server 02. GUI 50 connects to server 00, GUI 51 connects to server 01, and GUI 52 connects to 02. This configuration can be started using the default files by running the LAUNCH.cmd script.	
+		javac .\src\core\node\NodeRunner.java -sourcepath .\src -d .\bin		
+		javac .\src\oracle\OracleApp.java -sourcepath .\src -d .\bin
 	
+	In this phase, we have created a generic NodeRunner class that launches any app as specified in the apps.txt folder. An app will specify a NodeId that is associated with it. If an app is a BranchServer (aka BranchApp) app, it will specify a primary server(NodeId) first and then any backup server NodeIds. This is an example:
+		AppId	AppName  		    	NodeIDs
+		A1		bank.gui.BranchGuiApp   XXX
+		A2		bank.branch.BranchApp  	XXP XXB XXB2
+		A3		orace.OracleApp 	    XXO
+		
+	Therefore, to launch any app you only need to specify a NodeID in the following command. The XXX is the 3 digit id that is used to identify each node. This 3 digit id can be found under the NodeIDs column in in apps.txt. 
+	
+		start java -cp "./bin" "core/node/NodeRunner" XXX
+
+	Therefore, to launch in the example above we would need to use the above command and use XXX,XXP, XXB,XXB2,XXO as inputs to launch all of those branch, oracle, and branch gui apps.
+		
+	The script "LAUNCH.cmd" performs the necessary commands to start BranchGui's and BranchServer's that correspond to the default "topology_file.txt" and "nodes.txt" and "apps.txt". The "topology_file.txt" represents physical links that all the nodes have between each other. The script will start 3 GUIs and 3 servers. The GUIS have physical links to all the servers. Furthermore, "apps.txt" specifies that server 100 will serve as primary for branch 00, 101 for branch 01, and 102 for branch 02. For each branch, the other servers will serve as backups. This configuration can be started using the default files by running the LAUNCH.cmd script.
+
+
 -------------------------------------------------------------------------------
+
 
 TUTORIAL
 
-The following describes the topology and test cases that can be made after running LAUNCH.cmd
 
-In order to appropriately test all the cases, we have included a topology file that contains three branches (branch 00, branch 01, and branch 02) connected in this manner:
+-------------------------------------------------------------------------------
 
-00->01
-01->00
-01->02
-
-We also launch an ATM (GUI) with each branch above.
-ATM 00050 goes with branch 00
-ATM 00051 goes with branch 01
-ATM 00052 goes with branch 02
-
-Therefore, branch 0 and 1 can communicate with each other. Branch 1 has a unidirectional link to branch 2, and branch 2 has no links with branch 0. This topology layout covers all the possible cases of how the branches can be connected to each other. Either there is a uni-directional link both ways between the branches, or there is only one uni-directional link from one branch to another, or there are no links between two branches at all.
-
-Inputs to the GUI:
-	- Serial Number: An integer representing the unique serial number
-	- Source Account Number: A number of the format bb.aaaaa, such as 00.12345, to mean branch 00 account 12345. This is the target account for deposits, withdraws, and queries, and is the source account in a transfer
-	- Dest Account Number: Same as source account number, but only used as the destination in a transfer
-	- Amount: The amount to use in the transaction. Ignored in a check balance query transaction.
-
-The following interactions through the gui will thouroughly the cases covered in the topology above:
-
-GENERAL TESTS (from any account):
-   - Test any action on a branch with the wrong account. 
-		For example, using ATM 51, deposit to account 00.12345. This will fail since 51 is not connected to branch 00.
-		Serial Number: 0
-		Src account: 01.00051
-		Dest account: 00.12345
-		Amount:10.0
-   - Test serial number field with a text input instead of a numeric input. Result is a rejection. 
-		Serial Number: CS5414
-		Src account: 01.00051
-		Dest account: 
-		Amount:
-   - Test the src account field with a text input instead of a numeric input. Result is a rejection
-		Serial Number: 0
-		Src account: CS5414
-		Dest account: 
-		Amount:
-   - Test the src account field with an input that does not follow the bb.aaaaa format. Result is rejection
-		Serial Number: 0
-		Src account: 11.11
-		Dest account: 
-		Amount:
-   - Test the dest account field with a text input instead of numeric input. Result is a rejection
-		Serial Number: 0
-		Src account: aa.12345
-		Dest account: 
-		Amount:
-   - Test the dest account field with an input that does not follow the bb.aaaaa format. Result is rejection
-		Serial Number: 0
-		Src account: 00.00010
-		Dest account: 11.11
-		Amount:11
-   - Test the amount field with a negative number. Result is rejection
-		Serial Number: 0
-		Src account: 00.00050
-		Dest account: 
-		Amount: -500
-   - Test the amount field with a non-numeric entry. Result is a rejection.
-		Serial Number: 0
-		Src account: 00.00050
-		Dest account: 
-		Amount: CS5414
-
-STATE CONSISTENCY:
-    - Deposit 10$ into account 00.00000 with serial number 0 on ATM 50.
-		Serial Number: 0
-		Src account: 00.00050
-		Dest account: 
-		Amount: 10
-
-    - Click Take Snapshot button, you should see a panel on the left appear with the src account and the deposit amount of 10.0.
-
-    - Try to perform another action (deposit,withdraw, check balance) with same serial number 0. This will be rejected.
-		Serial Number: 0
-		Src account: 00.00050
-		Dest account: 
-		Amount: 10
-
-    - Withdraw 5$ from this account with serial number 1. 
-		Serial Number: 1
-		Src account: 00.00050
-		Dest account: 
-		Amount: 5
-
-    - Click Take Snapshot button, you should see a panel on the left appear with src account and the balance of 5.0
-
-    - Check balance of this account with serial number 2. Will return $5.
-		Serial Number: 2
-		Src account: 00.00050
-		Dest account: 
-		Amount: 
-	
-TRANSFER TEST:
- (1) Testing transfer between two branches that can communicate with each other.
-    - Since we know that there exist a uni-directional connection both ways between branch 00 and branch 01, that means 00.00050 and 01.00051 can make transfers between each other. So
-	- Either on branch 00 or branch 01, using a different serial number, make a transfer of some amount from src account being either 00.00050 or 01.00051 to the destination account 01.00051 or 00.00050. On success of the transaction, go to the other branch to make sure it received the transfer by checking the balance on that account.
-		Serial Number: 4
-		Src account: 00.00050
-		Dest account: 01.00051
-		Amount: 10
-      - Click Take Snapshot button after the transfer button. Because the snapshot process is fast, you may not be able to catch the message transferring. When you click the take snapshot button, you will see on the top part of the left panel any messages that are currently in transaction, and the non-zero account balances for the local branches. Therefore, at account 00.00050 you should see less $10, and at account 01.00051 you should see increase in 10.
-	- attempt doing a transfer with a previously used serial number. Will fail.
-		Serial Number: 4
-		Src account: 00.00050
-		Dest account: 01.00051
-		Amount: 10
-   
-(2) Testing transfer between a branch that has a uni-directional link to another branch.
-	- In this example, we know 01 can communicate with 02, but 02 can not communicate with 01. Therefore, if we try to transfer from 01 to 02, it should withdraw from our account, and should deposit into the account at 02, but we will never get a response.
-		Serial Number: 5
-		Src account: 01.00050
-		Dest account: 02.00052
-		Amount: 10
-(3) Testing a transfer when there is no link.
-	If 00 tries to transfer to 02, the transfer should fail as no link exists between 00 and 02. 
-	- Make a transfer from 00 to 02. An error will come up.
-		Serial Number: 0
-		Src account: 00.00050
-		Dest account: 02.00052
-		Amount: 10
-PHASE 2 FURTHER TUTORIAL EXPLANATION
----------------------
-You can use take snapshot as specified in the tutorial above from Phase 1.
-
-This is a general description of general user input for testing which you can observe by playing around on your own of taking the snapshots as specified above from the tutorials from Phase 1.
-(1) Testing bank account balances on taking snapshots.
-	- On launch, deposit, withdraw, or transfer any amounts of your choice between the different branches. At any point in time, if you take a snapshot, the account balances on each branch for each account on that branch will be accurate to what user input you have provided.
-
-(2) Testing transactions
-It will be hard to test transactions only by use of user input into the GUI. Although you can try to do actions (Withdraw, Deposit, Transfer) really fast after taking the snapshots, due to the fast nature of algorithm, it will probably not catch any messages in transition. However, we have tested this aspect by emulating delays in message sending which is further described in our TestPlan. We,however, decided to remove the delays because we did not want to include them in the main product. 
-HOWEVER:
- -- You can test transactions, by uncommenting the Thread.Sleep in the NetworkInterface class in the getMessage() method. If you uncomment this, you can start a snapshot, then say deposit,withdraw, or transfer, and possibly catch it in the transactions of one of the branches! As described in TestPlan.txt, we used this to help simulate delays in order to catch messages in progress to display after snapshot finished.
 
 TEAM MEMBERS 
----------------------
+
 PHASE 1: Vera Kutsenko & Jeremy Fein
 PHASE 2: Vera Kutsenko & Jeremy Fein

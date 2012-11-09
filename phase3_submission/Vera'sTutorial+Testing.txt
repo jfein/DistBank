@@ -1,30 +1,4 @@
-INSTALLATION TUTORIAL:
-
-	To install and run on Windows from the .zip folder, first unzip the folder to the desired directory. Open a Windows shell to this directory, and set the Java path as follows (change to your local Java installation path):
-		
-		set PATH=C:\Program Files\Java\jdk1.7.0_18\bin;%PATH%
-		
-	Now, you can compile the BranchGui and BranchServer with the following two commands:
-		javac .\src\core\node\NodeRunner.java -sourcepath .\src -d .\bin
-		javac .\src\bank\branch\BranchApp.java -sourcepath .\src -d .\bin
-		javac .\src\bank\gui\BranchGuiApp.java -sourcepath .\src -d .\bin
-	
-	In this phase, we have created a generic NodeRunner class that launches any app as specified in the apps.txt folder. An app will specify a NodeId that is associated with it. If an app is a BranchServer app, it will specify a primary server(NodeId) first and then any backup server NodeIds. This is an example:
-AppIds    AppName  		    NodeIDs
-AA1	     bank.gui.BranchGuiApp   XXX
-AA2           bank.branch.BranchApp  XXP XXB XXB2
-AA3          orace.OracleApp 	     XXO
-Therefore, to launch any app you must run the following command. The XXX is the 3 digit id that is used to identify each app. This 3 digit id can be found under the NodeIDs column in in apps.txt. 
-	
-		start java -cp "./bin" "core/node/NodeRunner" XXX
-
-Therefore, to launch in the example above we would need to use the above command and use XXX,XXP, XXB,XXB2,XXO as inputs to launch all of those branch, oracle, and branch gui apps.
-		
-	The script "LAUNCH.cmd" performs the necessary commands to start BranchGui's and BranchServer's that correspond to the default "topology_file.txt" and "server_node_mapping.txt" and "apps.txt". The "topology_file.txt" represents physical links that all the nodes have between each other. The script will start 3 GUIs and 3 servers. The GUIS have physical links to all the servers. Furthermore, "apps.txt" specifies that server 100 will serve as primary for branch 00, 101 for branch 01, and 102 for branch 02. In each scenario, the  other servers will serve as backups. This configuration can be started using the default files by running the LAUNCH.cmd script.	
-	
--------------------------------------------------------------------------------
-
-TUTORIAL
+TUTORIAL TO USE
 
 The following describes the topology and test cases that can be made after running LAUNCH.cmd
 
@@ -149,19 +123,8 @@ TRANSFER TEST:
 		Src account: 00.00050
 		Dest account: 02.00052
 		Amount: 10
-PHASE 2 FURTHER TUTORIAL EXPLANATION
----------------------
-You can use take snapshot as specified in the tutorial above from Phase 1.
 
-This is a general description of general user input for testing which you can observe by playing around on your own of taking the snapshots as specified above from the tutorials from Phase 1.
-(1) Testing bank account balances on taking snapshots.
-	- On launch, deposit, withdraw, or transfer any amounts of your choice between the different branches. At any point in time, if you take a snapshot, the account balances on each branch for each account on that branch will be accurate to what user input you have provided.
-
-(2) Testing transactions
-It will be hard to test transactions only by use of user input into the GUI. Although you can try to do actions (Withdraw, Deposit, Transfer) really fast after taking the snapshots, due to the fast nature of algorithm, it will probably not catch any messages in transition. However, we have tested this aspect by emulating delays in message sending which is further described in our TestPlan. We,however, decided to remove the delays because we did not want to include them in the main product. 
-HOWEVER:
- -- You can test transactions, by uncommenting the Thread.Sleep in the NetworkInterface class in the getMessage() method. If you uncomment this, you can start a snapshot, then say deposit,withdraw, or transfer, and possibly catch it in the transactions of one of the branches! As described in TestPlan.txt, we used this to help simulate delays in order to catch messages in progress to display after snapshot finished.
-
+		
 PHASE3
 -------------
 Use LAUNCH.cmd to launch 3 GUIs  and 3 servers.
@@ -195,9 +158,3 @@ Scenarios to test:
 	(2) However, the transfers may happen a bit too fast for a person to click fail right in the middle of a transfer, one way to slow down the transfer transaction is to put sleep statements between the request and response in the transfer function.
 	(3) Once the node that you are transferring to fails and before the oracle notifies of the failure, the transfer will hang.
 	(4) Once you notify the failure of the node being transferred to, the transaction should reroute to a backup of the node and the transfer will complete.
-	
-Deposit
-TEAM MEMBERS 
----------------------
-PHASE 1: Vera Kutsenko & Jeremy Fein
-PHASE 2: Vera Kutsenko & Jeremy Fein
